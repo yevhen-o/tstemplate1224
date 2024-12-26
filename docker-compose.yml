@@ -1,0 +1,45 @@
+version: '3'
+services:
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgress
+      - POSTGRES_DB=postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./database:/var/lib/postgresql/data
+  nginx:
+    depends_on:
+      - backend
+      - frontend
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - '3050:80'
+  backend:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./backend
+    volumes:
+      - /app/node_modules
+      - ./backend:/app
+    environment:
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgress
+      - PGPORT=5432
+  frontend:
+    ports:
+      - 3000:3000
+    stdin_open: true
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./frontend
+    volumes:
+      - /app/node_modules
+      - ./frontend:/app

@@ -12,7 +12,7 @@ const Todo = require("./models/todos");
 // Express route handlers
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hi");
+  res.send("Hi there");
 });
 
 app.get("/status", (req: Request, res: Response) => {
