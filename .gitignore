@@ -1,0 +1,7 @@
+node_modules/
+.idea/
+.history/
+database/
+data/
+backend/node_modules/
+frontend/node_modules/
