@@ -8,24 +8,11 @@ import {
 
 import FieldLabel from "../FieldLabel/FieldLabel";
 
-import { checkValidity, ValidationErrors } from "src/helpers/validation";
+import { checkValidity } from "src/helpers/validation";
 import classNames from "classnames";
+import { CheckBoxType, DefaultFormProps } from "src/Types/FormTypes";
 
-type Props = {
-  className?: string;
-  disabled?: boolean;
-  formErrors?: ValidationErrors;
-  helpText?: string;
-  id?: string;
-  isTouched?: boolean;
-  label?: string;
-  name: string;
-  onChange?: (arg0: string, arg1: object) => void;
-  onFocus?: () => void;
-  rules?: object;
-  style?: object;
-  values?: object;
-};
+type Props = CheckBoxType & DefaultFormProps;
 
 const CheckBox: ForwardRefRenderFunction<
   HTMLInputElement,
@@ -45,6 +32,7 @@ const CheckBox: ForwardRefRenderFunction<
     rules = {},
     style,
     values,
+    fieldType,
     ...restProps
   },
   ref
@@ -60,7 +48,7 @@ const CheckBox: ForwardRefRenderFunction<
       value.toString(),
       rules[field as keyof typeof rules]
     );
-    onChange?.(value.toString(), {
+    onChange?.(value, {
       formErrors: { ...formErrors, [field]: errorMessage },
     });
   };
@@ -77,7 +65,7 @@ const CheckBox: ForwardRefRenderFunction<
               ref={cmpRef}
               name={name}
               id={id || name}
-              checked={values && values[name as keyof typeof values] === "true"}
+              checked={values && values[name as keyof typeof values] === true}
               disabled={disabled}
               className={classNames(
                 "custom-input-field__field-element",

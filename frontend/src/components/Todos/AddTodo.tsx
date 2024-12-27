@@ -10,6 +10,8 @@ const AddTodo: React.FC = () => {
     title: "",
     deadline: "",
     priority: "medium",
+    scope: "forWork",
+    isImportant: false,
   };
 
   const { todoAdded } = useActions();
@@ -25,10 +27,10 @@ const AddTodo: React.FC = () => {
   };
 
   const formFields: FieldType[] = [
-    { type: "input", name: "title", label: "Title" },
-    { type: "date", name: "deadline", label: "Due date" },
+    { fieldType: "input", name: "title", label: "Title" },
+    { fieldType: "date", name: "deadline", label: "Due date" },
     {
-      type: "select",
+      fieldType: "select",
       name: "priority",
       label: "Priority",
       options: [
@@ -38,27 +40,27 @@ const AddTodo: React.FC = () => {
       ],
     },
     {
-      type: "radio",
-      name: "customRadio",
+      fieldType: "radio",
+      name: "scope",
       id: "customRadio1",
-      value: "customRadio1",
-      label: "Custom Radio 1",
+      value: "forFun",
+      label: "Done it for fun",
       helpText: "This is a custom radio",
     },
     {
-      type: "checkbox",
+      fieldType: "radio",
+      name: "scope",
+      id: "customRadio2",
+      value: "forWork",
+      label: "Done it for personal growth",
+      helpText:
+        "Maybe need to think about radio group, but it's not a priority",
+    },
+    {
+      fieldType: "checkbox",
       name: "isImportant",
       label: "Important",
       helpText: "Mark as important",
-    },
-    {
-      type: "radio",
-      name: "customRadio",
-      id: "customRadio2",
-      value: "customRadio2",
-      label: "Custom Radio 2",
-      helpText:
-        "Maybe need to think about radio group, but it's not a priority",
     },
   ];
 

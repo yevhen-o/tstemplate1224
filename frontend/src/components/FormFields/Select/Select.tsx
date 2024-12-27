@@ -8,25 +8,11 @@ import {
 
 import FieldLabel from "../FieldLabel/FieldLabel";
 
-import { checkValidity, ValidationErrors } from "src/helpers/validation";
+import { checkValidity } from "src/helpers/validation";
 import classNames from "classnames";
+import { DefaultFormProps, SelectType } from "src/Types/FormTypes";
 
-type Props = {
-  className?: string;
-  disabled?: boolean;
-  formErrors?: ValidationErrors;
-  helpText?: string;
-  id?: string;
-  isTouched?: boolean;
-  label?: string;
-  name: string;
-  onChange?: (arg0: string, arg1: object) => void;
-  onFocus?: () => void;
-  rules?: object;
-  style?: object;
-  values?: object;
-  options: { value: string; label: string }[];
-};
+type Props = SelectType & DefaultFormProps;
 
 const Select: ForwardRefRenderFunction<
   HTMLSelectElement,
@@ -47,6 +33,7 @@ const Select: ForwardRefRenderFunction<
     style,
     values,
     options,
+    fieldType,
     ...restProps
   },
   ref

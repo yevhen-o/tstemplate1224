@@ -2,25 +2,13 @@ import { useState } from "react";
 import classNames from "classnames";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "./DatePicker.scss";
 
 import FieldLabel from "../FieldLabel/FieldLabel";
-import { checkValidity, ValidationErrors } from "src/helpers/validation";
+import { checkValidity } from "src/helpers/validation";
+import { DatePickType, DefaultFormProps } from "src/Types/FormTypes";
 
-type Props = {
-  className?: string;
-  disabled?: boolean;
-  formErrors?: ValidationErrors;
-  helpText?: string;
-  id?: string;
-  isTouched?: boolean;
-  label?: string;
-  name: string;
-  onChange?: (arg0: string, arg1: object) => void;
-  onFocus?: () => void;
-  rules?: object;
-  style?: object;
-  values?: object;
-};
+type Props = DatePickType & DefaultFormProps;
 
 const DatePickerImpl: React.FC<Props> = ({
   className,
@@ -36,6 +24,7 @@ const DatePickerImpl: React.FC<Props> = ({
   rules = {},
   style,
   values,
+  fieldType,
   ...restProps
 }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -63,6 +52,7 @@ const DatePickerImpl: React.FC<Props> = ({
       )}
       <div className={"mt-2"}>
         <DatePicker
+          autoComplete="off"
           selected={values && values[name as keyof typeof values]}
           onChange={(date) => date && onInputChange(date)}
           name={name}

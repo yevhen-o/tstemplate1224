@@ -8,12 +8,16 @@ const todosSlice = createSlice({
   initialState,
   reducers: {
     todoAdded(state, action) {
-      const { uid, title, deadline } = action.payload;
+      const { uid, title, deadline, priority, isImportant, scope } =
+        action.payload;
       state.push({
         uid,
         title,
         deadline,
         isCompleted: false,
+        priority,
+        isImportant,
+        scope,
       });
     },
     todoToggled(state, action) {

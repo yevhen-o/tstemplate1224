@@ -6,11 +6,28 @@ import AddTodo from "./AddTodo";
 const Todos: React.FC = () => {
   const todos = useTypedSelector((state) => state.todo);
   return (
-    <div>
+    <div className="px-8">
       <AddTodo />
       {todos.map((todo: TodoInterface) => (
-        <div key={todo.uid}>
-          {todo.uid} {todo.title}
+        <div
+          className="rounded-lg bg-white text-left shadow-xl px-4 py-3 border border-gray-200 my-4"
+          key={todo.uid}
+        >
+          <strong>ID: </strong>
+          {todo.uid}
+          <br />
+          <strong>Title: </strong>
+          {todo.title}
+          <br />
+          <strong>Priority: </strong>
+          {todo.priority}
+          <br />
+          <strong>Is completed: </strong>
+          {todo.isCompleted ? "Yes" : "No"}
+          <br />
+          <strong>Deadline: </strong>
+          {todo.deadline}
+          <br />
         </div>
       ))}
     </div>

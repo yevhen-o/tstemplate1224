@@ -8,24 +8,11 @@ import {
 
 import FieldLabel from "../FieldLabel/FieldLabel";
 
-import { checkValidity, ValidationErrors } from "src/helpers/validation";
+import { checkValidity } from "src/helpers/validation";
 import classNames from "classnames";
+import { DefaultFormProps, RadioType } from "src/Types/FormTypes";
 
-type Props = {
-  className?: string;
-  disabled?: boolean;
-  formErrors?: ValidationErrors;
-  helpText?: string;
-  id: string;
-  isTouched?: boolean;
-  label?: string;
-  name: string;
-  onChange?: (arg0: string, arg1: object) => void;
-  onFocus?: () => void;
-  rules?: object;
-  style?: object;
-  values?: object;
-};
+type Props = RadioType & DefaultFormProps;
 
 const RadioInput: ForwardRefRenderFunction<
   HTMLInputElement,
@@ -45,6 +32,7 @@ const RadioInput: ForwardRefRenderFunction<
     rules = {},
     style,
     values,
+    fieldType,
     ...restProps
   },
   ref

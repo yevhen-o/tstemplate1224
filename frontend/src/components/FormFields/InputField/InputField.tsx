@@ -6,31 +6,14 @@ import {
   useRef,
   ElementType,
 } from "react";
+import { DefaultFormProps, InputType } from "src/Types/FormTypes";
 
 import FieldLabel from "../FieldLabel/FieldLabel";
 
-import { checkValidity, ValidationErrors } from "src/helpers/validation";
+import { checkValidity } from "src/helpers/validation";
 import classNames from "classnames";
 
-type Props = {
-  autoComplete?: string;
-  className?: string;
-  disabled?: boolean;
-  formErrors?: ValidationErrors;
-  helpText?: string;
-  id?: string;
-  isTouched?: boolean;
-  label?: string;
-  name: string;
-  onChange?: (arg0: string, arg1: object) => void;
-  onFocus?: () => void;
-  placeholder?: string;
-  rows?: number;
-  rules?: object;
-  style?: object;
-  type?: string;
-  values?: object;
-};
+type Props = InputType & DefaultFormProps;
 
 const InputField: ForwardRefRenderFunction<
   HTMLInputElement | HTMLTextAreaElement,
@@ -54,6 +37,7 @@ const InputField: ForwardRefRenderFunction<
     style,
     type,
     values,
+    fieldType,
     ...restProps
   },
   ref

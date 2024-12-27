@@ -1,50 +1,20 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import InputField from "src/components/FormFields/InputField";
 import Select from "src/components/FormFields/Select";
 import CheckBox from "src/components/FormFields/CheckBox";
-import RadioInput from "src/components/FormFields/RadioInput/RadioInput";
+import RadioInput from "src/components/FormFields/RadioInput";
+import DatePicker from "src/components/FormFields/DatePicker";
+import {
+  InputType,
+  SelectType,
+  CheckBoxType,
+  RadioType,
+  DatePickType,
+} from "src/Types/FormTypes";
 
 type RulesType = Record<string, any>;
 type ValuesType = object;
 type ErrorsType = Record<string, string | undefined | null> | undefined;
-
-interface BaseFieldType {
-  name: string;
-  ref?: React.Ref<any>;
-  label?: string;
-  helpText?: string;
-  value?: string;
-  autoComplete?: string;
-  className?: string;
-  disabled?: boolean;
-  id?: string;
-  isTouched?: boolean;
-  placeholder?: string;
-  rows?: number;
-  style?: object;
-}
-
-interface InputType extends BaseFieldType {
-  type: "input";
-}
-
-interface SelectType extends BaseFieldType {
-  type: "select";
-  options: { value: string; label: string }[];
-}
-
-interface CheckBoxType extends BaseFieldType {
-  type: "checkbox";
-}
-
-interface RadioType extends BaseFieldType {
-  type: "radio";
-  id: string;
-}
-
-interface DatePickType extends BaseFieldType {
-  type: "date";
-}
 
 export type FieldType =
   | InputType
@@ -84,11 +54,16 @@ const useForm = (rules: RulesType, initialValues: ValuesType = {}) => {
       rules,
       formErrors,
       values,
-      onChange: (value: string, options: { formErrors?: ErrorsType }) =>
-        handleInputChange(field.name, value, options),
+      onChange: (
+        value: string | boolean,
+        options: { formErrors?: ErrorsType }
+      ) => handleInputChange(field.name, value, options),
     };
 
-    switch (field.type) {
+    switch (field.fieldType) {
+      case "date": {
+        return <DatePicker key={field.name} {...field} {...props} />;
+      }
       case "radio": {
         return <RadioInput key={field.id} {...field} {...props} />;
       }
