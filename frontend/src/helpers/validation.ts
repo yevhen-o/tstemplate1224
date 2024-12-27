@@ -3,7 +3,7 @@ import getTypedKeys from "./getTypedKeys";
 
 type BaseFunction = (...args: any[]) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-type Value = string | null | undefined;
+type Value = string | number | boolean | null | undefined;
 export type Rule = {
   hasLength?: number;
   hasLetters?: boolean;
@@ -32,9 +32,10 @@ type Validity = {
 };
 
 export const checkValidity = (
-  value: Value,
+  v: Value,
   rules: Rule | null | undefined
 ): Validity => {
+  const value = v?.toString();
   const validation: Validity = {
     errorMessage: null,
     isValid: true,
@@ -186,7 +187,7 @@ export const checkValidity = (
         : null;
     }
     if (rules.isChecked && validation.isValid) {
-      validation.isValid = Boolean(value);
+      validation.isValid = value === "true";
       validation.errorMessage = !validation.isValid
         ? "This field is required"
         : null;

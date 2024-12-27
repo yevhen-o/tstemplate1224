@@ -24,6 +24,9 @@ const AddTodo: React.FC = () => {
     deadline: {
       isRequired: true,
     },
+    isImportant: {
+      isChecked: true,
+    },
   };
 
   const formFields: FieldType[] = [

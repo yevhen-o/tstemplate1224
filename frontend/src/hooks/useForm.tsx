@@ -4,6 +4,7 @@ import Select from "src/components/FormFields/Select";
 import CheckBox from "src/components/FormFields/CheckBox";
 import RadioInput from "src/components/FormFields/RadioInput";
 import DatePicker from "src/components/FormFields/DatePicker";
+import { getValidationErrors } from "src/helpers/validation";
 import {
   InputType,
   SelectType,
@@ -12,8 +13,9 @@ import {
   DatePickType,
 } from "src/Types/FormTypes";
 
+type Value = string | number | boolean | null | undefined;
 type RulesType = Record<string, any>;
-type ValuesType = object;
+type ValuesType = Record<string, Value>;
 type ErrorsType = Record<string, string | undefined | null> | undefined;
 
 export type FieldType =
@@ -25,7 +27,9 @@ export type FieldType =
 
 const useForm = (rules: RulesType, initialValues: ValuesType = {}) => {
   const [values, setValues] = useState<ValuesType>(initialValues);
-  const [formErrors, setFormErrors] = useState<ErrorsType>({});
+  const [formErrors, setFormErrors] = useState<ErrorsType>(
+    getValidationErrors(initialValues, rules)
+  );
 
   const handleInputChange = (
     key: string,
