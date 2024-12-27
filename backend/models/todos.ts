@@ -13,20 +13,24 @@ const Todo = db.define("todo", {
     type: Sequelize.STRING(10000),
     allowNull: false,
   },
-  duedate: {
+  deadline: {
     type: Sequelize.STRING,
+    allowNull: true,
+  },
+  isCompleted: {
+    type: Sequelize.BOOLEAN,
     allowNull: true,
   },
 });
 
-// Organization.sync({force: true});
+// Todo.sync({force: true});
 
-Todo.addRecord = (title: string, duedate: string) => {
+Todo.addRecord = (title: string, deadline: string) => {
   const id = new Date().getTime();
   const options = {
     uid: id,
     title,
-    duedate,
+    deadline,
   };
   return Todo.create(options);
 };
