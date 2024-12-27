@@ -26,7 +26,7 @@ const AddTodo: React.FC = () => {
 
   const formFields: FieldType[] = [
     { type: "input", name: "title", label: "Title" },
-    { type: "input", name: "deadline", label: "Due date" },
+    { type: "date", name: "deadline", label: "Due date" },
     {
       type: "select",
       name: "priority",
@@ -62,20 +62,11 @@ const AddTodo: React.FC = () => {
     },
   ];
 
-  const {
-    values,
-    resetForm,
-    formErrors,
-    isFormValid,
-    hasFormChanges,
-    renderFormField,
-    handleInputChange,
-  } = useForm(RULES, initialValue);
+  const { values, resetForm, isFormValid, hasFormChanges, renderFormField } =
+    useForm(RULES, initialValue);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    console.log("on submit");
     e.preventDefault();
-    console.log("values", values);
     todoAdded({
       uid: Math.random().toString(36).slice(2, 5),
       isCompleted: false,

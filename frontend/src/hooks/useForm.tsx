@@ -14,6 +14,14 @@ interface BaseFieldType {
   label?: string;
   helpText?: string;
   value?: string;
+  autoComplete?: string;
+  className?: string;
+  disabled?: boolean;
+  id?: string;
+  isTouched?: boolean;
+  placeholder?: string;
+  rows?: number;
+  style?: object;
 }
 
 interface InputType extends BaseFieldType {
@@ -34,7 +42,16 @@ interface RadioType extends BaseFieldType {
   id: string;
 }
 
-export type FieldType = InputType | SelectType | CheckBoxType | RadioType;
+interface DatePickType extends BaseFieldType {
+  type: "date";
+}
+
+export type FieldType =
+  | InputType
+  | SelectType
+  | CheckBoxType
+  | RadioType
+  | DatePickType;
 
 const useForm = (rules: RulesType, initialValues: ValuesType = {}) => {
   const [values, setValues] = useState<ValuesType>(initialValues);

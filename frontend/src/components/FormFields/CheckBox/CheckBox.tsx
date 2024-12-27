@@ -103,16 +103,16 @@ const CheckBox: ForwardRefRenderFunction<
               <path
                 className="opacity-0 group-has-[:checked]:opacity-100"
                 d="M3 8L6 11L11 3.5"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
               <path
                 className="opacity-0 group-has-[:indeterminate]:opacity-100"
                 d="M3 7H11"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </div>
