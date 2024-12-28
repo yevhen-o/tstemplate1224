@@ -19,18 +19,19 @@ app.get("/status", (req: Request, res: Response) => {
   res.json({ status: "connected!" });
 });
 
-app.get("/add-record", async (req: Request, res: Response) => {
+app.post("/todos", async (req: Request, res: Response) => {
   try {
-    const todo = await Todo.addRecord();
-    console.log(todo);
-    res.json({ added: true });
+    const todo = await Todo.addRecord(req.body);
+    res.json(todo);
   } catch (e) {
     console.log(e);
     res.status(500).send();
   }
 });
 
-app.get("/get-records", Todo.getRecords);
+app.get("/todos", Todo.getRecords);
+
+app.get("/todos/:uid", Todo.getRecord);
 
 app.listen(keys.backendPort, () => {
   console.log("Listening");

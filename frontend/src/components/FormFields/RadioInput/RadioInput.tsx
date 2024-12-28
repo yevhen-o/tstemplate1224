@@ -39,7 +39,8 @@ const RadioInput: ForwardRefRenderFunction<
 ) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const cmpRef = ref || useRef(null);
-  const [isTouched, setIsTouched] = useState(propsIsTouched);
+  const [internalIsTouched, setInternalIsTouched] = useState(false);
+  const isTouched = propsIsTouched || internalIsTouched;
 
   const onInputChange = (e: React.FormEvent<HTMLInputElement>): void => {
     const target = e.target as HTMLInputElement;
@@ -77,7 +78,7 @@ const RadioInput: ForwardRefRenderFunction<
             type="radio"
             {...restProps}
             onChange={onInputChange}
-            onBlur={() => setIsTouched(true)}
+            onBlur={() => setInternalIsTouched(true)}
             onFocus={onFocus}
           />
         </div>

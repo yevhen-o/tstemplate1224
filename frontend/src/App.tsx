@@ -5,6 +5,7 @@ import { store } from "src/store/store";
 import "./App.css";
 import HomePage from "./pages/HomePage";
 import Todos from "./components/Todos";
+import ViewTodo from "./components/Todos/ViewTodo";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/todos" element={<Todos />} />
+          <Route path="/todos/:todoId" element={<ViewTodo />} />
         </Routes>
       </BrowserRouter>
     </Provider>

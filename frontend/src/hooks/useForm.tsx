@@ -14,8 +14,6 @@ import {
 } from "src/Types/FormTypes";
 
 type Value = string | number | boolean | null | undefined;
-type RulesType = Record<string, any>;
-type ValuesType = Record<string, Value>;
 type ErrorsType = Record<string, string | undefined | null> | undefined;
 
 export type FieldType =
@@ -25,8 +23,11 @@ export type FieldType =
   | RadioType
   | DatePickType;
 
-const useForm = (rules: RulesType, initialValues: ValuesType = {}) => {
-  const [values, setValues] = useState<ValuesType>(initialValues);
+const useForm = <T extends Record<string, Value>>(
+  rules: Partial<Record<keyof T, any>>,
+  initialValues: T = {} as T
+) => {
+  const [values, setValues] = useState<T>(initialValues);
   const [formErrors, setFormErrors] = useState<ErrorsType>(
     getValidationErrors(initialValues, rules)
   );

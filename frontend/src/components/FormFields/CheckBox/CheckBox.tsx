@@ -39,7 +39,8 @@ const CheckBox: ForwardRefRenderFunction<
 ) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const cmpRef = ref || useRef(null);
-  const [isTouched, setIsTouched] = useState(propsIsTouched);
+  const [internalIsTouched, setInternalIsTouched] = useState(false);
+  const isTouched = propsIsTouched || internalIsTouched;
 
   const onInputChange = (e: React.FormEvent<HTMLInputElement>): void => {
     const target = e.target as HTMLInputElement;
@@ -57,7 +58,7 @@ const CheckBox: ForwardRefRenderFunction<
   const isValid = !errorMessage;
 
   return (
-    <div>
+    <div className="col-span-full custom-input-field__wrapper">
       <div className="flex gap-3">
         <div className="flex h-6 shrink-0 items-center">
           <div className="group grid size-4 grid-cols-1">
@@ -79,7 +80,7 @@ const CheckBox: ForwardRefRenderFunction<
               style={style}
               {...restProps}
               onChange={onInputChange}
-              onBlur={() => setIsTouched(true)}
+              onBlur={() => setInternalIsTouched(true)}
               onFocus={onFocus}
               type="checkbox"
             />

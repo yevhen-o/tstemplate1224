@@ -3,8 +3,13 @@ import { TodoInterface } from "src/Types";
 import { useActions } from "src/hooks/useActions";
 import useForm, { FieldType } from "src/hooks/useForm";
 import Button from "../Buttons";
+import Modal from "../Modal";
 
-const AddTodo: React.FC = () => {
+type AddTodoProps = {
+  onClose: () => void;
+};
+
+const AddTodo: React.FC<AddTodoProps> = ({ onClose }) => {
   type ValuesType = Omit<TodoInterface, "uid" | "isCompleted">;
   const initialValue: ValuesType = {
     title: "",
@@ -14,7 +19,7 @@ const AddTodo: React.FC = () => {
     isImportant: false,
   };
 
-  const { todoAdd } = useActions();
+  const { todoPostItem } = useActions();
 
   const RULES = {
     title: {
@@ -67,20 +72,34 @@ const AddTodo: React.FC = () => {
     },
   ];
 
+  const [fields, setFields] = React.useState<FieldType[]>(formFields);
+
   const { values, resetForm, isFormValid, hasFormChanges, renderFormField } =
     useForm(RULES, initialValue);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    todoAdd({
-      uid: Math.random().toString(36).slice(2, 5),
-      isCompleted: false,
-      ...values,
-    });
+    if (isFormValid()) {
+      const { title, deadline, priority, scope, isImportant } = values;
+      await todoPostItem({
+        uid: Math.random().toString(36).slice(2, 16),
+        isCompleted: false,
+        title,
+        deadline,
+        priority,
+        scope,
+        isImportant,
+      });
+      onClose();
+    } else {
+      setFields((fields) => [
+        ...fields.map((field) => ({ ...field, isTouched: true })),
+      ]);
+    }
   };
 
   return (
-    <>
+    <Modal title="Add new todo" onClose={onClose}>
       <form onSubmit={handleSubmit} style={{ padding: "20px" }}>
         <h2 className="text-base/7 font-semibold text-gray-900">
           Add new todo
@@ -89,16 +108,16 @@ const AddTodo: React.FC = () => {
           Use some descriptive title and set a deadline for the task
         </p>
         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-          {formFields.map((field) => renderFormField(field))}
+          {fields.map((field) => renderFormField(field))}
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">
           {hasFormChanges() && <Button onClick={resetForm}>Reset</Button>}
-          <Button isPrimary disabled={!isFormValid()} type="submit">
+          <Button isPrimary type="submit">
             Submit
           </Button>
         </div>
       </form>
-    </>
+    </Modal>
   );
 };
 

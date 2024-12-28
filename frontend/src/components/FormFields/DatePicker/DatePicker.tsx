@@ -27,8 +27,8 @@ const DatePickerImpl: React.FC<Props> = ({
   fieldType,
   ...restProps
 }) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [isTouched, setIsTouched] = useState(propsIsTouched);
+  const [internalIsTouched, setInternalIsTouched] = useState(false);
+  const isTouched = propsIsTouched || internalIsTouched;
 
   const onInputChange = (value: Date): void => {
     const { errorMessage } = checkValidity(
@@ -67,7 +67,7 @@ const DatePickerImpl: React.FC<Props> = ({
             }
           )}
           {...restProps}
-          onBlur={() => setIsTouched(true)}
+          onBlur={() => setInternalIsTouched(true)}
           onFocus={onFocus}
         />
       </div>

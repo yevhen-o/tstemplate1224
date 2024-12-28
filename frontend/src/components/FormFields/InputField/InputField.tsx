@@ -44,8 +44,8 @@ const InputField: ForwardRefRenderFunction<
 ) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const cmpRef = ref || useRef();
-  const [isTouched, setIsTouched] = useState(propsIsTouched);
-
+  const [internalIsTouched, setInternalIsTouched] = useState(false);
+  const isTouched = propsIsTouched || internalIsTouched;
   const onInputChange = (
     e: React.FormEvent<HTMLInputElement> | React.FormEvent<HTMLTextAreaElement>
   ): void => {
@@ -92,7 +92,7 @@ const InputField: ForwardRefRenderFunction<
           type={type}
           {...restProps}
           onChange={onInputChange}
-          onBlur={() => setIsTouched(true)}
+          onBlur={() => setInternalIsTouched(true)}
           onFocus={onFocus}
         />
       </div>
