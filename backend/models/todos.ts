@@ -48,9 +48,7 @@ export type TodoInterface = {
 };
 
 Todo.addRecord = (body: TodoInterface) => {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(Todo.create(body)), 5000);
-  });
+  return Todo.create(body);
 };
 
 Todo.getRecords = async (req: Request, res: Response) => {
@@ -62,6 +60,12 @@ Todo.getRecords = async (req: Request, res: Response) => {
 
 Todo.getRecord = async (req: Request, res: Response) => {
   const todo = await Todo.findOne({ where: { uid: req.params.uid } });
+  res.send(todo);
+};
+
+Todo.patchRecord = async (req: Request, res: Response) => {
+  const todo = await Todo.findOne({ where: { uid: req.params.uid } });
+  await todo.update(req.body);
   res.send(todo);
 };
 

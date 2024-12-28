@@ -7,19 +7,23 @@ import Modal from "../Modal";
 
 type AddTodoProps = {
   onClose: () => void;
+  propsState?: TodoInterface;
 };
 
-const AddTodo: React.FC<AddTodoProps> = ({ onClose }) => {
-  type ValuesType = Omit<TodoInterface, "uid" | "isCompleted">;
-  const initialValue: ValuesType = {
-    title: "",
-    deadline: "",
-    priority: "medium",
-    scope: "forWork",
-    isImportant: false,
-  };
+const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
+  type ValuesType = Omit<TodoInterface, "uid">;
+  const initialValue: ValuesType = propsState
+    ? ({ ...propsState, uid: undefined } as ValuesType)
+    : {
+        title: "",
+        deadline: "",
+        priority: "medium",
+        scope: "forWork",
+        isImportant: false,
+        isCompleted: false,
+      };
 
-  const { todoPostItem } = useActions();
+  const { todoPostItem, todoPatchItem } = useActions();
 
   const RULES = {
     title: {
@@ -80,16 +84,17 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isFormValid()) {
-      const { title, deadline, priority, scope, isImportant } = values;
-      await todoPostItem({
-        uid: Math.random().toString(36).slice(2, 16),
-        isCompleted: false,
-        title,
-        deadline,
-        priority,
-        scope,
-        isImportant,
-      });
+      if (propsState) {
+        await todoPatchItem({
+          uid: propsState.uid,
+          item: values,
+        });
+      } else {
+        await todoPostItem({
+          uid: Math.random().toString(36).slice(2, 16),
+          ...values,
+        });
+      }
       onClose();
     } else {
       setFields((fields) => [
@@ -113,7 +118,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose }) => {
         <div className="mt-6 flex items-center justify-end gap-x-6">
           {hasFormChanges() && <Button onClick={resetForm}>Reset</Button>}
           <Button isPrimary type="submit">
-            Submit
+            {propsState ? "Update" : "Submit"}
           </Button>
         </div>
       </form>

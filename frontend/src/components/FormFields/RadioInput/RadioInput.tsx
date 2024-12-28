@@ -31,6 +31,7 @@ const RadioInput: ForwardRefRenderFunction<
     onFocus,
     rules = {},
     style,
+    value,
     values,
     fieldType,
     ...restProps
@@ -63,7 +64,8 @@ const RadioInput: ForwardRefRenderFunction<
             ref={cmpRef}
             name={name}
             id={id || name}
-            value={values && values[name as keyof typeof values]}
+            value={value}
+            checked={values && values[name as keyof typeof values] === value}
             disabled={disabled}
             className={classNames(
               "custom-input-field__field-element",

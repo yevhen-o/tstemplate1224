@@ -21,6 +21,11 @@ type StateType = {
     isFetched: boolean;
     hasError: boolean;
   };
+  patchItem: {
+    isFetching: boolean;
+    isFetched: boolean;
+    hasError: boolean;
+  };
 };
 
 const initialState: StateType = {
@@ -37,6 +42,11 @@ const initialState: StateType = {
     hasError: false,
   },
   postItem: {
+    isFetching: false,
+    isFetched: false,
+    hasError: false,
+  },
+  patchItem: {
     isFetching: false,
     isFetched: false,
     hasError: false,
@@ -117,9 +127,43 @@ const todosSlice = createSlice({
       .addCase(todoGetItem.rejected, (state) => {
         state.getItem.isFetching = false;
         state.getItem.hasError = true;
+      })
+      .addCase(todoPatchItem.pending, (state) => {
+        state.patchItem.isFetching = true;
+        state.patchItem.isFetched = false;
+        state.patchItem.hasError = false;
+      })
+      .addCase(
+        todoPatchItem.fulfilled,
+        (state, action: PayloadAction<TodoInterface>) => {
+          state.patchItem.isFetching = false;
+          state.patchItem.isFetched = true;
+          state.itemsById[action.payload.uid] = {
+            ...(state.itemsById[action.payload.uid] || {}),
+            ...action.payload,
+          };
+        }
+      )
+      .addCase(todoPatchItem.rejected, (state) => {
+        state.patchItem.isFetching = false;
+        state.patchItem.hasError = true;
       });
   },
 });
+
+export const todoPatchItem = createAsyncThunk(
+  "todos/patchItem",
+  async ({ uid, item }: { uid: string; item: Partial<TodoInterface> }) => {
+    const result: TodoInterface = await fetch(`/api/todos/${uid}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(item),
+    }).then((res) => res.json());
+    return result;
+  }
+);
 
 export const todoGetItem = createAsyncThunk(
   "todos/getItem",

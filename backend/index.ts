@@ -33,6 +33,8 @@ app.get("/todos", Todo.getRecords);
 
 app.get("/todos/:uid", Todo.getRecord);
 
+app.patch("/todos/:uid", Todo.patchRecord);
+
 app.listen(keys.backendPort, () => {
   console.log("Listening");
 });

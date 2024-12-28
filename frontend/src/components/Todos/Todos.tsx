@@ -3,7 +3,7 @@ import { createSelector } from "reselect";
 import { TodoInterface } from "src/Types";
 import { useActions } from "src/hooks/useActions";
 import { useTypedSelector } from "src/hooks/useTypedSelector";
-import AddTodoModal from "./AddTodoModal";
+import AddTodoModal from "./AddEditTodoModal";
 import Button from "src/components/Buttons";
 import { formatDate } from "src/helpers/formatDate";
 import { Link } from "react-router";
