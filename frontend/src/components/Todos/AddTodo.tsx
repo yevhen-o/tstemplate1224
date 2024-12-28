@@ -14,7 +14,7 @@ const AddTodo: React.FC = () => {
     isImportant: false,
   };
 
-  const { todoAdded } = useActions();
+  const { todoAdd } = useActions();
 
   const RULES = {
     title: {
@@ -72,7 +72,7 @@ const AddTodo: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    todoAdded({
+    todoAdd({
       uid: Math.random().toString(36).slice(2, 5),
       isCompleted: false,
       ...values,

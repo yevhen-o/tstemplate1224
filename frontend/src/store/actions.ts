@@ -1,1 +1,1 @@
-export { todoAdded, todoToggled } from "./todo/todoSlice";
+export { todoAdd, todoToggle, todoGetList } from "./todo/todoSlice";
