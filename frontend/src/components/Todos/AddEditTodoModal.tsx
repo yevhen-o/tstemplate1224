@@ -4,6 +4,7 @@ import { useActions } from "src/hooks/useActions";
 import useForm, { FieldType } from "src/hooks/useForm";
 import Button from "../Buttons";
 import Modal from "../Modal";
+import { isValid } from "react-datepicker/dist/date_utils";
 
 type AddTodoProps = {
   onClose: () => void;
@@ -29,6 +30,23 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
     title: {
       isRequired: true,
       minLength: 15,
+      customRules: [
+        (value: string) => {
+          if (
+            value === "some interesting string, maybe check for vulgar words"
+          ) {
+            return {
+              isValid: false,
+              errorMessage: "This string is forbidden",
+            };
+          } else {
+            return {
+              isValid: true,
+              errorMessage: null,
+            };
+          }
+        },
+      ],
     },
     deadline: {
       isRequired: true,
@@ -107,7 +125,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
     <Modal title="Add new todo" onClose={onClose}>
       <form onSubmit={handleSubmit} style={{ padding: "20px" }}>
         <h2 className="text-base/7 font-semibold text-gray-900">
-          Add new todo
+          {propsState ? "Edit todo" : "Add new todo"}
         </h2>
         <p className="mt-1 text-sm/6 text-gray-600">
           Use some descriptive title and set a deadline for the task
