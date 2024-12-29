@@ -44,7 +44,10 @@ const useForm = <T extends Record<string, Value>>(
     }
   };
 
-  const resetForm = () => setValues(initialValues);
+  const resetForm = () => {
+    setValues(initialValues);
+    setFormErrors(getValidationErrors(initialValues, rules));
+  };
 
   const isFormValid = () =>
     !formErrors || !Object.keys(formErrors).some((key) => !!formErrors[key]);
