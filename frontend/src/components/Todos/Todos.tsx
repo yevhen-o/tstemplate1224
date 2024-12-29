@@ -6,7 +6,7 @@ import { useTypedSelector } from "src/hooks/useTypedSelector";
 import AddTodoModal from "./AddEditTodoModal";
 import Button from "src/components/Buttons";
 import { formatDate } from "src/helpers/formatDate";
-import { Link } from "react-router";
+import { Link, getUrl, IDENTIFIERS } from "src/helpers/urlsHelper";
 
 const Todos: React.FC = () => {
   const { isFetching, isFetched, hasError, todos } = useTypedSelector(
@@ -45,7 +45,7 @@ const Todos: React.FC = () => {
         todos &&
         todos.map((todo: TodoInterface) => (
           <Link
-            to={`/todos/${todo.uid}`}
+            to={getUrl(IDENTIFIERS.TODO_VIEW, { todoId: todo.uid })}
             className="rounded-lg block bg-white text-left shadow-xl px-4 py-3 border border-gray-200 my-4"
             key={todo.uid}
           >
