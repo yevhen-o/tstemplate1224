@@ -3,7 +3,14 @@ import getTypedKeys from "./getTypedKeys";
 
 type BaseFunction = (...args: any[]) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-type Value = string | number | boolean | null | undefined;
+export type Value =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | string[]
+  | object;
 export type Rule = {
   hasLength?: number;
   hasLetters?: boolean;
@@ -31,11 +38,35 @@ type Validity = {
   isValid: boolean;
 };
 
+export const regex = {
+  hasUpperCase: /(?=.*[A-Z])/,
+  lettersOnly: /^[A-Za-z ]+$/,
+  lettersNumbersOnly: /^[A-Za-z0-9-]+$/,
+  numbersOnly: /^\d+$/,
+  hasLetters: /[a-z]+/i,
+  email:
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  phone: /^[\d\s()-]+$/,
+  numbersWithDecimalOnly: /^[1-9]\d*(\.\d+)?$/,
+  url: /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9_]-*)*[a-z\u00a1-\uffff0-9_]+)(?:\.(?:[a-z\u00a1-\uffff0-9_]-*)*[a-z\u00a1-\uffff0-9_]+)*(?:\.(?:[a-z\u00a1-\uffff_]{2,})))(?::\d{2,5})?(?:\/\S*)?$/,
+};
+
+const isString = (value: Value): value is string => typeof value === "string";
+
+const isNumber = (value: Value): value is number => typeof value === "number";
+
+const hasValue = (value: Value): boolean => {
+  if (value === null || value === undefined) return false;
+  if (isString(value)) return value.trim() !== "";
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value === "object") return Object.keys(value).length > 0;
+  return true;
+};
+
 export const checkValidity = (
-  v: Value,
+  value: Value,
   rules: Rule | null | undefined
 ): Validity => {
-  const value = v?.toString();
   const validation: Validity = {
     errorMessage: null,
     isValid: true,
@@ -43,30 +74,34 @@ export const checkValidity = (
 
   if (rules) {
     if (rules.isRequired && validation.isValid) {
-      validation.isValid = !!value && String(value).trim() !== "";
+      if (!hasValue(value)) {
+        validation.isValid = false;
+      }
       validation.errorMessage = !validation.isValid
         ? "This field is required"
         : null;
     }
     if (validation.isValid && rules.hasLength) {
-      if (value && value.length < rules.hasLength) {
+      if (
+        !hasValue(value) ||
+        !isString(value) ||
+        value.length < rules.hasLength
+      ) {
         validation.isValid = false;
-        validation.errorMessage = "The password must be at least 8 characters";
+        validation.errorMessage = `This field is too short ${rules.hasLength} characters`;
       }
     }
     if (rules.hasUpperLetter && validation.isValid) {
-      const lettersRegExp = /(?=.*[A-Z])/;
-      validation.isValid = lettersRegExp.test(String(value));
+      validation.isValid = !isString(value) || regex.hasUpperCase.test(value);
 
       validation.errorMessage = !validation.isValid
         ? "Should contain at least one upper case letter"
         : null;
     }
     if (rules.lettersOnly && validation.isValid) {
-      const lettersRegExp = /^[A-Za-z ]+$/;
-      validation.isValid = lettersRegExp.test(String(value).toLowerCase());
+      validation.isValid = !isString(value) || regex.lettersOnly.test(value);
 
-      if (value && value.trim().length === 0 && !rules.isRequired) {
+      if (isString(value) && value.trim().length === 0 && !rules.isRequired) {
         validation.isValid = true;
       }
 
@@ -75,10 +110,10 @@ export const checkValidity = (
         : null;
     }
     if (rules.lettersNumbersOnly && validation.isValid) {
-      const lettersRegExp = /^[A-Za-z0-9-]+$/;
-      validation.isValid = lettersRegExp.test(String(value).toLowerCase());
+      validation.isValid =
+        !isString(value) || regex.lettersNumbersOnly.test(value);
 
-      if (value && value.trim().length === 0 && !rules.isRequired) {
+      if (isString(value) && value.trim().length === 0 && !rules.isRequired) {
         validation.isValid = true;
       }
 
@@ -87,10 +122,14 @@ export const checkValidity = (
         : null;
     }
     if (rules.numbersOnly && validation.isValid) {
-      const numbersRegExp = /^\d+$/;
-      validation.isValid = numbersRegExp.test(String(value));
+      validation.isValid =
+        isNumber(value) || (isString(value) && regex.numbersOnly.test(value));
 
-      if (`${value}`.trim().length === 0 && !rules.isRequired) {
+      if (
+        (isString(value) || isNumber(value)) &&
+        `${value}`.trim().length === 0 &&
+        !rules.isRequired
+      ) {
         validation.isValid = true;
       }
 
@@ -99,10 +138,10 @@ export const checkValidity = (
         : null;
     }
     if (rules.hasLetters && validation.isValid) {
-      const hasLettersRegExp = /[a-z]+/i;
-      validation.isValid = hasLettersRegExp.test(String(value).toLowerCase());
+      validation.isValid =
+        !isString(value) || regex.hasLetters.test(value.toLowerCase());
 
-      if (value && value.trim().length === 0 && !rules.isRequired) {
+      if (isString(value) && value.trim().length === 0 && !rules.isRequired) {
         validation.isValid = true;
       }
 
@@ -111,11 +150,10 @@ export const checkValidity = (
         : null;
     }
     if (rules.minLength && validation.isValid) {
-      validation.isValid = Boolean(
-        value && value.trim().length >= rules.minLength
-      );
+      validation.isValid =
+        isString(value) && value.trim().length >= rules.minLength;
 
-      if (value && value.trim().length === 0 && !rules.isRequired) {
+      if (isString(value) && value.trim().length === 0 && !rules.isRequired) {
         validation.isValid = true;
       }
 
@@ -124,9 +162,15 @@ export const checkValidity = (
         : null;
     }
     if (rules.maxLength && validation.isValid) {
-      validation.isValid = `${value}`.trim().length <= rules.maxLength;
+      validation.isValid =
+        (isString(value) || isNumber(value)) &&
+        `${value}`.trim().length <= rules.maxLength;
 
-      if (`${value}`.trim().length === 0 && !rules.isRequired) {
+      if (
+        (isString(value) || isNumber(value)) &&
+        `${value}`.trim().length === 0 &&
+        !rules.isRequired
+      ) {
         validation.isValid = true;
       }
 
@@ -135,9 +179,15 @@ export const checkValidity = (
         : null;
     }
     if (rules.maxNumber && validation.isValid) {
-      validation.isValid = +`${value}`.trim() <= rules.maxNumber;
+      validation.isValid =
+        (isNumber(value) || isString(value)) &&
+        +`${value}`.trim() <= rules.maxNumber;
 
-      if (`${value}`.trim().length === 0 && !rules.isRequired) {
+      if (
+        (isString(value) || isNumber(value)) &&
+        `${value}`.trim().length === 0 &&
+        !rules.isRequired
+      ) {
         validation.isValid = true;
       }
 
@@ -146,9 +196,15 @@ export const checkValidity = (
         : null;
     }
     if (rules.minNumber && validation.isValid) {
-      validation.isValid = +`${value}`.trim() >= rules.minNumber;
+      validation.isValid =
+        (isString(value) || isNumber(value)) &&
+        +`${value}`.trim() >= rules.minNumber;
 
-      if (`${value}`.trim().length === 0 && !rules.isRequired) {
+      if (
+        (isString(value) || isNumber(value)) &&
+        `${value}`.trim().length === 0 &&
+        !rules.isRequired
+      ) {
         validation.isValid = true;
       }
 
@@ -157,10 +213,9 @@ export const checkValidity = (
         : null;
     }
     if (rules.isEmail && validation.isValid) {
-      const emailRegExp =
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      validation.isValid = emailRegExp.test(String(value).toLowerCase());
-      if (value && value.trim().length === 0 && !rules.isRequired) {
+      validation.isValid =
+        isString(value) && regex.email.test(value.toLowerCase());
+      if (isString(value) && value.trim().length === 0 && !rules.isRequired) {
         validation.isValid = true;
       }
 
@@ -169,8 +224,7 @@ export const checkValidity = (
         : null;
     }
     if (rules.isPhone && validation.isValid) {
-      const phoneRegex = /^[\d\s()-]+$/;
-      const isValid = value && phoneRegex.test(value);
+      const isValid = isString(value) && regex.phone.test(value);
       if (!isValid) {
         validation.isValid = false;
       } else {
@@ -178,22 +232,24 @@ export const checkValidity = (
         validation.isValid = phone.length >= 7;
       }
 
-      if (value && value.trim().length === 0 && !rules.isRequired) {
+      if (isString(value) && value.trim().length === 0 && !rules.isRequired) {
         validation.isValid = true;
       }
 
       validation.errorMessage = !validation.isValid
-        ? "Invalid number. Make sure your number is correct and that you've selected the proper country from the drop down list. Do not include your country code in your number."
+        ? "Invalid number. Make sure your number is correct"
         : null;
     }
     if (rules.isChecked && validation.isValid) {
-      validation.isValid = value === "true";
+      validation.isValid =
+        (typeof value === "boolean" && value) ||
+        (isString(value) && value === "true");
       validation.errorMessage = !validation.isValid
         ? "This field is required"
         : null;
     }
     if (rules.isObject && validation.isValid) {
-      validation.isValid = Boolean(value) && typeof value === "object";
+      validation.isValid = typeof value === "object";
       validation.errorMessage = !validation.isValid
         ? "This field is required"
         : null;
@@ -206,10 +262,15 @@ export const checkValidity = (
     }
 
     if (rules.numbersWithDecimalOnly && validation.isValid) {
-      const regexp = /^[1-9]\d*(\.\d+)?$/;
-      validation.isValid = regexp.test(String(value).toLowerCase());
+      validation.isValid =
+        (isString(value) || isNumber(value)) &&
+        regex.numbersWithDecimalOnly.test(String(value).toLowerCase());
 
-      if (`${value}`.trim().length === 0 && !rules.isRequired) {
+      if (
+        (isString(value) || isNumber(value)) &&
+        `${value}`.trim().length === 0 &&
+        !rules.isRequired
+      ) {
         validation.isValid = true;
       }
 
@@ -219,16 +280,14 @@ export const checkValidity = (
     }
 
     if (rules.isUrl && validation.isValid && value !== "") {
-      const regexp =
-        /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9_]-*)*[a-z\u00a1-\uffff0-9_]+)(?:\.(?:[a-z\u00a1-\uffff0-9_]-*)*[a-z\u00a1-\uffff0-9_]+)*(?:\.(?:[a-z\u00a1-\uffff_]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
-      validation.isValid = Boolean(value && regexp.test(value));
+      validation.isValid = Boolean(isString(value) && regex.url.test(value));
       validation.errorMessage = !validation.isValid ? "Enter Valid Url" : null;
     }
 
     if (rules.isAlreadyExistsInArray && validation.isValid) {
       validation.isValid = !(
-        rules.isAlreadyExistsInArray.filter((e) =>
-          Boolean(value && e.toLowerCase() === value.toLocaleLowerCase())
+        rules.isAlreadyExistsInArray.filter(
+          (e) => e.toLowerCase() === String(value).toLowerCase()
         ).length > 0
       );
       validation.errorMessage = !validation.isValid
