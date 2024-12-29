@@ -25,7 +25,7 @@ services:
       dockerfile: Dockerfile.dev
       context: ./backend
     volumes:
-      - /app/node_modules
+      - ./backend/node_modules:/app/node_modules
       - ./backend:/app
     environment:
       - PGUSER=postgres

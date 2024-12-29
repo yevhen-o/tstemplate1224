@@ -3,7 +3,7 @@ const Sequelize = require("sequelize");
 
 const db = require("../db_connect");
 
-const Todo = db.define("todo", {
+export const Todo = db.define("todo", {
   uid: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -68,5 +68,3 @@ Todo.patchRecord = async (req: Request, res: Response) => {
   await todo.update(req.body);
   res.send(todo);
 };
-
-module.exports = Todo;
