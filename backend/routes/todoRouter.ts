@@ -5,19 +5,24 @@ import {
   patchTodoValidationSchema,
 } from "../validationSchemas";
 import { Todo } from "../models/todos";
+import { tryCatch } from "../utils/tryCatch";
 
 const router = Router();
 
-router.post("/todos", ajvWrapper(postTodoValidationSchema), Todo.addRecord);
+router.post(
+  "/todos",
+  ajvWrapper(postTodoValidationSchema),
+  tryCatch(Todo.addRecord)
+);
 
-router.get("/todos", Todo.getRecords);
+router.get("/todos", tryCatch(Todo.getRecords));
 
-router.get("/todos/:uid", Todo.getRecord);
+router.get("/todos/:uid", tryCatch(Todo.getRecord));
 
 router.patch(
   "/todos/:uid",
   ajvWrapper(patchTodoValidationSchema),
-  Todo.patchRecord
+  tryCatch(Todo.patchRecord)
 );
 
 export default router;

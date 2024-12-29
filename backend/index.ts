@@ -1,10 +1,10 @@
 const keys = require("./keys");
 import express, { Request, Response, Application, Router } from "express";
 import todoRouter from "./routes/todoRouter";
+import errorHandler from "./middlewares/errorHandler";
 
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const router = Router();
 
 const app: Application = express();
 app.use(cors());
@@ -20,7 +20,9 @@ app.get("/status", (req: Request, res: Response) => {
   res.json({ status: "connected!" });
 });
 
-router.use(todoRouter);
+app.use(todoRouter);
+
+app.use(errorHandler);
 
 app.listen(keys.backendPort, () => {
   console.log("Listening");
