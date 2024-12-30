@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { createSelector } from "reselect";
-import { TodoInterface } from "src/Types";
 import { useActions } from "src/hooks/useActions";
 import { useTypedSelector } from "src/hooks/useTypedSelector";
 import AddTodoModal from "./AddEditTodoModal";
 import Button from "src/components/Buttons";
-import { formatDate } from "src/helpers/formatDate";
-import { Link, getUrl, IDENTIFIERS } from "src/helpers/urlsHelper";
+import TodoList from "./TodoList";
 
 const Todos: React.FC = () => {
   const { isFetching, isFetched, hasError, todos } = useTypedSelector(
@@ -41,25 +39,7 @@ const Todos: React.FC = () => {
       {showAddTodoModal && <AddTodoModal onClose={handleCloseModal} />}
       {isFetching && <div>Loading...</div>}
       {hasError && <div>Something went wrong...</div>}
-      {isFetched &&
-        todos &&
-        todos.map((todo: TodoInterface) => (
-          <Link
-            to={getUrl(IDENTIFIERS.TODO_VIEW, { todoId: todo.uid })}
-            className="rounded-lg block bg-white text-left shadow-xl px-4 py-3 border border-gray-200 my-4"
-            key={todo.uid}
-          >
-            <strong>ID: </strong>
-            {todo.uid}
-            <br />
-            <strong>Title: </strong>
-            {todo.title}
-            <br />
-            <strong>Deadline: </strong>
-            {formatDate(todo.deadline)}
-            <br />
-          </Link>
-        ))}
+      {isFetched && todos && <TodoList items={todos} />}
     </div>
   );
 };

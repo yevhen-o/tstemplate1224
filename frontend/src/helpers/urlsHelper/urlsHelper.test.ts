@@ -12,7 +12,7 @@ describe("helpers/urlHelper", () => {
       );
     });
 
-    it("should replace array params in the path, just as comman separated lists", () => {
+    it("should replace array params in the path, just as common separated lists", () => {
       expect(
         getUrl("/pets/[petId]/owners" as IDENTIFIERS, { petId: ["123", "456"] })
       ).toEqual("/pets/123%2C456/owners");
