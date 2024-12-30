@@ -1,7 +1,7 @@
 import { TodoInterface } from "src/Types";
 import { formatDate } from "src/helpers/formatDate";
 import { Link, getUrl, IDENTIFIERS } from "src/helpers/urlsHelper";
-import withPagination from "src/hocs/WithPagination";
+import withPagination from "src/hocs/withPagination";
 
 interface TodoListProps {
   itemsToDisplay: TodoInterface[];

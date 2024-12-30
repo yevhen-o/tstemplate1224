@@ -177,18 +177,25 @@ export const todoGetItem = createAsyncThunk(
 
 export const todoPostItem = createAsyncThunk(
   "todos/postItem",
-  async (item: TodoInterface) => {
-    const result = await fetch("/api/todos", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(item),
-    });
-    if (!result.ok) {
-      throw new Error("Failed to post item");
+  async (item: TodoInterface, thunkAPI) => {
+    try {
+      const result = await fetch("/api/todos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(item),
+      });
+      if (!result.ok) {
+        throw new Error("Should reject");
+      }
+      const data = await result.json();
+      return data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err instanceof Error ? err.message : "Something going wrong"
+      );
     }
-    return item;
   }
 );
 

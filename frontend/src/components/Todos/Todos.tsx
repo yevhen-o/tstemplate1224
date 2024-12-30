@@ -5,6 +5,7 @@ import { useTypedSelector } from "src/hooks/useTypedSelector";
 import AddTodoModal from "./AddEditTodoModal";
 import Button from "src/components/Buttons";
 import TodoList from "./TodoList";
+import Filters from "../Filters/Filters";
 
 const Todos: React.FC = () => {
   const { isFetching, isFetched, hasError, todos } = useTypedSelector(
@@ -36,6 +37,9 @@ const Todos: React.FC = () => {
       <Button isPrimary onClick={() => setShowAddTodoModal(true)}>
         Add Todo
       </Button>
+
+      <Filters />
+
       {showAddTodoModal && <AddTodoModal onClose={handleCloseModal} />}
       {isFetching && <div>Loading...</div>}
       {hasError && <div>Something went wrong...</div>}

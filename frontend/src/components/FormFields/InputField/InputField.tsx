@@ -70,7 +70,7 @@ const InputField: ForwardRefRenderFunction<
           {label}
         </FieldLabel>
       )}
-      <div className={"mt-2"}>
+      <div className={classNames({ "mt-2": !!label })}>
         <CMP
           ref={cmpRef}
           name={name}

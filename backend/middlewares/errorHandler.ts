@@ -6,8 +6,9 @@ const errorHandler: ErrorRequestHandler = async (error, req, res, next) => {
     res
       .status(error.statusCode)
       .send({ message: error.message, details: error.details });
+  } else {
+    res.status(500).send(error.message);
   }
-  res.status(500).send(error.message);
 };
 
 export default errorHandler;

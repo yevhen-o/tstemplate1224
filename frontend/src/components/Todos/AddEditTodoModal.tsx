@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { TodoInterface } from "src/Types";
+import { createSelector } from "reselect";
+
 import { useActions } from "src/hooks/useActions";
 import useForm, { FieldType } from "src/hooks/useForm";
+import { useTypedSelector } from "src/hooks/useTypedSelector";
 import Button from "../Buttons";
 import Modal from "../Modal";
-import { isValid } from "react-datepicker/dist/date_utils";
 
 type AddTodoProps = {
   onClose: () => void;
@@ -25,6 +27,18 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
       };
 
   const { todoPostItem, todoPatchItem } = useActions();
+  const { isFetching, isFetched, hasError } = useTypedSelector((state) =>
+    createSelector([(s) => s.todo, (_, key) => key], (todo, key) => todo[key])(
+      state,
+      propsState ? "patchItem" : "postItem"
+    )
+  );
+
+  useEffect(() => {
+    if (isFetched && !hasError) {
+      onClose();
+    }
+  }, [isFetched, hasError, onClose]);
 
   const RULES = {
     title: {
@@ -50,9 +64,6 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
     },
     deadline: {
       isRequired: true,
-    },
-    isImportant: {
-      isChecked: true,
     },
   };
 
@@ -113,7 +124,6 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
           ...values,
         });
       }
-      onClose();
     } else {
       setFields((fields) => [
         ...fields.map((field) => ({ ...field, isTouched: true })),
@@ -134,6 +144,10 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
           {fields.map((field) => renderFormField(field))}
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">
+          {isFetching && <span>Loading...</span>}
+          {hasError && (
+            <span className="text-red-500">Something goes wrong</span>
+          )}
           {hasFormChanges() && <Button onClick={resetForm}>Reset</Button>}
           <Button isPrimary type="submit">
             {propsState ? "Update" : "Submit"}

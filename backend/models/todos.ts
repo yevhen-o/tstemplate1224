@@ -47,8 +47,9 @@ export type TodoInterface = {
   scope: string;
 };
 
-Todo.addRecord = (body: TodoInterface) => {
-  return Todo.create(body);
+Todo.addRecord = async (req: Request, res: Response) => {
+  const todo = await Todo.create(req.body);
+  res.send(todo);
 };
 
 Todo.getRecords = async (req: Request, res: Response) => {
