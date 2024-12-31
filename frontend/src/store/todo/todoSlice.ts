@@ -267,15 +267,40 @@ export const todoGetList = createAsyncThunk<
   return genericRequest(fetchOptions, thunkApi);
 });
 
+// function createTodoThunk<T, A>(
+//   type: string,
+//   requestFn: (
+//     args: A,
+//     thunkApi: { rejectWithValue: (value: KnownError) => any }
+//   ) => Promise<T>
+// ) {
+//   return createAsyncThunk<T, A, RejectValueType>(type, requestFn);
+// }
+
+// export const todoGetList = createTodoThunk<
+//   TodoInterface[],
+//   { signal?: AbortSignal }
+// >("todos/getList", async ({ signal }, thunkApi) => {
+//   return genericRequest(
+//     {
+//       method: "GET",
+//       url: "/api/todos",
+//       signal,
+//     },
+//     thunkApi
+//   );
+// });
+
 async function genericRequest<T, R>(
   config: RequestConfig,
   thunkApi: { rejectWithValue: (value: KnownError) => R }
-) {
+): Promise<T | R> {
   try {
-    const result: T = await fetch(config.url, { ...config }).then((res) =>
-      res.json()
-    );
-    return result;
+    const response = await fetch(config.url, { ...config });
+    if (!response.ok) {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+    return await response.json();
   } catch (error: unknown) {
     return thunkApi.rejectWithValue({
       message:
