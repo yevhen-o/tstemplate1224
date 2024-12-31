@@ -1,84 +1,129 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { TodoInterface } from "src/Types";
 
+// TODO: move app when will get more slices
+
+type SliceError = KnownError | null | undefined;
+
+interface KnownError {
+  message: string;
+}
+
+type ActionMeta = {
+  requestId: string;
+  aborted: boolean;
+  condition: boolean;
+} & (
+  | {
+      rejectedWithValue: true;
+    }
+  | ({
+      rejectedWithValue: false;
+    } & {})
+);
+
+const setFetchingState = <T>(section: T, latestRequestId: string) => ({
+  ...section,
+  latestRequestId,
+  isFetching: true,
+  isFetched: false,
+  error: null,
+});
+
+const setFulfilledState = <T>(section: T) => ({
+  ...section,
+  isFetching: false,
+  isFetched: true,
+});
+
+const setRejectedState = <T extends RequestState>(
+  section: T,
+  meta: ActionMeta,
+  actionPayload: SliceError,
+  actionErrorMessage: string | undefined = "Something goes wrong"
+) => {
+  const { requestId, condition, aborted } = meta;
+  section = { ...section, isFetched: false, isFetching: false };
+  if (section.latestRequestId === requestId) {
+    if (!condition && !aborted) {
+      if (!!actionPayload) {
+        section.error = actionPayload;
+      } else {
+        section.error = new Error(actionErrorMessage);
+      }
+    }
+  }
+  return section;
+};
+
+const updateItemById = <
+  T extends { [key: string]: any },
+  V extends { uid: string }
+>(
+  section: T,
+  item: V
+) => ({
+  ...section,
+  [item.uid]: {
+    ...(section[item.uid] || {}),
+    ...item,
+  },
+});
+
+interface RequestState {
+  latestRequestId: string;
+  isFetching: boolean;
+  isFetched: boolean;
+  error: SliceError;
+}
+
 type StateType = {
-  list: {
-    isFetching: boolean;
-    isFetched: boolean;
-    hasError: boolean;
+  list: RequestState & {
     data: string[];
   };
   itemsById: {
     [key: string]: TodoInterface;
   };
-  getItem: {
-    isFetching: boolean;
-    isFetched: boolean;
-    hasError: boolean;
-  };
-  postItem: {
-    isFetching: boolean;
-    isFetched: boolean;
-    hasError: boolean;
-  };
-  patchItem: {
-    isFetching: boolean;
-    isFetched: boolean;
-    hasError: boolean;
-  };
+  getItem: RequestState;
+  postItem: RequestState;
+  patchItem: RequestState;
 };
 
 const initialState: StateType = {
   list: {
-    isFetching: false,
-    isFetched: false,
-    hasError: false,
+    ...setFetchingState({}, ""),
     data: [],
   },
   itemsById: {},
   getItem: {
-    isFetching: false,
-    isFetched: false,
-    hasError: false,
+    ...setFetchingState({}, ""),
   },
   postItem: {
-    isFetching: false,
-    isFetched: false,
-    hasError: false,
+    ...setFetchingState({}, ""),
   },
   patchItem: {
-    isFetching: false,
-    isFetched: false,
-    hasError: false,
+    ...setFetchingState({}, ""),
   },
 };
 
 const todosSlice = createSlice({
   name: "todos",
   initialState,
-  reducers: {
-    todoAdd(state, action) {
-      state.list.data.push(action.payload.uid);
-      state.itemsById[action.payload.uid] = action.payload;
-    },
-    todoToggle(state, action) {
-      state.itemsById[action.payload].isCompleted =
-        !state.itemsById[action.payload].isCompleted;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(todoGetList.pending, (state) => {
-        state.list.isFetching = true;
-        state.list.isFetched = false;
-        state.list.hasError = false;
+      .addCase(todoGetList.pending, (state, action) => {
+        state.list = setFetchingState(state.list, action.meta.requestId);
       })
-      .addCase(
-        todoGetList.fulfilled,
-        (state, action: PayloadAction<TodoInterface[]>) => {
-          state.list.isFetching = false;
-          state.list.isFetched = true;
-          state.list.data = action.payload.map((todo) => todo.uid);
+      .addCase(todoGetList.fulfilled, (state, action) => {
+        if (state.list.latestRequestId === action.meta.requestId) {
+          state.list = setFulfilledState(state.list);
+          state.list.data = Array.from(
+            new Set([
+              ...state.list.data,
+              ...action.payload.map((todo) => todo.uid),
+            ])
+          );
           action.payload.forEach((todo) => {
             state.itemsById[todo.uid] = {
               ...(state.itemsById[todo.uid] || {}),
@@ -86,125 +131,157 @@ const todosSlice = createSlice({
             };
           });
         }
-      )
-      .addCase(todoPostItem.pending, (state) => {
-        state.postItem.isFetching = true;
-        state.postItem.isFetched = false;
-        state.postItem.hasError = false;
       })
-      .addCase(
-        todoPostItem.fulfilled,
-        (state, action: PayloadAction<TodoInterface>) => {
-          state.postItem.isFetching = false;
-          state.postItem.isFetched = true;
-          state.list.data.push(action.payload.uid);
-          state.itemsById[action.payload.uid] = {
-            ...(state.itemsById[action.payload.uid] || {}),
-            ...action.payload,
-          };
-        }
-      )
-      .addCase(todoPostItem.rejected, (state) => {
-        state.postItem.isFetching = false;
-        state.postItem.hasError = true;
+      .addCase(todoGetList.rejected, (state, action) => {
+        state.list = setRejectedState(
+          state.list,
+          action.meta,
+          action.payload,
+          action.error.message
+        );
       })
-      .addCase(todoGetItem.pending, (state) => {
-        state.getItem.isFetching = true;
-        state.getItem.isFetched = false;
-        state.getItem.hasError = false;
+      .addCase(todoPostItem.pending, (state, action) => {
+        state.postItem = setFetchingState(
+          state.postItem,
+          action.meta.requestId
+        );
       })
-      .addCase(
-        todoGetItem.fulfilled,
-        (state, action: PayloadAction<TodoInterface>) => {
-          state.getItem.isFetching = false;
-          state.getItem.isFetched = true;
-          state.itemsById[action.payload.uid] = {
-            ...(state.itemsById[action.payload.uid] || {}),
-            ...action.payload,
-          };
-        }
-      )
-      .addCase(todoGetItem.rejected, (state) => {
-        state.getItem.isFetching = false;
-        state.getItem.hasError = true;
+      .addCase(todoPostItem.fulfilled, (state, action) => {
+        state.postItem = setFulfilledState(state.postItem);
+        state.list.data.push(action.payload.uid);
+        state.itemsById = updateItemById(state.itemsById, action.payload);
       })
-      .addCase(todoPatchItem.pending, (state) => {
-        state.patchItem.isFetching = true;
-        state.patchItem.isFetched = false;
-        state.patchItem.hasError = false;
+      .addCase(todoPostItem.rejected, (state, action) => {
+        state.postItem = setRejectedState(
+          state.postItem,
+          action.meta,
+          action.payload,
+          action.error.message
+        );
       })
-      .addCase(
-        todoPatchItem.fulfilled,
-        (state, action: PayloadAction<TodoInterface>) => {
-          state.patchItem.isFetching = false;
-          state.patchItem.isFetched = true;
-          state.itemsById[action.payload.uid] = {
-            ...(state.itemsById[action.payload.uid] || {}),
-            ...action.payload,
-          };
-        }
-      )
-      .addCase(todoPatchItem.rejected, (state) => {
-        state.patchItem.isFetching = false;
-        state.patchItem.hasError = true;
+      .addCase(todoGetItem.pending, (state, action) => {
+        state.getItem = setFetchingState(state.getItem, action.meta.requestId);
+      })
+      .addCase(todoGetItem.fulfilled, (state, action) => {
+        state.getItem = setFulfilledState(state.getItem);
+        state.itemsById = updateItemById(state.itemsById, action.payload);
+      })
+      .addCase(todoGetItem.rejected, (state, action) => {
+        state.getItem = setRejectedState(
+          state.getItem,
+          action.meta,
+          action.payload,
+          action.error.message
+        );
+      })
+      .addCase(todoPatchItem.pending, (state, action) => {
+        state.patchItem = setFetchingState(
+          state.patchItem,
+          action.meta.requestId
+        );
+      })
+      .addCase(todoPatchItem.fulfilled, (state, action) => {
+        state.patchItem = setFulfilledState(state.patchItem);
+        state.itemsById = updateItemById(state.itemsById, action.payload);
+      })
+      .addCase(todoPatchItem.rejected, (state, action) => {
+        state.patchItem = setRejectedState(
+          state.patchItem,
+          action.meta,
+          action.payload,
+          action.error.message
+        );
       });
   },
 });
 
-export const todoPatchItem = createAsyncThunk(
-  "todos/patchItem",
-  async ({ uid, item }: { uid: string; item: Partial<TodoInterface> }) => {
-    const result: TodoInterface = await fetch(`/api/todos/${uid}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(item),
-    }).then((res) => res.json());
-    return result;
-  }
-);
+type RejectValueType = {
+  rejectValue: KnownError;
+};
 
-export const todoGetItem = createAsyncThunk(
-  "todos/getItem",
-  async (uid: string) => {
-    const result: TodoInterface = await fetch(`/api/todos/${uid}`).then((res) =>
+type RequestConfig = {
+  url: string;
+  method: "PATCH" | "POST" | "GET" | "PUT";
+  headers?: Record<string, string>;
+  body?: string;
+  signal?: AbortSignal;
+};
+
+export const todoPatchItem = createAsyncThunk<
+  TodoInterface,
+  { uid: string; item: Partial<TodoInterface>; signal?: AbortSignal },
+  RejectValueType
+>("todos/patchItem", async ({ uid, item, signal }, thunkApi) => {
+  const fetchOptions: RequestConfig = {
+    method: "PATCH",
+    url: `/api/todos/${uid}`,
+    signal: signal,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(item),
+  };
+  return genericRequest(fetchOptions, thunkApi);
+});
+
+export const todoGetItem = createAsyncThunk<
+  TodoInterface,
+  { uid: string; signal?: AbortSignal },
+  RejectValueType
+>("todos/getItem", async ({ uid, signal }, thunkApi) => {
+  const fetchOptions: RequestConfig = {
+    method: "GET",
+    url: `/api/todos/${uid}`,
+    signal: signal,
+  };
+  return genericRequest(fetchOptions, thunkApi);
+});
+
+export const todoPostItem = createAsyncThunk<
+  TodoInterface,
+  { item: TodoInterface; signal?: AbortSignal },
+  RejectValueType
+>("todos/postItem", async ({ item, signal }, thunkApi) => {
+  const fetchOptions: RequestConfig = {
+    method: "POST",
+    url: `/api/todos`,
+    signal: signal,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(item),
+  };
+  return genericRequest(fetchOptions, thunkApi);
+});
+
+export const todoGetList = createAsyncThunk<
+  TodoInterface[],
+  { signal?: AbortSignal },
+  RejectValueType
+>("todos/getList", async ({ signal }, thunkApi) => {
+  const fetchOptions: RequestConfig = {
+    method: "GET",
+    url: `/api/todos`,
+    signal: signal,
+  };
+  return genericRequest(fetchOptions, thunkApi);
+});
+
+async function genericRequest<T, R>(
+  config: RequestConfig,
+  thunkApi: { rejectWithValue: (value: KnownError) => R }
+) {
+  try {
+    const result: T = await fetch(config.url, { ...config }).then((res) =>
       res.json()
     );
     return result;
+  } catch (error: unknown) {
+    return thunkApi.rejectWithValue({
+      message:
+        error instanceof Error ? error.message : "Unknown error occurred",
+    });
   }
-);
+}
 
-export const todoPostItem = createAsyncThunk(
-  "todos/postItem",
-  async (item: TodoInterface, thunkAPI) => {
-    try {
-      const result = await fetch("/api/todos", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(item),
-      });
-      if (!result.ok) {
-        throw new Error("Should reject");
-      }
-      const data = await result.json();
-      return data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(
-        err instanceof Error ? err.message : "Something going wrong"
-      );
-    }
-  }
-);
-
-export const todoGetList = createAsyncThunk("todos/getList", async () => {
-  const result: TodoInterface[] = await fetch("/api/todos").then((res) =>
-    res.json()
-  );
-  return result;
-});
-
-export const { todoAdd, todoToggle } = todosSlice.actions;
 export default todosSlice.reducer;

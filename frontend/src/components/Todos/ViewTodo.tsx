@@ -19,7 +19,7 @@ const ViewTodo: React.FC<ViewTodoProps> = () => {
 
   useEffect(() => {
     if (todoId) {
-      todoGetItem(todoId);
+      todoGetItem({ uid: todoId });
     }
   }, [todoId, todoGetItem]);
 

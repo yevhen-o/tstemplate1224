@@ -23,7 +23,18 @@ const Todos: React.FC = () => {
   const { todoGetList } = useActions();
 
   useEffect(() => {
-    todoGetList();
+    const controller = new AbortController();
+    const signal: AbortSignal = controller.signal;
+    console.log("on todo get list");
+    try {
+      todoGetList({ signal });
+    } catch (error) {
+      console.log("on catch todo get list", error);
+    }
+    return () => {
+      console.log("clear, next call");
+      controller.abort();
+    };
   }, [todoGetList]);
 
   const [showAddTodoModal, setShowAddTodoModal] = useState(false);

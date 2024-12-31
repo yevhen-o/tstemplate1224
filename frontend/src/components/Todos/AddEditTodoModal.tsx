@@ -120,8 +120,10 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
         });
       } else {
         await todoPostItem({
-          uid: Math.random().toString(36).slice(2, 16),
-          ...values,
+          item: {
+            uid: Math.random().toString(36).slice(2, 16),
+            ...values,
+          },
         });
       }
     } else {

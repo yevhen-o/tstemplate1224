@@ -53,6 +53,9 @@ Todo.addRecord = async (req: Request, res: Response) => {
 };
 
 Todo.getRecords = async (req: Request, res: Response) => {
+  // await new Promise<void>((resolve) => {
+  //   setTimeout(() => resolve(), 10000);
+  // });
   const todos = await Todo.findAll({
     attributes: ["uid", "title", "deadline"],
   });

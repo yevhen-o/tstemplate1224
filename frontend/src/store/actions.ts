@@ -1,6 +1,4 @@
 export {
-  todoAdd,
-  todoToggle,
   todoGetList,
   todoPostItem,
   todoGetItem,
