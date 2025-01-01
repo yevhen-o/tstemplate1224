@@ -1,16 +1,26 @@
 import { useState } from "react";
+import withClientScreen from "src/hocs/withClientScreen";
+import { ClientScreenInterface } from "src/Types/ClientScreen";
+import InputField from "../FormFields/InputField";
 
-const Filters = () => {
-  const [searchText, setSearchText] = useState("");
+interface FilterProps extends Partial<ClientScreenInterface> {
+  searchText?: string;
+}
+
+const Filters: React.FC<FilterProps> = ({ searchText = "", screenWidth }) => {
+  const [search, setSearch] = useState(searchText);
   return (
     <div>
-      <input
+      {screenWidth}
+      <InputField
+        name="search"
         type="search"
-        value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
+        fieldType="input"
+        value={search}
+        onChange={(value) => setSearch(value.toString())}
       />
     </div>
   );
 };
 
-export default Filters;
+export default withClientScreen(Filters);

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { createSelector } from "reselect";
 import { useActions } from "src/hooks/useActions";
 import { useTypedSelector } from "src/hooks/useTypedSelector";
+import { useClientScreen } from "src/hooks/useClienScreen";
 import AddTodoModal from "./AddEditTodoModal";
 import Button from "src/components/Buttons";
 import TodoList from "./TodoList";
@@ -21,6 +22,7 @@ const Todos: React.FC = () => {
   );
 
   const { todoGetList } = useActions();
+  const { screenWidth, screenHeight } = useClientScreen();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -55,6 +57,7 @@ const Todos: React.FC = () => {
       {isFetching && <div>Loading...</div>}
       {hasError && <div>Something went wrong...</div>}
       {isFetched && todos && <TodoList items={todos} />}
+      {`Window innerWidth: ${screenWidth} && innerHeight ${screenHeight}`}
     </div>
   );
 };

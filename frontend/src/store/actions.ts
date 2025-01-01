@@ -4,3 +4,5 @@ export {
   todoGetItem,
   todoPatchItem,
 } from "./todo/todoSlice";
+
+export { setClientScreen } from "./clientScreen/clientScreenSlice";

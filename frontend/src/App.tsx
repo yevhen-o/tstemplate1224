@@ -7,10 +7,12 @@ import HomePage from "./pages/HomePage";
 import Todos from "./components/Todos";
 import ViewTodo from "./components/Todos/ViewTodo";
 import { getReactRouterPath, IDENTIFIERS } from "./helpers/urlsHelper";
+import ClientScreenChangeListener from "./components/ClientScreenChangeListener";
 
 function App() {
   return (
     <Provider store={store}>
+      <ClientScreenChangeListener />
       <BrowserRouter>
         <Routes>
           <Route
