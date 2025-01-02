@@ -1,5 +1,6 @@
 export enum IDENTIFIERS {
   HOME = "/",
+  DROP_DOWNS = "/dropdowns",
   TODOS = "/todos",
   TODO_VIEW = "/todos/[todoId]",
   PAGE_401 = "/401",

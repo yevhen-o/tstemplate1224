@@ -8,6 +8,7 @@ import ViewTodo from "./components/Todos/ViewTodo";
 import { getReactRouterPath, IDENTIFIERS } from "./helpers/urlsHelper";
 import ClientScreenChangeListener from "./components/ClientScreenChangeListener";
 import TodosPage from "./pages/TodosPage";
+import DropDownsPage from "./pages/DropDownsPage";
 
 function App() {
   return (
@@ -26,6 +27,10 @@ function App() {
           <Route
             path={getReactRouterPath(IDENTIFIERS.TODO_VIEW)}
             element={<ViewTodo />}
+          />
+          <Route
+            path={getReactRouterPath(IDENTIFIERS.DROP_DOWNS)}
+            element={<DropDownsPage />}
           />
         </Routes>
       </BrowserRouter>

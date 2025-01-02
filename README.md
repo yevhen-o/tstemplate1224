@@ -30,7 +30,7 @@ localhost:3050/api - api
 - [x] FormFields basic
 - [ ] FormFields advanced
 - [ ] DropDown
-- [ ] DropDown with just css
+- [x] DropDown with just css
 - [ ] MultiSelect
 - [ ] VirtualScroll component
 - [ ] Create Authentication flow with email and password, try to use browser hashing functionality

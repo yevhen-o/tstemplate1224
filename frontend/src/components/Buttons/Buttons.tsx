@@ -1,19 +1,27 @@
-type ButtonProps = {
+import classNames from "classnames";
+
+export type ButtonProps = {
   children: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
   isPrimary?: boolean;
   isBordered?: boolean;
+  className?: string;
+  id?: string;
+  style?: React.CSSProperties;
 };
 
 const Button: React.FC<ButtonProps> = ({
-  children,
-  onClick,
-  disabled,
+  id,
   type,
+  onClick,
+  children,
+  disabled,
+  className,
   isPrimary,
   isBordered,
+  ...restProps
 }) => {
   let classes = "text-sm/6 font-semibold text-gray-900";
   if (isPrimary) {
@@ -25,10 +33,12 @@ const Button: React.FC<ButtonProps> = ({
   }
   return (
     <button
+      {...restProps}
+      id={id}
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={classes}
+      className={classNames(classes, className)}
     >
       {children}
     </button>

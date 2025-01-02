@@ -6,12 +6,13 @@ interface WrapperSizeProps {
 }
 
 export function withWrapperSize<T extends WrapperSizeProps>(
-  Component: React.ComponentType<T>
+  Component: React.ComponentType<T>,
+  isRefSupported: boolean = false
 ) {
   const SizeWrapper = React.forwardRef<
-    HTMLDivElement,
+    HTMLElement,
     Omit<T, keyof WrapperSizeProps>
-  >((props, ref: ForwardedRef<HTMLDivElement>) => {
+  >((props, ref: ForwardedRef<HTMLElement>) => {
     const [size, setSize] = useState<{ blockSize: number; inlineSize: number }>(
       {
         blockSize: 0,
@@ -19,15 +20,14 @@ export function withWrapperSize<T extends WrapperSizeProps>(
       }
     );
 
-    const localRef = useRef<HTMLDivElement | null>(null); // Mutable reference for the div
+    const localRef = useRef<HTMLElement | null>(null);
 
-    const setCombinedRef = (element: HTMLDivElement | null) => {
+    const setCombinedRef = (element: HTMLElement | null) => {
       if (ref) {
         if (typeof ref === "function") {
           ref(element);
         } else if (ref && "current" in ref) {
-          (ref as React.MutableRefObject<HTMLDivElement | null>).current =
-            element;
+          (ref as React.MutableRefObject<HTMLElement | null>).current = element;
         }
       }
       localRef.current = element;
@@ -51,7 +51,7 @@ export function withWrapperSize<T extends WrapperSizeProps>(
       };
 
       const resizeObserver = new ResizeObserver(observerCallback);
-      const element = localRef.current; // Use mutable ref to access the DOM element
+      const element = localRef.current;
       if (element) {
         resizeObserver.observe(element);
       }
@@ -59,34 +59,29 @@ export function withWrapperSize<T extends WrapperSizeProps>(
       return () => resizeObserver.disconnect();
     }, [size]);
 
-    return (
-      <div ref={setCombinedRef}>
+    if (isRefSupported) {
+      // Case 1: Ref is forwarded, no wrapper needed
+      return (
         <Component
+          ref={setCombinedRef}
           {...(props as unknown as T)}
           wrapperWidth={size.inlineSize}
           wrapperHeight={size.blockSize}
         />
-      </div>
-    );
+      );
+    } else {
+      // Case 2: Ref not supported, add wrapper
+      return (
+        <div className="case2" ref={setCombinedRef}>
+          <Component
+            {...(props as unknown as T)}
+            wrapperWidth={size.inlineSize}
+            wrapperHeight={size.blockSize}
+          />
+        </div>
+      );
+    }
   });
 
   return SizeWrapper;
 }
-
-// The withWrapperSize is a Higher-Order Component (HOC) designed to enhance a given React component by injecting its parent's (or wrapper's) dimensions (width and height) as props. It uses the ResizeObserver API to monitor size changes of the wrapper element and updates the component dynamically whenever the size changes.
-// Parameters:
-// Component:
-
-// A React component that requires wrapperWidth and wrapperHeight props to adjust its layout, styling, or functionality based on the size of its container.
-// Props:
-
-// The wrapped component must accept two additional props:
-// wrapperWidth: The current width of the wrapper in pixels.
-// wrapperHeight: The current height of the wrapper in pixels.
-
-// useEffect(() => {
-//   document.documentElement.style.setProperty(
-//     "--filters-height",
-//     `${wrapperHeight}px`
-//   );
-// }, [wrapperHeight]);
