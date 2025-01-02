@@ -22,10 +22,10 @@ localhost:3050/api - api
 - [x] validation helper
 - [x] url builder helper
 - [x] HOC withPagination
-- [ ] HOC withFilters
+- [x] HOC withFilters
 - [ ] HOC withFilters reflect url changing on filter change
 - [x] HOC withDeviceMedia
-- [ ] HOC withWrapperSize
+- [x] HOC withWrapperSize
 - [ ] Table
 - [x] FormFields basic
 - [ ] FormFields advanced
@@ -36,3 +36,4 @@ localhost:3050/api - api
 - [ ] Create Authentication flow with email and password, try to use browser hashing functionality
 - [ ] Build Authorization Logic
 - [ ] Use localForage for cross tab communication
+- [ ] Widget communication flow

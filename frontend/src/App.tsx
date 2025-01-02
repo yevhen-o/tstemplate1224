@@ -4,10 +4,10 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import { store } from "src/store/store";
 import "./App.css";
 import HomePage from "./pages/HomePage";
-import Todos from "./components/Todos";
 import ViewTodo from "./components/Todos/ViewTodo";
 import { getReactRouterPath, IDENTIFIERS } from "./helpers/urlsHelper";
 import ClientScreenChangeListener from "./components/ClientScreenChangeListener";
+import TodosPage from "./pages/TodosPage";
 
 function App() {
   return (
@@ -21,7 +21,7 @@ function App() {
           />
           <Route
             path={getReactRouterPath(IDENTIFIERS.TODOS)}
-            element={<Todos />}
+            element={<TodosPage />}
           />
           <Route
             path={getReactRouterPath(IDENTIFIERS.TODO_VIEW)}

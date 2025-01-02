@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Button from "src/components/Buttons";
-import InputField from "src/components/FormFields/InputField";
 import Select from "src/components/FormFields/Select";
 import { DEFAULT_PAGE_SIZE, PREDEFINED_PAGE_SIZES } from "src/constants";
 

@@ -8,9 +8,12 @@ import AddTodoModal from "./AddEditTodoModal";
 import Button from "src/components/Buttons";
 import TodoList from "./TodoList";
 import { FieldType } from "src/hooks/useForm";
-import { FILTER_ALL_VALUE } from "src/hocs/withFilters";
+import { FILTER_ALL_VALUE, withWrapperSize } from "src/hocs";
 
-const Todos: React.FC = () => {
+const Todos: React.FC<{ wrapperWidth: number; wrapperHeight: number }> = ({
+  wrapperWidth,
+  wrapperHeight,
+}) => {
   const { isFetching, isFetched, hasError, todos } = useTypedSelector(
     createSelector(
       [(state) => state.todo.list, (state) => state.todo.itemsById],
@@ -105,9 +108,11 @@ const Todos: React.FC = () => {
           initialValues={initialFilterValues}
         />
       )}
+      {`Wrapper width: ${wrapperWidth} && wrapperHeight ${wrapperHeight}`}
+      <br />
       {`Window innerWidth: ${screenWidth} && innerHeight ${screenHeight}`}
     </div>
   );
 };
 
-export default Todos;
+export default withWrapperSize(Todos);

@@ -1,8 +1,11 @@
-import React, { useEffect } from "react";
+import Todos from "src/components/Todos";
 
 function TodosPage() {
-  useEffect;
-  return <div></div>;
+  return (
+    <div>
+      <Todos />
+    </div>
+  );
 }
 
 export default TodosPage;
