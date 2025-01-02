@@ -1,26 +1,43 @@
-import { useState } from "react";
-import withClientScreen from "src/hocs/withClientScreen";
-import { ClientScreenInterface } from "src/Types/ClientScreen";
-import InputField from "../FormFields/InputField";
+import { useEffect } from "react";
+import { FormValueType, FieldType, useForm } from "src/hooks";
+import Button from "../Buttons";
 
-interface FilterProps extends Partial<ClientScreenInterface> {
-  searchText?: string;
+interface FilterProps {
+  filterFields: FieldType[];
+  initialValues: FormValueType;
+  onChange: (values: FormValueType) => void;
 }
 
-const Filters: React.FC<FilterProps> = ({ searchText = "", screenWidth }) => {
-  const [search, setSearch] = useState(searchText);
+const Filters: React.FC<FilterProps> = ({
+  onChange,
+  filterFields,
+  initialValues = {},
+}) => {
+  const { values, renderFormField, hasFormChanges, resetForm } = useForm(
+    {},
+    initialValues
+  );
+
+  useEffect(() => {
+    onChange(values);
+  }, [values, onChange]);
   return (
-    <div>
-      {screenWidth}
-      <InputField
-        name="search"
-        type="search"
-        fieldType="input"
-        value={search}
-        onChange={(value) => setSearch(value.toString())}
-      />
+    <div
+      style={{
+        display: "flex",
+        alignItems: "flex-end",
+        gap: "24px",
+        padding: "0 32px",
+      }}
+    >
+      {filterFields.map((field) => renderFormField(field))}
+      {hasFormChanges() && (
+        <Button isPrimary onClick={resetForm}>
+          Clear
+        </Button>
+      )}
     </div>
   );
 };
 
-export default withClientScreen(Filters);
+export default Filters;

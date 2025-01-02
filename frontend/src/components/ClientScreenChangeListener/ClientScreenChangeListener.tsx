@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useActions } from "src/hooks/useActions";
-import useClientScreen from "src/hooks/useClienScreen";
+import useClientScreen from "src/hooks/useClientScreen";
 
 export const ClientScreenChangeListener = () => {
   const {

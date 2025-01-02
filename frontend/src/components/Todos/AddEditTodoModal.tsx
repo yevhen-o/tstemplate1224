@@ -2,9 +2,7 @@ import React, { useEffect } from "react";
 import { TodoInterface } from "src/Types";
 import { createSelector } from "reselect";
 
-import { useActions } from "src/hooks/useActions";
-import useForm, { FieldType } from "src/hooks/useForm";
-import { useTypedSelector } from "src/hooks/useTypedSelector";
+import { FieldType, useForm, useTypedSelector, useActions } from "src/hooks";
 import Button from "../Buttons";
 import Modal from "../Modal";
 

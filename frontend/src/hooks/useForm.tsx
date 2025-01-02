@@ -13,8 +13,10 @@ import {
   DatePickType,
 } from "src/Types/FormTypes";
 
-type Value = string | number | boolean | null | undefined;
+export type Value = string | number | boolean | null | undefined;
 type ErrorsType = Record<string, string | undefined | null> | undefined;
+
+export type FormValueType = Record<string, Value>;
 
 export type FieldType =
   | InputType
@@ -23,7 +25,7 @@ export type FieldType =
   | RadioType
   | DatePickType;
 
-const useForm = <T extends Record<string, Value>>(
+export const useForm = <T extends FormValueType>(
   rules: Partial<Record<keyof T, any>>,
   initialValues: T = {} as T
 ) => {
@@ -97,5 +99,3 @@ const useForm = <T extends Record<string, Value>>(
     handleInputChange,
   };
 };
-
-export default useForm;

@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { createSelector } from "reselect";
+
 import { useActions } from "src/hooks/useActions";
 import { useTypedSelector } from "src/hooks/useTypedSelector";
-import { useClientScreen } from "src/hooks/useClienScreen";
+import { useClientScreen } from "src/hooks/useClientScreen";
 import AddTodoModal from "./AddEditTodoModal";
 import Button from "src/components/Buttons";
 import TodoList from "./TodoList";
-import Filters from "../Filters/Filters";
+import { FieldType } from "src/hooks/useForm";
+import { FILTER_ALL_VALUE } from "src/hocs/withFilters";
 
 const Todos: React.FC = () => {
   const { isFetching, isFetched, hasError, todos } = useTypedSelector(
@@ -45,18 +47,64 @@ const Todos: React.FC = () => {
     setShowAddTodoModal(false);
   }, [setShowAddTodoModal]);
 
+  const initialFilterValues = {
+    search: "",
+    priority: FILTER_ALL_VALUE,
+    isImportant: FILTER_ALL_VALUE,
+    scope: FILTER_ALL_VALUE,
+  };
+
+  const filterFields: FieldType[] = [
+    { fieldType: "input", name: "search", label: "Search" },
+    {
+      fieldType: "select",
+      name: "priority",
+      label: "Priority",
+      options: [
+        { value: FILTER_ALL_VALUE, label: "All" },
+        { value: "low", label: "Low" },
+        { value: "medium", label: "Medium" },
+        { value: "high", label: "High" },
+      ],
+    },
+    {
+      fieldType: "select",
+      name: "scope",
+      label: "Scope",
+      options: [
+        { value: FILTER_ALL_VALUE, label: "All" },
+        { value: "forWork", label: "For Work" },
+        { value: "forFun", label: "For Fun" },
+      ],
+    },
+    {
+      fieldType: "select",
+      name: "isImportant",
+      label: "Is Important",
+      options: [
+        { value: FILTER_ALL_VALUE, label: "All" },
+        { value: "true", label: "Important" },
+        { value: "false", label: "Not important" },
+      ],
+    },
+  ];
+
   return (
     <div className="px-8">
       <Button isPrimary onClick={() => setShowAddTodoModal(true)}>
         Add Todo
       </Button>
 
-      <Filters />
-
       {showAddTodoModal && <AddTodoModal onClose={handleCloseModal} />}
       {isFetching && <div>Loading...</div>}
       {hasError && <div>Something went wrong...</div>}
-      {isFetched && todos && <TodoList items={todos} />}
+      {isFetched && todos && (
+        <TodoList
+          items={todos}
+          filterFields={filterFields}
+          initialValues={initialFilterValues}
+        />
+      )}
       {`Window innerWidth: ${screenWidth} && innerHeight ${screenHeight}`}
     </div>
   );

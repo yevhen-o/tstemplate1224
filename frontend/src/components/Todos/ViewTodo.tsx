@@ -1,19 +1,21 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import { useEffect, useState } from "react";
 import { createSelector } from "@reduxjs/toolkit";
 
 import Button from "src/components/Buttons";
-import { useActions } from "src/hooks/useActions";
-import { useTypedSelector } from "src/hooks/useTypedSelector";
+import { withClientScreen } from "src/hocs";
 import AddEditTodoModal from "./AddEditTodoModal";
-
-type ViewTodoProps = {};
+import { useActions, useTypedSelector } from "src/hooks";
+import { ClientScreenInterface } from "src/Types/ClientScreen";
 
 type Params = {
   todoId: string;
 };
 
-const ViewTodo: React.FC<ViewTodoProps> = () => {
+const ViewTodo: React.FC<Partial<ClientScreenInterface>> = ({
+  screenHeight,
+  screenWidth,
+}) => {
   const { todoGetItem } = useActions();
   const { todoId } = useParams<Params>();
 
@@ -47,9 +49,10 @@ const ViewTodo: React.FC<ViewTodoProps> = () => {
           propsState={todo}
         />
       )}
+      {`Window innerWidth: ${screenWidth} && innerHeight ${screenHeight}`}
       <pre>{JSON.stringify(todo, null, 2)}</pre>
     </div>
   );
 };
 
-export default ViewTodo;
+export default withClientScreen(ViewTodo);

@@ -23,6 +23,7 @@ localhost:3050/api - api
 - [x] url builder helper
 - [x] HOC withPagination
 - [ ] HOC withFilters
+- [ ] HOC withFilters reflect url changing on filter change
 - [x] HOC withDeviceMedia
 - [ ] HOC withWrapperSize
 - [ ] Table

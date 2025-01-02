@@ -63,7 +63,7 @@ const Select: ForwardRefRenderFunction<
           {label}
         </FieldLabel>
       )}
-      <div className="mt-2 grid grid-cols-1">
+      <div className={classNames("grid grid-cols-1", { "mt-2": !!label })}>
         <select
           ref={cmpRef}
           name={name}

@@ -1,16 +1,16 @@
 import { TodoInterface } from "src/Types";
 import { formatDate } from "src/helpers/formatDate";
 import { Link, getUrl, IDENTIFIERS } from "src/helpers/urlsHelper";
-import withPagination from "src/hocs/withPagination";
+import { withFilters, withPagination } from "src/hocs";
 
 interface TodoListProps {
-  itemsToDisplay: TodoInterface[];
+  items: TodoInterface[];
 }
 
-const TodoList: React.FC<TodoListProps> = ({ itemsToDisplay }) => {
+const TodoList: React.FC<TodoListProps> = ({ items }) => {
   return (
     <div className="px-8">
-      {itemsToDisplay.map((todo: TodoInterface) => (
+      {items.map((todo: TodoInterface) => (
         <Link
           to={getUrl(IDENTIFIERS.TODO_VIEW, { todoId: todo.uid })}
           className="rounded-lg block bg-white text-left shadow-xl px-4 py-3 border border-gray-200 my-4"
@@ -30,5 +30,4 @@ const TodoList: React.FC<TodoListProps> = ({ itemsToDisplay }) => {
     </div>
   );
 };
-
-export default withPagination(TodoList);
+export default withFilters(withPagination(TodoList));

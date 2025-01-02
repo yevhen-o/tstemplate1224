@@ -22,6 +22,13 @@ type ActionMeta = {
     } & {})
 );
 
+const initialFetchingState = {
+  latestRequestId: "",
+  isFetching: false,
+  isFetched: false,
+  error: null,
+};
+
 const setFetchingState = <T>(section: T, latestRequestId: string) => ({
   ...section,
   latestRequestId,
@@ -91,18 +98,18 @@ type StateType = {
 
 const initialState: StateType = {
   list: {
-    ...setFetchingState({}, ""),
+    ...initialFetchingState,
     data: [],
   },
   itemsById: {},
   getItem: {
-    ...setFetchingState({}, ""),
+    ...initialFetchingState,
   },
   postItem: {
-    ...setFetchingState({}, ""),
+    ...initialFetchingState,
   },
   patchItem: {
-    ...setFetchingState({}, ""),
+    ...initialFetchingState,
   },
 };
 

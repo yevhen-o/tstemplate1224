@@ -18,5 +18,3 @@ export function withClientScreen<T extends Partial<ClientScreenInterface>>(
     );
   };
 }
-
-export default withClientScreen;
