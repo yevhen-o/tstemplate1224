@@ -19,18 +19,19 @@ localhost:3050/api - api
 - [ ] Caching based on redux
 - [ ] useApiHook?
 - [x] useFormHook
+- [x] useObserveElementSize
 - [x] validation helper
 - [x] url builder helper
 - [x] HOC withPagination
 - [x] HOC withFilters
 - [ ] HOC withFilters reflect url changing on filter change
 - [x] HOC withDeviceMedia
-- [x] HOC withWrapperSize
+- [x] ~~HOC withWrapperSize~~ deprecated: to complicated to use, hook is more straight forward
 - [ ] Table
 - [x] FormFields basic
 - [ ] FormFields advanced
 - [ ] DropDown
-- [x] DropDown with just css
+- [x] DropDown with just css simple implementation, work great, but don't set dropdown correctly when anchor is shifted with translate, and not the best browser support yet
 - [ ] MultiSelect
 - [ ] VirtualScroll component
 - [ ] Create Authentication flow with email and password, try to use browser hashing functionality

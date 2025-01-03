@@ -1,103 +1,123 @@
-import React, { useState, useRef, useEffect, forwardRef } from "react";
-import { withClientScreen, withWrapperSize } from "src/hocs";
+import React, { useState, useRef, useEffect } from "react";
+import { withClientScreen } from "src/hocs";
+import { useObserveElementSize } from "src/hooks/useObserveElementSize";
 
 interface StickerProps {
   children: React.ReactNode;
-  initialPosition?: { top: number; left: number };
+  initialPosition?: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  };
   screenWidth: number;
   screenHeight: number;
-  wrapperWidth: number;
-  wrapperHeight: number;
 }
 
-function mergeRefs<T>(
-  ...refs: (React.Ref<T> | undefined)[]
-): React.RefCallback<T> {
-  return (element: T | null) => {
-    refs.forEach((ref) => {
-      if (typeof ref === "function") {
-        ref(element);
-      } else if (ref && "current" in ref) {
-        (ref as React.MutableRefObject<T | null>).current = element;
-      }
-    });
+const Sticker: React.FC<StickerProps> = ({
+  children,
+  initialPosition = { top: 100, left: 100 },
+  screenWidth,
+  screenHeight,
+}) => {
+  const [position, setPosition] = useState(initialPosition);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragRef = useRef<HTMLDivElement>(null);
+
+  const { wrapperHeight, wrapperWidth } = useObserveElementSize(dragRef);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
   };
-}
 
-const Sticker = forwardRef<HTMLDivElement, StickerProps>(
-  (
-    {
-      children,
-      initialPosition = { top: 100, left: 100 },
-      screenWidth,
-      screenHeight,
-      wrapperHeight,
-      wrapperWidth,
-    },
-    ref
-  ) => {
-    const [position, setPosition] = useState(initialPosition);
-    const [isDragging, setIsDragging] = useState(false);
-    const dragRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDragging && dragRef.current) {
+        setPosition((prev) => {
+          const newPosition = { ...prev };
 
-    const handleMouseDown = (e: React.MouseEvent) => {
-      e.preventDefault();
-      setIsDragging(true);
+          if (prev.top !== undefined) {
+            newPosition.top = prev.top + e.movementY;
+          } else if (prev.bottom !== undefined) {
+            newPosition.bottom = prev.bottom - e.movementY;
+          }
+
+          if (prev.left !== undefined) {
+            newPosition.left = prev.left + e.movementX;
+          } else if (prev.right !== undefined) {
+            newPosition.right = prev.right - e.movementX;
+          }
+
+          return newPosition;
+        });
+      }
     };
 
-    useEffect(() => {
-      const handleMouseMove = (e: MouseEvent) => {
-        if (isDragging && dragRef.current) {
-          setPosition((prev) => ({
-            top: prev.top + (e.movementY || 0),
-            left: prev.left + (e.movementX || 0),
-          }));
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    } else {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    }
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setPosition((prev) => {
+        let newPosition = { ...prev };
+
+        if (prev.left !== undefined && prev.left > screenWidth - wrapperWidth) {
+          newPosition.left = screenWidth - wrapperWidth;
         }
-      };
+        if (prev.top !== undefined && prev.top > screenHeight - wrapperHeight) {
+          newPosition.top = screenHeight - wrapperHeight;
+        }
+        if (
+          prev.right !== undefined &&
+          prev.right > screenWidth - wrapperWidth
+        ) {
+          newPosition.right = screenWidth - wrapperWidth;
+        }
+        if (
+          prev.bottom !== undefined &&
+          prev.bottom > screenHeight - wrapperHeight
+        ) {
+          newPosition.bottom = screenHeight - wrapperHeight;
+        }
+        return newPosition;
+      });
+    };
 
-      const handleMouseUp = () => {
-        setIsDragging(false);
-      };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [screenWidth, screenHeight, wrapperHeight, wrapperWidth]);
 
-      if (isDragging) {
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("mouseup", handleMouseUp);
-      } else {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      }
-      return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      };
-    }, [isDragging]);
+  const styles: React.CSSProperties = {
+    position: "fixed",
+    cursor: isDragging ? "grabbing" : "grab",
+    zIndex: 1000,
+  };
 
-    const { top, left } = position;
+  if (position.top !== undefined) styles.top = position.top;
+  if (position.bottom !== undefined) styles.bottom = position.bottom;
+  if (position.left !== undefined) styles.left = position.left;
+  if (position.right !== undefined) styles.right = position.right;
 
-    useEffect(() => {
-      if (left > screenWidth - wrapperWidth / 3) {
-        setPosition((prev) => ({ ...prev, left: screenWidth - wrapperWidth }));
-      }
-      if (top > screenHeight - wrapperHeight / 3) {
-        setPosition((prev) => ({ ...prev, top: screenWidth - wrapperWidth }));
-      }
-    }, [top, left, screenHeight, screenWidth, wrapperHeight, wrapperWidth]);
+  return (
+    <div ref={dragRef} style={styles} onMouseDown={handleMouseDown}>
+      {children}
+    </div>
+  );
+};
 
-    return (
-      <div
-        ref={mergeRefs(dragRef, ref)}
-        style={{
-          position: "fixed",
-          top: position.top,
-          left: position.left,
-          cursor: isDragging ? "grabbing" : "grab",
-          zIndex: 1000,
-        }}
-        onMouseDown={handleMouseDown}
-      >
-        {children}
-      </div>
-    );
-  }
-);
-export default withClientScreen(withWrapperSize(Sticker, true));
+export default withClientScreen(Sticker);

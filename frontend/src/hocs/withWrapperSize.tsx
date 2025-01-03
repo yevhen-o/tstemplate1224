@@ -1,3 +1,6 @@
+// deprecated
+// require to much work to forward ref and cast types, much simpler to use hook --> created instead useObserverElementSize ;)
+
 import React, { useState, useEffect, useRef, ForwardedRef } from "react";
 
 interface WrapperSizeProps {

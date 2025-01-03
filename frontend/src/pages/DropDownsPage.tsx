@@ -1,12 +1,8 @@
 import { useState } from "react";
 import DropDownCss from "src/components/DropDownCss";
 import Sticker from "src/components//Sticker";
-import { withClientScreen } from "src/hocs";
 
-const DropDownsPage: React.FC<{
-  screenWidth: number;
-  screenHeight: number;
-}> = ({ screenHeight, screenWidth }) => {
+const DropDownsPage: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const handleOptionClick = (value: string) => () => {
@@ -34,24 +30,64 @@ const DropDownsPage: React.FC<{
   ];
 
   return (
-    <div>
-      <DropDownCss isPrimary options={menuOptions}>
-        Menu button
-      </DropDownCss>
-      {screenWidth && screenHeight && (
-        <Sticker
-          initialPosition={{ top: screenHeight - 200, left: screenWidth - 150 }}
-        >
-          <div style={{ padding: "20px", width: "150px" }}>
-            <DropDownCss isPrimary options={menuOptions}>
-              ···
-            </DropDownCss>
+    <div style={{ padding: "20px" }}>
+      <div>
+        <DropDownCss isPrimary options={menuOptions}>
+          Menu button
+        </DropDownCss>
+      </div>
+
+      <div
+        style={{
+          position: "relative",
+          overflow: "hidden",
+          display: "inline-block",
+        }}
+      >
+        <DropDownCss isPrimary options={menuOptions}>
+          Wrapper overflow hidden
+        </DropDownCss>
+      </div>
+
+      <div
+        style={{
+          transform: "translate(100px, 0)",
+          overflow: "hidden",
+          display: "inline-block",
+          right: 0,
+        }}
+      >
+        <DropDownCss isPrimary options={menuOptions}>
+          Wrapper position absolute
+        </DropDownCss>
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          overflow: "hidden",
+          display: "inline-block",
+          right: 0,
+        }}
+      >
+        <DropDownCss isPrimary options={menuOptions}>
+          Wrapper position absolute
+        </DropDownCss>
+      </div>
+
+      <Sticker initialPosition={{ bottom: 0, right: 0 }}>
+        <div style={{ padding: "20px", width: "150px" }}>
+          <DropDownCss isPrimary options={menuOptions}>
+            ···
+          </DropDownCss>
+          <br />
+          <small>
             Drag element any where to check how dropdown position reflect
-          </div>
-        </Sticker>
-      )}
+          </small>
+        </div>
+      </Sticker>
     </div>
   );
 };
 
-export default withClientScreen(DropDownsPage);
+export default DropDownsPage;
