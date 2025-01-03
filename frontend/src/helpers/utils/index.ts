@@ -1,1 +1,1 @@
-export { debounce, throttle, countBy, deepClone } from "./utils";
+export { debounce, throttle, countBy, deepClone, isBrowser } from "./utils";

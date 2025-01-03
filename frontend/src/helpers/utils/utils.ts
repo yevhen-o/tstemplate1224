@@ -28,25 +28,36 @@ export function throttle<T>(func: Function, wait: number) {
   let timerId: ReturnType<typeof setTimeout> | null = null;
   let lastInvocationTime: number | null = null;
 
-  return function (this: T, ...args: any[]) {
+  function throttled(this: T, ...args: any[]) {
     const now = Date.now();
     const context = this;
+
     if (timerId) {
       clearTimeout(timerId);
     }
 
-    const applyFn = (onTimer = true) => {
+    const applyFn = () => {
       lastInvocationTime = now;
       func.apply(context, args);
     };
 
     if (lastInvocationTime === null || now - lastInvocationTime >= wait) {
-      applyFn(false);
-    } else if (!timerId) {
+      applyFn();
+    } else {
       const remaining = wait - (now - lastInvocationTime);
       timerId = setTimeout(applyFn, remaining);
     }
+  }
+
+  throttled.cancel = () => {
+    if (timerId) {
+      clearTimeout(timerId);
+      timerId = null;
+    }
+    lastInvocationTime = null;
   };
+
+  return throttled;
 }
 
 export function deepClone<T>(obj: T, seen = new Map()): T {
@@ -91,3 +102,6 @@ export function deepClone<T>(obj: T, seen = new Map()): T {
 
   return clone as T;
 }
+
+// nice check for ssr
+export const isBrowser = (): boolean => typeof document !== "undefined";

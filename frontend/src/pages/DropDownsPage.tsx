@@ -1,6 +1,49 @@
 import { useState } from "react";
+import classNames from "classnames";
 import DropDownCss from "src/components/DropDownCss";
 import Sticker from "src/components//Sticker";
+import CheckBox from "src/components/FormFields/CheckBox";
+import VirtualScroll from "src/components/VirtualScroll";
+
+interface OptionInterface {
+  title: string;
+  value: string;
+  onClick: () => void;
+}
+
+const ItemRenderer =
+  (selectedOptions: string[]) =>
+  ({
+    item,
+    index,
+    activeIndex,
+    onMouseEnter,
+  }: {
+    item: OptionInterface;
+    onMouseEnter: () => void;
+    index: number;
+    activeIndex: number;
+  }) => {
+    const { value, title, onClick } = item;
+    return (
+      <div
+        onMouseEnter={onMouseEnter}
+        key={value}
+        style={{ padding: "8px" }}
+        className={classNames("v-scroll__item", {
+          "v-scroll__item--active": activeIndex === index,
+        })}
+      >
+        <CheckBox
+          onChange={onClick}
+          name={`control__${value}`}
+          label={title}
+          fieldType="checkbox"
+          value={`${selectedOptions.includes(`${value}`)}`}
+        />
+      </div>
+    );
+  };
 
 const DropDownsPage: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
@@ -28,6 +71,12 @@ const DropDownsPage: React.FC = () => {
       onClick: handleOptionClick("c"),
     },
   ];
+
+  const longList = Array.from({ length: 1000 }, (_, index) => ({
+    title: `Option ${index}`,
+    value: index,
+    onClick: handleOptionClick(index.toString()),
+  }));
 
   return (
     <div style={{ padding: "20px" }}>
@@ -74,6 +123,13 @@ const DropDownsPage: React.FC = () => {
           Wrapper position absolute
         </DropDownCss>
       </div>
+
+      <VirtualScroll items={longList} />
+
+      <VirtualScroll
+        items={longList}
+        CMP={ItemRenderer(selectedOptions)}
+      ></VirtualScroll>
 
       <Sticker initialPosition={{ bottom: 0, right: 0 }}>
         <div style={{ padding: "20px", width: "150px" }}>

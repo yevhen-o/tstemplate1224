@@ -1,0 +1,33 @@
+.v-scroll {
+  &__wrapper {
+    width: calc(100% - 1px);
+    position: relative;
+    max-height: 304px;
+    overflow: auto;
+    box-sizing: border-box;
+    min-height: 32px;
+    align-self: stretch;
+
+    &>div {
+      box-sizing: border-box;
+    }
+  }
+
+  &__item {
+    min-height: 40px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 8px;
+    line-height: 24px;
+    box-sizing: border-box;
+
+    &--active {
+      background-color: rgba(0, 0,0, 0.02);
+    }
+
+    &:hover {
+      background-color: rgba(0,0,0,.02);
+    }
+  }
+}
