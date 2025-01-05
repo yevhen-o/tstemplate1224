@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 
-import Portal from "./Portal";
+import Portal from "../Portal/Portal";
 import Button from "src/components/Buttons";
 import "./Modal.scss";
 

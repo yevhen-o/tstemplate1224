@@ -1,15 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { withClientScreen } from "src/hocs";
-import { useObserveElementSize } from "src/hooks/useObserveElementSize";
+import { useObserveElementSize } from "src/hooks";
+
+type InitialPosition =
+  | { top: number; bottom?: never; left: number; right?: never }
+  | { top: number; bottom?: never; left?: never; right: number }
+  | { top?: never; bottom: number; left: number; right?: never }
+  | { top?: never; bottom: number; left?: never; right: number };
 
 interface StickerProps {
   children: React.ReactNode;
-  initialPosition?: {
-    top?: number;
-    bottom?: number;
-    left?: number;
-    right?: number;
-  };
+  initialPosition?: InitialPosition;
   screenWidth: number;
   screenHeight: number;
 }
@@ -105,7 +106,7 @@ const Sticker: React.FC<StickerProps> = ({
   const styles: React.CSSProperties = {
     position: "fixed",
     cursor: isDragging ? "grabbing" : "grab",
-    zIndex: 1000,
+    zIndex: 8,
   };
 
   if (position.top !== undefined) styles.top = position.top;

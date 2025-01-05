@@ -4,6 +4,7 @@ import DropDownCss from "src/components/DropDownCss";
 import Sticker from "src/components//Sticker";
 import CheckBox from "src/components/FormFields/CheckBox";
 import VirtualScroll from "src/components/VirtualScroll";
+import MenuButton from "src/components/MenuButton";
 
 interface OptionInterface {
   title: string;
@@ -82,8 +83,11 @@ const DropDownsPage: React.FC = () => {
     <div style={{ padding: "20px" }}>
       <div>
         <DropDownCss isPrimary options={menuOptions}>
-          Menu button
+          Menu button css
         </DropDownCss>
+        <MenuButton isBordered menuItems={menuOptions}>
+          Menu button
+        </MenuButton>
       </div>
 
       <div
@@ -96,6 +100,9 @@ const DropDownsPage: React.FC = () => {
         <DropDownCss isPrimary options={menuOptions}>
           Wrapper overflow hidden
         </DropDownCss>
+        <MenuButton isBordered menuItems={menuOptions}>
+          Menu button
+        </MenuButton>
       </div>
 
       <div
@@ -109,6 +116,9 @@ const DropDownsPage: React.FC = () => {
         <DropDownCss isPrimary options={menuOptions}>
           Wrapper position absolute
         </DropDownCss>
+        <MenuButton isBordered menuItems={menuOptions}>
+          Menu button
+        </MenuButton>
       </div>
 
       <div
@@ -122,6 +132,9 @@ const DropDownsPage: React.FC = () => {
         <DropDownCss isPrimary options={menuOptions}>
           Wrapper position absolute
         </DropDownCss>
+        <MenuButton isBordered menuItems={menuOptions}>
+          Menu button
+        </MenuButton>
       </div>
 
       <VirtualScroll items={longList} />
@@ -136,6 +149,9 @@ const DropDownsPage: React.FC = () => {
           <DropDownCss isPrimary options={menuOptions}>
             ···
           </DropDownCss>
+          <MenuButton isBordered menuItems={menuOptions}>
+            ···
+          </MenuButton>
           <br />
           <small>
             Drag element any where to check how dropdown position reflect

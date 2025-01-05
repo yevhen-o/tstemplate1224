@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { ForwardRefRenderFunction, PropsWithChildren, forwardRef } from "react";
 
 export type ButtonProps = {
   children: React.ReactNode;
@@ -12,17 +13,23 @@ export type ButtonProps = {
   style?: React.CSSProperties;
 };
 
-const Button: React.FC<ButtonProps> = ({
-  id,
-  type,
-  onClick,
-  children,
-  disabled,
-  className,
-  isPrimary,
-  isBordered,
-  ...restProps
-}) => {
+const Button: ForwardRefRenderFunction<
+  HTMLButtonElement,
+  PropsWithChildren<ButtonProps>
+> = (
+  {
+    id,
+    type,
+    onClick,
+    children,
+    disabled,
+    className,
+    isPrimary,
+    isBordered,
+    ...restProps
+  },
+  ref
+) => {
   let classes = "text-sm/6 font-semibold text-gray-900";
   if (isPrimary) {
     classes =
@@ -33,6 +40,7 @@ const Button: React.FC<ButtonProps> = ({
   }
   return (
     <button
+      ref={ref}
       {...restProps}
       id={id}
       type={type}
@@ -45,4 +53,4 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
-export default Button;
+export default forwardRef(Button);

@@ -30,9 +30,13 @@ const ListItem = ({
 };
 
 interface VirtualScroll {
+  id?: string;
   items: any[];
+  value?: any; // TODO: Fix usage of any here
   itemHeight?: number;
   extraItems?: number;
+  hasActiveByDefault?: boolean;
+  isItemSelected?: (itemValue: string, newValue: string | string[]) => void;
   CMP?: ComponentType<any>;
   handleClick?: (callback?: () => void) => void;
   handleClose?: () => void;
