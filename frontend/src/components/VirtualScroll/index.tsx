@@ -2,6 +2,7 @@ import classNames from "classnames";
 import { ComponentType } from "react";
 import VirtualizedList from "./VirtualScroll";
 import "./VirtualScroll.scss";
+import { OptionType } from "src/Types/FormTypes";
 
 const ListItem = ({
   index,
@@ -24,14 +25,14 @@ const ListItem = ({
         "v-scroll__item--active": activeIndex === activeIndex + index,
       })}
     >
-      {item.title}
+      {item.label}
     </div>
   );
 };
 
 interface VirtualScroll {
   id?: string;
-  items: any[];
+  items: OptionType[];
   value?: any; // TODO: Fix usage of any here
   itemHeight?: number;
   extraItems?: number;

@@ -16,7 +16,7 @@ interface DropDownItemProps {
   ) => boolean;
   item: {
     href?: string;
-    title: string;
+    label: string;
     style?: React.CSSProperties;
     target?: string;
     onClick?: () => void;
@@ -39,7 +39,7 @@ const DropDownItem: React.FC<DropDownItemProps> = ({
   isItemSelected = (i: string | number, v: Array<string | number>) => false,
   item: {
     href,
-    title,
+    label,
     style,
     target,
     onClick = () => {},
@@ -67,7 +67,7 @@ const DropDownItem: React.FC<DropDownItemProps> = ({
         })}
       >
         <span className="drop-down__item-text">
-          <TextEllipsis>{title}</TextEllipsis>
+          <TextEllipsis>{label}</TextEllipsis>
         </span>
       </a>
     );
@@ -87,7 +87,7 @@ const DropDownItem: React.FC<DropDownItemProps> = ({
       })}
     >
       <span className={"drop-down__item-text"}>
-        <TextEllipsis>{title}</TextEllipsis>
+        <TextEllipsis>{label}</TextEllipsis>
       </span>
     </button>
   );

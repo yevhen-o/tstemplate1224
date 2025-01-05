@@ -2,7 +2,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter, Routes, Route } from "react-router";
 
 import { store } from "src/store/store";
-import "./App.css";
+import "./App.scss";
 import HomePage from "./pages/HomePage";
 import ViewTodo from "./components/Todos/ViewTodo";
 import { getReactRouterPath, IDENTIFIERS } from "./helpers/urlsHelper";

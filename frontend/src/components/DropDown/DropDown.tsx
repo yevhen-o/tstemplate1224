@@ -3,6 +3,7 @@ import { useEffect, useRef, useCallback, ComponentType } from "react";
 import Portal from "src/components/Portal";
 import VirtualScroll from "src/components/VirtualScroll";
 import { useOutsideClick } from "src/hooks";
+import { OptionType } from "src/Types/FormTypes";
 import DropDownItem from "./DropDownItem";
 
 import "./DropDown.scss";
@@ -10,8 +11,8 @@ import "./DropDown.scss";
 interface DropDownProps {
   id?: string;
   CMP?: ComponentType<any>;
-  value?: string | number;
-  menuItems: any[]; // TODO: better typing for menu items
+  value?: string | number | Array<string | number>;
+  menuItems: OptionType[];
   itemHeight: number;
   searchText?: string;
   isTopFixed?: boolean;

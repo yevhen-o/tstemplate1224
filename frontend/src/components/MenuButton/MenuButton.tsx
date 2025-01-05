@@ -8,17 +8,16 @@ import React, {
 
 import Buttons from "src/components/Buttons";
 import DropDown from "src/components/DropDown";
+import { OptionType } from "src/Types/FormTypes";
 
 type ButtonProps = Parameters<typeof Buttons>[0];
 
 type Props = ButtonProps & {
   id?: string;
-  menuItems: {
+  menuItems: (OptionType & {
     disabled?: boolean;
     onClick: () => void;
-    title: string;
-    [x: string | number | symbol]: unknown;
-  }[];
+  })[];
   children?: ReactNode;
   onClick?: () => void;
   isWidthFixed?: boolean;

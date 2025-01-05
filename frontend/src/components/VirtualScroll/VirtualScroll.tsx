@@ -1,6 +1,7 @@
 import { useState, ComponentType, useCallback, useEffect, useRef } from "react";
 import { isBrowser } from "src/helpers/utils";
 import { KEY_CODES } from "src/constants";
+import { OptionType } from "src/Types/FormTypes";
 
 const VirtualizedList = ({
   items,
@@ -11,7 +12,10 @@ const VirtualizedList = ({
   extraItems = 20,
   visibleSpace,
 }: {
-  items: any[];
+  items: (OptionType & {
+    href?: string;
+    onClick?: () => void;
+  })[];
   itemHeight?: number;
   extraItems?: number;
   CMP: ComponentType<any>;

@@ -34,7 +34,7 @@ localhost:3050/api - api
 - [ ] FormFields advanced
 - [x] DropDown hm implementation much harder that with css only, work correctly when anchor shifted with translate, but instead buggy on scroll
 - [x] DropDown with just css simple implementation, work great, but don't set dropdown correctly when anchor is shifted with translate, and not the best browser support yet
-- [ ] MultiSelect
+- [x] MultiSelect // Should work yet on style improvement and types improvements
 - [x] VirtualScroll component // get some performance issues, maybe better to use some library instead, but in this case it will be less flexible
 - [ ] Create Authentication flow with email and password, try to use browser hashing functionality
 - [ ] Build Authorization Logic

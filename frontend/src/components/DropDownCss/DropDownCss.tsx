@@ -7,7 +7,7 @@ import { useMemo } from "react";
 
 interface DropDownCssProps extends ButtonProps {
   children: React.ReactNode;
-  options: { title: string; value: string; onClick: () => void }[];
+  options: { label: string; value: string; onClick: () => void }[];
 }
 
 const DropDownCss: React.FC<DropDownCssProps> = ({
@@ -38,10 +38,10 @@ const DropDownCss: React.FC<DropDownCssProps> = ({
         popover="auto"
         className="profile-menu rounded-md"
       >
-        {options.map(({ title, onClick, value }, index) => {
+        {options.map(({ label, onClick, value }, index) => {
           return (
-            <button key={`${title}__${value}__${index}`} onClick={onClick}>
-              {title}
+            <button key={`${label}__${value}__${index}`} onClick={onClick}>
+              {label}
             </button>
           );
         })}

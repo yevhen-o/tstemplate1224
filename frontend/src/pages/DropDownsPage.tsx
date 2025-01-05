@@ -5,27 +5,23 @@ import Sticker from "src/components//Sticker";
 import CheckBox from "src/components/FormFields/CheckBox";
 import VirtualScroll from "src/components/VirtualScroll";
 import MenuButton from "src/components/MenuButton";
-
-interface OptionInterface {
-  title: string;
-  value: string;
-  onClick: () => void;
-}
+import MultiSelect from "src/components/FormFields/MultiSelect";
+import { OptionType } from "src/Types/FormTypes";
 
 const ItemRenderer =
-  (selectedOptions: string[]) =>
+  (selectedOptions: Array<string | number>) =>
   ({
     item,
     index,
     activeIndex,
     onMouseEnter,
   }: {
-    item: OptionInterface;
+    item: OptionType & { onClick: () => void };
     onMouseEnter: () => void;
     index: number;
     activeIndex: number;
   }) => {
-    const { value, title, onClick } = item;
+    const { value, label, onClick } = item;
     return (
       <div
         onMouseEnter={onMouseEnter}
@@ -38,7 +34,7 @@ const ItemRenderer =
         <CheckBox
           onChange={onClick}
           name={`control__${value}`}
-          label={title}
+          label={label}
           fieldType="checkbox"
           value={`${selectedOptions.includes(`${value}`)}`}
         />
@@ -47,7 +43,9 @@ const ItemRenderer =
   };
 
 const DropDownsPage: React.FC = () => {
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<
+    Array<string | number>
+  >([]);
 
   const handleOptionClick = (value: string) => () => {
     setSelectedOptions((prev) =>
@@ -57,24 +55,24 @@ const DropDownsPage: React.FC = () => {
 
   const menuOptions = [
     {
-      title: "Option A",
+      label: "Option A",
       value: "a",
       onClick: handleOptionClick("a"),
     },
     {
-      title: "Option B",
-      value: "c",
+      label: "Option B",
+      value: "b",
       onClick: handleOptionClick("b"),
     },
     {
-      title: "Option C",
+      label: "Option C",
       value: "c",
       onClick: handleOptionClick("c"),
     },
   ];
 
   const longList = Array.from({ length: 1000 }, (_, index) => ({
-    title: `Option ${index}`,
+    label: `Option ${index}`,
     value: index,
     onClick: handleOptionClick(index.toString()),
   }));
@@ -143,6 +141,31 @@ const DropDownsPage: React.FC = () => {
         items={longList}
         CMP={ItemRenderer(selectedOptions)}
       ></VirtualScroll>
+      <div style={{ display: "flex", gap: "var(--spacer-xl)" }}>
+        <MultiSelect
+          value={selectedOptions}
+          isMultiple
+          fieldType="multiSelect"
+          name="custom-name"
+          options={menuOptions}
+          isCloseOnSelect
+          onChange={(e) => {
+            Array.isArray(e) && setSelectedOptions(e);
+          }}
+        />
+        <MultiSelect
+          value={selectedOptions}
+          isMultiple
+          fieldType="multiSelect"
+          name="custom-name"
+          options={longList}
+          isCloseOnSelect
+          isSearchable
+          onChange={(e) => {
+            Array.isArray(e) && setSelectedOptions(e);
+          }}
+        />
+      </div>
 
       <Sticker initialPosition={{ bottom: 0, right: 0 }}>
         <div style={{ padding: "20px", width: "150px" }}>

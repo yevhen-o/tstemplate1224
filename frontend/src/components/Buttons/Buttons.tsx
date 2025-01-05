@@ -3,7 +3,7 @@ import { ForwardRefRenderFunction, PropsWithChildren, forwardRef } from "react";
 
 export type ButtonProps = {
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
   isPrimary?: boolean;
@@ -11,6 +11,7 @@ export type ButtonProps = {
   className?: string;
   id?: string;
   style?: React.CSSProperties;
+  ariaLabel?: string;
 };
 
 const Button: ForwardRefRenderFunction<
@@ -26,6 +27,7 @@ const Button: ForwardRefRenderFunction<
     className,
     isPrimary,
     isBordered,
+    ariaLabel,
     ...restProps
   },
   ref
@@ -46,6 +48,7 @@ const Button: ForwardRefRenderFunction<
       type={type}
       onClick={onClick}
       disabled={disabled}
+      aria-label={ariaLabel}
       className={classNames(classes, className)}
     >
       {children}
