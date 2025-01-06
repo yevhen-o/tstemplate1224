@@ -1,6 +1,6 @@
 import { TodoInterface } from "src/Types";
 import { formatDate } from "src/helpers/formatDate";
-import { Link, getUrl, IDENTIFIERS } from "src/helpers/urlsHelper";
+import { Link, getUrl, IDENTIFIERS } from "src/services/urlsHelper";
 import { withFilters, withPagination } from "src/hocs";
 
 interface TodoListProps {

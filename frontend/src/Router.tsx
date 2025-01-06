@@ -12,7 +12,12 @@ import HomePage from "./pages/HomePage";
 import TodosPage from "./pages/TodosPage";
 import DropDownsPage from "./pages/DropDownsPage";
 import ViewTodo from "./components/Todos/ViewTodo";
-import { getUrl, getReactRouterPath, IDENTIFIERS } from "./helpers/urlsHelper";
+import { storageGetKey, storageGetLatest } from "src/services/localStorage";
+import {
+  getUrl,
+  getReactRouterPath,
+  IDENTIFIERS,
+} from "src/services/urlsHelper";
 
 type RouterParamsProps =
   | { children: React.ReactElement; element?: never }
@@ -21,18 +26,11 @@ type RouterParamsProps =
 const RouterParams: React.FC<RouterParamsProps> = ({ children, element }) => {
   const { pathname } = useLocation();
   let [searchParams] = useSearchParams();
-  const storedString = localStorage.getItem(pathname);
-  let storedValues = {};
-  try {
-    storedValues = storedString ? JSON.parse(storedString) : {};
-  } catch {
-    //TODO: add logger here
-  }
+  const storedValues = storageGetLatest(storageGetKey(pathname), {});
+
   return (
     <>
-      {!searchParams.toString() &&
-      storedString &&
-      Object.keys(storedValues).length ? (
+      {!searchParams.toString() && Object.keys(storedValues).length ? (
         <Navigate to={getUrl(pathname as IDENTIFIERS, storedValues)} />
       ) : (
         children || element

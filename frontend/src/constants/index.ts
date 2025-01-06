@@ -1,6 +1,8 @@
 export const DEFAULT_PAGE_SIZE = 3;
 export const PREDEFINED_PAGE_SIZES = [3, 5, 10, 15, 50];
 
+export const JWT_COOKIE_NAME = "u";
+
 export const KEY_CODES = {
   ARROW_DOWN: "ArrowDown",
   ARROW_LEFT: "ArrowLeft",

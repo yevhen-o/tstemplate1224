@@ -8,7 +8,7 @@ import { withClientScreen } from "src/hocs";
 import AddEditTodoModal from "./AddEditTodoModal";
 import { useActions, useTypedSelector } from "src/hooks";
 import { ClientScreenInterface } from "src/Types/ClientScreen";
-import { getUrl, IDENTIFIERS } from "src/helpers/urlsHelper";
+import { getUrl, IDENTIFIERS } from "src/services/urlsHelper";
 
 type Params = {
   todoId: string;

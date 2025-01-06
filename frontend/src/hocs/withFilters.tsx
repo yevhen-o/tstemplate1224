@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router";
 import Filters from "src/components/Filters";
-import { getUrl, IDENTIFIERS } from "src/helpers/urlsHelper";
+import { getUrl, IDENTIFIERS } from "src/services/urlsHelper";
 import { FormValueType, FieldType, Value } from "src/hooks/useForm";
+import { storageSet, storageGetKey } from "src/services/localStorage";
 
 interface WithFiltersProps<T> {
   items: T[];
@@ -92,7 +93,7 @@ export function withFilters<T>(
           }),
           {} as FormValueType
         );
-        localStorage.setItem(pathname, JSON.stringify(valuesImpactUrl));
+        storageSet(storageGetKey(pathname), valuesImpactUrl);
         navigate(getUrl(pathname as IDENTIFIERS, valuesImpactUrl));
       },
       [navigate, pathname]
