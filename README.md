@@ -25,8 +25,8 @@ localhost:3050/api - api
 - [x] url builder helper
 - [x] HOC withPagination
 - [x] HOC withFilters
-- [x] HOC withFilters reflect url changing on filter change
-- [ ] Write localStorage helper to store all client data under uniq key
+- [x] HOC withFilters reflect url changing on filter change // also add reflect pagination
+- [x] Write localStorage helper to store all client data under uniq key
 - [x] HOC withDeviceMedia
 - [ ] HOC or hook withContextMenu
 - [x] ~~HOC withWrapperSize~~ deprecated: to complicated to use, hook is more straight forward

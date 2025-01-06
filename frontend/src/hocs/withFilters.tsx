@@ -22,6 +22,26 @@ interface InjectedProps<T> {
 export const FILTER_ALL_VALUE =
   "someLongRandomStringThatNotMatchAnyPossibleValue";
 
+const defaultSelectFilterFunction = (
+  item: unknown,
+  key: string,
+  value: NonNullable<Value>
+): boolean =>
+  value === FILTER_ALL_VALUE || `${(item as any)[key]}` === `${value}`;
+
+const defaultSearchFilterFunction = (
+  item: unknown,
+  _key: string,
+  value: NonNullable<Value>
+): boolean =>
+  value === "" ||
+  (!!item &&
+    typeof item === "object" &&
+    !Array.isArray(item) &&
+    Object.values(item).some((v) =>
+      v?.toString().toLowerCase().includes(value.toString().toLowerCase())
+    ));
+
 export function withFilters<T>(
   Component: React.ComponentType<InjectedProps<T>>
 ) {
@@ -36,26 +56,6 @@ export function withFilters<T>(
       null
     );
 
-    const defaultSelectFilterFunction = (
-      item: T,
-      key: string,
-      value: NonNullable<Value>
-    ): boolean =>
-      value === FILTER_ALL_VALUE || `${(item as any)[key]}` === `${value}`;
-
-    const defaultSearchFilterFunction = (
-      item: T,
-      _key: string,
-      value: NonNullable<Value>
-    ): boolean =>
-      value === "" ||
-      (item &&
-        typeof item === "object" &&
-        !Array.isArray(item) &&
-        Object.values(item).some((v) =>
-          v?.toString().toLowerCase().includes(value.toString().toLowerCase())
-        ));
-
     // Apply filters based on the current values
     const itemsToDisplay = items.filter(
       (item) =>
@@ -67,7 +67,7 @@ export function withFilters<T>(
             "input"
               ? defaultSearchFilterFunction
               : defaultSelectFilterFunction);
-          return !!value
+          return !!value && !["page", "perPage"].includes(key)
             ? filterFn(item, key, value as NonNullable<Value>)
             : true;
         })
@@ -89,14 +89,17 @@ export function withFilters<T>(
         const valuesImpactUrl = Object.entries(updatedValues).reduce(
           (acc, [key, v]) => ({
             ...acc,
-            ...(!!v && v !== FILTER_ALL_VALUE ? { [key]: v } : {}),
+            ...(!!v &&
+            (v !== FILTER_ALL_VALUE || !initialValues.hasOwnProperty(key))
+              ? { [key]: v }
+              : {}),
           }),
           {} as FormValueType
         );
         storageSet(storageGetKey(pathname), valuesImpactUrl);
         navigate(getUrl(pathname as IDENTIFIERS, valuesImpactUrl));
       },
-      [navigate, pathname]
+      [navigate, pathname, initialValues]
     );
 
     return (
