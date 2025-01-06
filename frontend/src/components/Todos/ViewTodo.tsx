@@ -1,12 +1,14 @@
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { createSelector } from "@reduxjs/toolkit";
+import { useNavigate } from "react-router";
 
 import Button from "src/components/Buttons";
 import { withClientScreen } from "src/hocs";
 import AddEditTodoModal from "./AddEditTodoModal";
 import { useActions, useTypedSelector } from "src/hooks";
 import { ClientScreenInterface } from "src/Types/ClientScreen";
+import { getUrl, IDENTIFIERS } from "src/helpers/urlsHelper";
 
 type Params = {
   todoId: string;
@@ -18,6 +20,7 @@ const ViewTodo: React.FC<Partial<ClientScreenInterface>> = ({
 }) => {
   const { todoGetItem } = useActions();
   const { todoId } = useParams<Params>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (todoId) {
@@ -40,8 +43,12 @@ const ViewTodo: React.FC<Partial<ClientScreenInterface>> = ({
   return (
     <div>
       <h1>View Todo</h1>
+
       <Button isPrimary onClick={() => setShowEditModal(true)}>
         Edit
+      </Button>
+      <Button isBordered onClick={() => navigate(getUrl(IDENTIFIERS.TODOS))}>
+        Go to list
       </Button>
       {showEditModal && (
         <AddEditTodoModal

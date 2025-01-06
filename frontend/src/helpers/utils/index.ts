@@ -1,1 +1,8 @@
-export { debounce, throttle, countBy, deepClone, isBrowser } from "./utils";
+export {
+  debounce,
+  throttle,
+  countBy,
+  deepClone,
+  isBrowser,
+  deepEqual,
+} from "./utils";

@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router";
 import Filters from "src/components/Filters";
+import { getUrl, IDENTIFIERS } from "src/helpers/urlsHelper";
 import { FormValueType, FieldType, Value } from "src/hooks/useForm";
 
 interface WithFiltersProps<T> {
@@ -29,7 +31,9 @@ export function withFilters<T>(
       filterFunctions = {},
       filterFields = [{ fieldType: "input", name: "search", label: "Search" }],
     } = props;
-    const [values, setValues] = useState<FormValueType>(initialValues);
+    const [appliedValues, setAppliedValues] = useState<FormValueType | null>(
+      null
+    );
 
     const defaultSelectFilterFunction = (
       item: T,
@@ -52,28 +56,75 @@ export function withFilters<T>(
         ));
 
     // Apply filters based on the current values
-    const itemsToDisplay = items.filter((item) =>
-      Object.entries(values).every(([key, value]) => {
-        const filterFn =
-          filterFunctions[key] ||
-          (filterFields.find((field) => field.name === key)?.fieldType ===
-          "input"
-            ? defaultSearchFilterFunction
-            : defaultSelectFilterFunction);
-        return !!value
-          ? filterFn(item, key, value as NonNullable<Value>)
-          : true;
-      })
+    const itemsToDisplay = items.filter(
+      (item) =>
+        !appliedValues ||
+        Object.entries(appliedValues).every(([key, value]) => {
+          const filterFn =
+            filterFunctions[key] ||
+            (filterFields.find((field) => field.name === key)?.fieldType ===
+            "input"
+              ? defaultSearchFilterFunction
+              : defaultSelectFilterFunction);
+          return !!value
+            ? filterFn(item, key, value as NonNullable<Value>)
+            : true;
+        })
+    );
+
+    const { pathname } = useLocation();
+    let [searchParams] = useSearchParams();
+
+    useEffect(() => {
+      const storedValues = localStorage.getItem(pathname);
+
+      if (storedValues && !searchParams.toString()) {
+        console.log("on mount update", storedValues);
+        setAppliedValues({ ...initialValues, ...JSON.parse(storedValues) });
+      } else {
+        const filterValues: FormValueType = {};
+        searchParams.forEach((value, key) => (filterValues[key] = value));
+        setAppliedValues(filterValues);
+      }
+    }, []);
+
+    useEffect(() => {
+      const filterValues: FormValueType = {};
+      searchParams.forEach((value, key) => (filterValues[key] = value));
+      if (appliedValues) setAppliedValues(filterValues);
+    }, [searchParams]);
+
+    const navigate = useNavigate();
+
+    const handleChange = useCallback(
+      (updatedValues: FormValueType) => {
+        console.log("on change", updatedValues);
+        const valuesImpactUrl = Object.entries(updatedValues).reduce(
+          (acc, [key, v]) => ({
+            ...acc,
+            ...(!!v && v !== FILTER_ALL_VALUE ? { [key]: v } : {}),
+          }),
+          {} as FormValueType
+        );
+        localStorage.setItem(pathname, JSON.stringify(valuesImpactUrl));
+        navigate(getUrl(pathname as IDENTIFIERS, valuesImpactUrl));
+      },
+      [navigate, pathname]
     );
 
     return (
       <>
-        <Filters
-          filterFields={filterFields}
-          initialValues={initialValues}
-          onChange={(updatedValues: FormValueType) => setValues(updatedValues)}
-        />
-        <Component {...props} items={itemsToDisplay} />
+        {appliedValues && (
+          <>
+            <Filters
+              filterFields={filterFields}
+              appliedValues={appliedValues}
+              initialValues={initialValues}
+              onChange={handleChange}
+            />
+            <Component {...props} items={itemsToDisplay} />
+          </>
+        )}
       </>
     );
   };

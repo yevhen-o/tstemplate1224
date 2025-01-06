@@ -105,3 +105,59 @@ export function deepClone<T>(obj: T, seen = new Map()): T {
 
 // nice check for ssr
 export const isBrowser = (): boolean => typeof document !== "undefined";
+
+export function deepEqual(valueA: unknown, valueB: unknown): boolean {
+  if (valueA === valueB) {
+    return true;
+  }
+
+  if (
+    ["string", "number", "boolean", "symbol"].includes(typeof valueA) ||
+    valueA === null
+  ) {
+    return valueA === valueB;
+  }
+
+  if (Array.isArray(valueA) || Array.isArray(valueB)) {
+    if (
+      !Array.isArray(valueB) ||
+      !Array.isArray(valueA) ||
+      valueA.length !== valueB.length
+    ) {
+      return false;
+    }
+    for (let i = 0; i < valueA.length; i++) {
+      if (!deepEqual(valueA[i], valueB[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  if (typeof valueA === "object" && typeof valueB === "object") {
+    if (valueA === null || valueB === null) return false;
+
+    const keysA = Object.keys(valueA);
+    const keysB = Object.keys(valueB);
+
+    // Compare keys lengths and values
+    if (keysA.length !== keysB.length || !deepEqual(keysA, keysB)) {
+      return false;
+    }
+
+    // Compare each key's value
+    for (const key of keysA) {
+      if (
+        !deepEqual(
+          (valueA as Record<string, any>)[key],
+          (valueB as Record<string, any>)[key]
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+  return false;
+}

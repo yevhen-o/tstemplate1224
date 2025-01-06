@@ -12,6 +12,7 @@ import {
   RadioType,
   DatePickType,
 } from "src/Types/FormTypes";
+import { deepEqual } from "src/helpers/utils";
 
 export type Value = string | number | boolean | null | undefined;
 type ErrorsType = Record<string, string | undefined | null> | undefined;
@@ -33,6 +34,12 @@ export const useForm = <T extends FormValueType>(
   const [formErrors, setFormErrors] = useState<ErrorsType>(
     getValidationErrors(initialValues, rules)
   );
+
+  const updateValues = (newValues: T) => {
+    if (!deepEqual(values, newValues)) {
+      setValues(newValues);
+    }
+  };
 
   const handleInputChange = (
     key: string,
@@ -94,6 +101,7 @@ export const useForm = <T extends FormValueType>(
     resetForm,
     formErrors,
     isFormValid,
+    updateValues,
     hasFormChanges,
     renderFormField,
     handleInputChange,

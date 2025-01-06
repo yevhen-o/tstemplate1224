@@ -6,6 +6,7 @@ import Button from "../Buttons";
 interface FilterProps {
   filterFields: FieldType[];
   initialValues: FormValueType;
+  appliedValues?: FormValueType;
   onChange: (values: FormValueType) => void;
   wrapperWidth: number;
   wrapperHeight: number;
@@ -15,17 +16,20 @@ const Filters: React.FC<FilterProps> = ({
   onChange,
   filterFields,
   initialValues = {},
+  appliedValues,
   wrapperHeight,
   wrapperWidth,
 }) => {
-  const { values, renderFormField, hasFormChanges, resetForm } = useForm(
-    {},
-    initialValues
-  );
+  const { values, renderFormField, hasFormChanges, resetForm, updateValues } =
+    useForm({}, initialValues);
 
   useEffect(() => {
     onChange(values);
   }, [values, onChange]);
+
+  useEffect(() => {
+    if (appliedValues) updateValues(appliedValues);
+  }, [appliedValues]);
 
   useEffect(() => {
     document.documentElement.style.setProperty(
