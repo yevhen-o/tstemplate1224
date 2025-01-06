@@ -76,29 +76,15 @@ export function withFilters<T>(
     let [searchParams] = useSearchParams();
 
     useEffect(() => {
-      const storedValues = localStorage.getItem(pathname);
-
-      if (storedValues && !searchParams.toString()) {
-        console.log("on mount update", storedValues);
-        setAppliedValues({ ...initialValues, ...JSON.parse(storedValues) });
-      } else {
-        const filterValues: FormValueType = {};
-        searchParams.forEach((value, key) => (filterValues[key] = value));
-        setAppliedValues(filterValues);
-      }
-    }, []);
-
-    useEffect(() => {
       const filterValues: FormValueType = {};
       searchParams.forEach((value, key) => (filterValues[key] = value));
-      if (appliedValues) setAppliedValues(filterValues);
+      setAppliedValues(filterValues);
     }, [searchParams]);
 
     const navigate = useNavigate();
 
     const handleChange = useCallback(
       (updatedValues: FormValueType) => {
-        console.log("on change", updatedValues);
         const valuesImpactUrl = Object.entries(updatedValues).reduce(
           (acc, [key, v]) => ({
             ...acc,

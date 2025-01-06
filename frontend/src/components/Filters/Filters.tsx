@@ -29,7 +29,7 @@ const Filters: React.FC<FilterProps> = ({
 
   useEffect(() => {
     if (appliedValues) updateValues(appliedValues);
-  }, [appliedValues]);
+  }, [appliedValues, updateValues]);
 
   useEffect(() => {
     document.documentElement.style.setProperty(

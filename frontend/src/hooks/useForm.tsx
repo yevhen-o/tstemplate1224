@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import InputField from "src/components/FormFields/InputField";
 import Select from "src/components/FormFields/Select";
 import CheckBox from "src/components/FormFields/CheckBox";
@@ -35,11 +35,14 @@ export const useForm = <T extends FormValueType>(
     getValidationErrors(initialValues, rules)
   );
 
-  const updateValues = (newValues: T) => {
-    if (!deepEqual(values, newValues)) {
-      setValues(newValues);
-    }
-  };
+  const updateValues = useCallback(
+    (newValues: T) => {
+      if (!deepEqual(initialValues, newValues)) {
+        setValues(newValues);
+      }
+    },
+    [initialValues]
+  );
 
   const handleInputChange = (
     key: string,

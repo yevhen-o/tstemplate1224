@@ -42,6 +42,7 @@ const InputField: ForwardRefRenderFunction<
   },
   ref
 ) => {
+  // TODO: write wrapper for such cases
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const cmpRef = ref || useRef();
   const [internalIsTouched, setInternalIsTouched] = useState(false);
@@ -75,7 +76,7 @@ const InputField: ForwardRefRenderFunction<
           ref={cmpRef}
           name={name}
           id={id || name}
-          value={values && values[name as keyof typeof values]}
+          value={(values && values[name as keyof typeof values]) || ""}
           disabled={disabled}
           autoComplete={autoComplete}
           rows={rows}

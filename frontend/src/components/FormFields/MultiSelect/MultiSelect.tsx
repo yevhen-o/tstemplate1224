@@ -1,19 +1,19 @@
 import React, {
-  useState,
-  forwardRef,
-  Fragment,
   useRef,
+  useState,
+  Fragment,
+  forwardRef,
   PropsWithChildren,
   ForwardRefRenderFunction,
 } from "react";
 import classNames from "classnames";
 import { nanoid } from "@reduxjs/toolkit";
 
-import Buttons from "src/components/Buttons";
 import DropDown from "src/components/DropDown";
 import FieldLabel from "src/components/FormFields/FieldLabel";
-import { checkValidity } from "src/helpers/validation";
+
 import { KEY_CODES } from "src/constants/";
+import { checkValidity } from "src/helpers/validation";
 import {
   DefaultFormProps,
   MultiSelectType,
@@ -49,6 +49,7 @@ const MultiSelect: ForwardRefRenderFunction<
   },
   ref
 ) => {
+  // TODO: combine ref
   const inputEl = useRef<HTMLInputElement>(null);
   const menuWrapperEl = useRef<HTMLButtonElement>(null);
 
