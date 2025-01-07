@@ -42,6 +42,7 @@ const Pagination: React.FC<PaginationProps> = ({
     if (!!appliedValues && !deepEqual(appliedValues, values)) {
       setValues(appliedValues);
     }
+    // TODO: Check how solve add value as a dependency
   }, [appliedValues]);
 
   return (

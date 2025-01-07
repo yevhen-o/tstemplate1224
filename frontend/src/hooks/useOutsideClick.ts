@@ -2,20 +2,22 @@ import { useEffect } from "react";
 
 export const useOutsideClick = (
   ref: React.RefObject<HTMLElement>,
-  onOutsideClick: () => void
+  onOutsideClick: () => void,
+  isActive: boolean = true,
+  trigger: keyof HTMLElementEventMap = "mouseup"
 ): void => {
   useEffect(() => {
-    const clickHandler = (e: MouseEvent): void => {
-      if (ref.current?.contains(e.target as Node)) {
+    const clickHandler = (e: Event): void => {
+      if (!isActive || ref.current?.contains(e.target as Node)) {
         return;
       }
       onOutsideClick();
     };
 
-    document.addEventListener("mouseup", clickHandler);
+    document.addEventListener(trigger, clickHandler);
 
     return (): void => {
-      document.removeEventListener("mouseup", clickHandler);
+      document.removeEventListener(trigger, clickHandler);
     };
-  }, [onOutsideClick, ref]);
+  }, [onOutsideClick, ref, isActive, trigger]);
 };
