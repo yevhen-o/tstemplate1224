@@ -32,9 +32,7 @@ const Todos: React.FC<{ wrapperWidth: number; wrapperHeight: number }> = ({
   useEffect(() => {
     const controller = new AbortController();
     const signal: AbortSignal = controller.signal;
-    try {
-      todoGetList({ signal });
-    } catch (error) {}
+    todoGetList({ signal });
     return () => {
       controller.abort();
     };

@@ -16,8 +16,8 @@ localhost:3050/api - api
 
 - [x] Redux basic setup
 - [ ] Redux advanced setup
-- [ ] Caching based on redux
-- [ ] useApiHook?
+- [x] Caching based on redux // It conflicting with abort signal, and don't see way outsource it more
+- [ ] useApiHook? // don't see reason to implement right now.
 - [x] useFormHook
 - [x] useObserveElementSize
 - [x] useClickOutside

@@ -74,6 +74,7 @@ const updateItemById = <
   [item.uid]: {
     ...(section[item.uid] || {}),
     ...item,
+    fetchedTime: Date.now(),
   },
 });
 
@@ -84,12 +85,17 @@ interface RequestState {
   error: SliceError;
 }
 
+interface FetchedTime {
+  fetchedTime?: number;
+}
+
 type StateType = {
-  list: RequestState & {
-    data: string[];
-  };
+  list: RequestState &
+    FetchedTime & {
+      data: string[];
+    };
   itemsById: {
-    [key: string]: TodoInterface;
+    [key: string]: TodoInterface & FetchedTime;
   };
   getItem: RequestState;
   postItem: RequestState;
@@ -125,6 +131,7 @@ const todosSlice = createSlice({
       .addCase(todoGetList.fulfilled, (state, action) => {
         if (state.list.latestRequestId === action.meta.requestId) {
           state.list = setFulfilledState(state.list);
+          state.list.fetchedTime = Date.now();
           state.list.data = Array.from(
             new Set([
               ...state.list.data,

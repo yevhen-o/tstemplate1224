@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 import Button from "src/components/Buttons";
 import { withClientScreen } from "src/hocs";
 import AddEditTodoModal from "./AddEditTodoModal";
-import { useActions, useTypedSelector } from "src/hooks";
+import { useActions, useTypedSelector, isOutdated } from "src/hooks";
 import { ClientScreenInterface } from "src/Types/ClientScreen";
 import { getUrl, IDENTIFIERS } from "src/services/urlsHelper";
 
@@ -22,12 +22,6 @@ const ViewTodo: React.FC<Partial<ClientScreenInterface>> = ({
   const { todoId } = useParams<Params>();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (todoId) {
-      todoGetItem({ uid: todoId });
-    }
-  }, [todoId, todoGetItem]);
-
   const todo = useTypedSelector((state) =>
     createSelector(
       [
@@ -37,6 +31,12 @@ const ViewTodo: React.FC<Partial<ClientScreenInterface>> = ({
       (itemsById, id) => (id ? itemsById[id] : undefined)
     )(state, todoId)
   );
+
+  useEffect(() => {
+    if (todoId && isOutdated(todo)) {
+      todoGetItem({ uid: todoId });
+    }
+  }, [todoId, todoGetItem, todo]);
 
   const [showEditModal, setShowEditModal] = useState(false);
 
