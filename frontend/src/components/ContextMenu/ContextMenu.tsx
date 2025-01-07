@@ -1,25 +1,23 @@
 import classNames from "classnames";
 import { useOutsideClick } from "src/hooks";
 import "./ContextMenu.scss";
+import { OptionType } from "src/Types/FormTypes";
+import DropDownItem from "src/components/DropDown/DropDownItem";
 
 interface ContextMenuProps {
   rightClickItem: any;
   positionX: number;
   positionY: number;
   isToggled: boolean;
-  options: Option[];
+  options: ContextMenuOptionType[];
   contextMenuRef: React.MutableRefObject<HTMLElement | null>;
   resetContextMenu: () => void;
 }
 
-interface Option {
-  label: string;
-  isSpacer?: boolean;
-  onClick: (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    rightClickItem: any
-  ) => void;
-}
+export type ContextMenuOptionType = OptionType & {
+  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, i: any) => void;
+  disabled?: boolean;
+};
 
 const ContextMenu: React.FC<ContextMenuProps> = ({
   rightClickItem,
@@ -31,10 +29,11 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   resetContextMenu,
 }) => {
   const handleClick =
-    (option: Option) =>
+    (option: ContextMenuOptionType) =>
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.stopPropagation();
       option.onClick(e, rightClickItem);
+      resetContextMenu();
     };
 
   useOutsideClick(contextMenuRef, resetContextMenu, true, "mousedown");
@@ -49,11 +48,16 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
       ref={contextMenuRef}
     >
       {options.map((option, index) => {
-        if (option.isSpacer) return <hr key={index} />;
+        if (option.isDivider) return <hr key={index} />;
         return (
-          <button key={index} onClick={handleClick(option)}>
-            {option.label}
-          </button>
+          <DropDownItem
+            handleClose={resetContextMenu}
+            handleClick={() => handleClick(option)}
+            activeIndex={-1}
+            index={index}
+            item={{ ...option, onClick: handleClick(option) }}
+            key={index}
+          />
         );
       })}
     </menu>

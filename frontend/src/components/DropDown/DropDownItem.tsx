@@ -2,15 +2,15 @@ import classNames from "classnames";
 import TextEllipsis from "src/components/TextEllipsis";
 
 interface DropDownItemProps {
-  id: string;
+  id?: string;
   index: number;
-  value: (string | number)[];
+  value?: (string | number)[];
   activeIndex: number;
   handleClose: () => void;
   handleClick: (
-    fn: () => void
+    fn: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
   ) => (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  isItemSelected: (
+  isItemSelected?: (
     itemValue: string | number,
     value: (string | number)[]
   ) => boolean;
@@ -19,7 +19,7 @@ interface DropDownItemProps {
     label: string;
     style?: React.CSSProperties;
     target?: string;
-    onClick?: () => void;
+    onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     disabled?: boolean;
     isDivider?: boolean;
     className?: string;
@@ -42,7 +42,7 @@ const DropDownItem: React.FC<DropDownItemProps> = ({
     label,
     style,
     target,
-    onClick = () => {},
+    onClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {},
     disabled,
     isDivider,
     className = "",
@@ -63,7 +63,8 @@ const DropDownItem: React.FC<DropDownItemProps> = ({
         className={classNames("drop-down__item", className, {
           "drop-down__item--active": activeIndex === index,
           "drop-down__item--disabled": disabled,
-          "drop-down__item--selected": isItemSelected(itemValue, value),
+          "drop-down__item--selected":
+            value && isItemSelected(itemValue, value),
         })}
       >
         <span className="drop-down__item-text">
@@ -83,7 +84,7 @@ const DropDownItem: React.FC<DropDownItemProps> = ({
       className={classNames("drop-down__item", className, {
         "drop-down__item--active": activeIndex === index,
         "drop-down__item--disabled": disabled,
-        "drop-down__item--selected": isItemSelected(itemValue, value),
+        "drop-down__item--selected": value && isItemSelected(itemValue, value),
       })}
     >
       <span className={"drop-down__item-text"}>

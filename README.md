@@ -21,6 +21,7 @@ localhost:3050/api - api
 - [x] useFormHook
 - [x] useObserveElementSize
 - [x] useClickOutside
+- [x] hook withContextMenu
 - [x] validation helper
 - [x] url builder helper
 - [x] HOC withPagination
@@ -28,7 +29,6 @@ localhost:3050/api - api
 - [x] HOC withFilters reflect url changing on filter change // also add reflect pagination
 - [x] Write localStorage helper to store all client data under uniq key
 - [x] HOC withDeviceMedia
-- [ ] HOC or hook withContextMenu
 - [x] ~~HOC withWrapperSize~~ deprecated: to complicated to use, hook is more straight forward
 - [ ] Table
 - [x] FormFields basic

@@ -53,6 +53,11 @@
       max-width: calc(100% + 2px);
     }
 
+    &:hover,
+    &.active {
+      background-color: var(--color-gray-25);
+    }
+
     &--active {
       background-color: var(--color-gray-25);
     }
@@ -61,13 +66,14 @@
       background-color: var(--color-gray-25);
     }
 
-    &--disabled {
+    &--disabled,
+    &:disabled {
       opacity: 0.7;
-    }
-
-    &:hover,
-    &.active {
-      background-color: var(--color-gray-25);
+      cursor: default;
+      &:hover,
+      &:active {
+        background-color: transparent;
+      }
     }
   }
 
