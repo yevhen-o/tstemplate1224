@@ -1,29 +1,27 @@
 const keys = require("./keys");
-import express, { Request, Response, Application, Router } from "express";
+import express, { Express } from "express";
+
+import swaggerDocs from "./utils/swagger";
+
 import todoRouter from "./routes/todoRouter";
+import healthCheckRouter from "./routes/healthCheck";
 import errorHandler from "./middlewares/errorHandler";
 
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
-const app: Application = express();
+const app: Express = express();
 app.use(cors());
 app.use(bodyParser.json());
 
 // Express route handlers
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hi there");
-});
-
-app.get("/status", (req: Request, res: Response) => {
-  res.json({ status: "connected!" });
-});
-
+app.use(healthCheckRouter);
 app.use(todoRouter);
 
 app.use(errorHandler);
 
 app.listen(keys.backendPort, () => {
   console.log("Listening");
+  swaggerDocs(app, keys.backendPort);
 });

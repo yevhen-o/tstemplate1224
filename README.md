@@ -37,6 +37,7 @@ localhost:3050/api - api
 - [x] DropDown with just css simple implementation, work great, but don't set dropdown correctly when anchor is shifted with translate, and not the best browser support yet
 - [x] MultiSelect // Should work yet on style improvement and types improvements
 - [x] VirtualScroll component // get some performance issues, maybe better to use some library instead, but in this case it will be less flexible
+- [x] Add openapi and swagger to api
 - [ ] Create Authentication flow with email and password, try to use browser hashing functionality
 - [ ] Build Authorization Logic
 - [ ] Use localForage for cross tab communication
