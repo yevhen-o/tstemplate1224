@@ -4,7 +4,9 @@ import express, { Express } from "express";
 import swaggerDocs from "./utils/swagger";
 
 import todoRouter from "./routes/todoRouter";
+import userRouter from "./routes/userRoutes";
 import healthCheckRouter from "./routes/healthCheck";
+
 import errorHandler from "./middlewares/errorHandler";
 
 const bodyParser = require("body-parser");
@@ -18,6 +20,7 @@ app.use(bodyParser.json());
 
 app.use(healthCheckRouter);
 app.use(todoRouter);
+app.use(userRouter);
 
 app.use(errorHandler);
 
