@@ -4,7 +4,7 @@ import {
   postOrgValidationSchema,
   patchOrgValidationSchema,
 } from "../validationSchemas";
-import { Organization } from "../models/organizations";
+import { Organization } from "../models";
 import { tryCatch } from "../utils/tryCatch";
 
 const router = Router();
@@ -139,5 +139,30 @@ router.delete(
   "/organizations/:organizationId",
   tryCatch(Organization.removeRecord)
 );
+
+/**
+ * @openapi
+ * '/organizations/add-user':
+ *  post:
+ *    tags:
+ *    - Organization
+ *    summary: Attach user to organization
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/OrganizationAddUserInput'
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/OrganizationResponse'
+ *      404:
+ *        description: Organization not found
+ */
+router.post("/organizations/add-user", tryCatch(Organization.handleAddUser));
 
 export default router;

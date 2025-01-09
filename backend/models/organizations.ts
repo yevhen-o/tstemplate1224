@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 const Sequelize = require("sequelize");
+import { User } from "./users";
 
 const db = require("../db_connect");
 
@@ -47,6 +48,22 @@ const db = require("../db_connect");
  *             type: string
  *           ownerId:
  *             type: string
+ *     OrganizationAddUserInput:
+ *       type: object
+ *       required:
+ *         - organizationId
+ *         - userId
+ *         - role
+ *       properties:
+ *         organizationId:
+ *           type: number
+ *           default: 1
+ *         userId:
+ *           type: number
+ *           default: 1
+ *         role:
+ *           type: string
+ *           default: Admin
  */
 
 export const Organization = db.define("organization", {
@@ -93,8 +110,11 @@ Organization.getRecords = async (req: Request, res: Response) => {
 };
 
 Organization.getRecord = async (req: Request, res: Response) => {
-  const Org = await Organization.findOne({
-    where: { organizationId: req.params.organizationId },
+  const Org = await Organization.findByPk(req.params.organizationId, {
+    include: [
+      { model: User }, // Regular User association
+      { model: User, as: "owner" }, // Owner relationship
+    ],
   });
   res.send(Org);
 };
@@ -112,4 +132,12 @@ Organization.removeRecord = async (req: Request, res: Response) => {
     where: { organizationId: req.params.organizationId },
   });
   res.status(204).send();
+};
+
+Organization.handleAddUser = async (req: Request, res: Response) => {
+  const { organizationId, userId, role } = req.body;
+  const organization = await Organization.findByPk(organizationId);
+  const user = await User.findByPk(userId);
+  const result = await organization.addUser(user, { through: { role } });
+  res.send(result);
 };

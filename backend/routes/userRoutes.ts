@@ -4,7 +4,7 @@ import {
   postUserValidationSchema,
   patchUserValidationSchema,
 } from "../validationSchemas";
-import { User } from "../models/users";
+import { User } from "../models";
 import { tryCatch } from "../utils/tryCatch";
 
 const router = Router();

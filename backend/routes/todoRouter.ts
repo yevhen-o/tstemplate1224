@@ -4,7 +4,7 @@ import {
   postTodoValidationSchema,
   patchTodoValidationSchema,
 } from "../validationSchemas";
-import { Todo } from "../models/todos";
+import { Todo } from "../models";
 import { tryCatch } from "../utils/tryCatch";
 
 const router = Router();

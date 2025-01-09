@@ -58,40 +58,53 @@ const db = require("../db_connect");
  *             type: number
  */
 
-export const User = db.define("user", {
-  userId: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  firstName: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  lastName: {
-    type: Sequelize.STRING,
-    allowNull: true,
-  },
-  email: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    unique: true,
-    validate: {
-      isEmail: true,
+export const User = db.define(
+  "user",
+  {
+    userId: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    firstName: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    lastName: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    email: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+      },
+    },
+    password: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    age: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      validate: {
+        min: 0,
+      },
     },
   },
-  password: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  age: {
-    type: Sequelize.INTEGER,
-    allowNull: true,
-    validate: {
-      min: 0,
+  {
+    defaultScope: {
+      attributes: { exclude: ["password"] },
     },
-  },
-});
+    scopes: {
+      withPassword: {
+        attributes: { include: ["password"] },
+      },
+    },
+  }
+);
 
 // User.sync({ force: true });
 
