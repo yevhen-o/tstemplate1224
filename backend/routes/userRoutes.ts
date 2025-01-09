@@ -66,6 +66,30 @@ router.get("/users", tryCatch(User.getRecords));
  *    tags:
  *    - User
  *    summary: Get single user by userId
+ *    parameters:
+ *    - name: userId
+ *      in: path
+ *      description: The id of User
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/UserResponse'
+ *      404:
+ *        description: User not found
+ */
+router.get("/users/:userId", tryCatch(User.getRecord));
+
+/**
+ * @openapi
+ * '/users/{userId}':
+ *  patch:
+ *    tags:
+ *    - User
+ *    summary: Update single user by userId
  *    requestBody:
  *      required: true
  *      content:
@@ -87,34 +111,30 @@ router.get("/users", tryCatch(User.getRecords));
  *      404:
  *        description: User not found
  */
-router.get("/users/:uid", tryCatch(User.getRecord));
+router.patch(
+  "/users/:userId",
+  ajvWrapper(patchUserValidationSchema),
+  tryCatch(User.patchRecord)
+);
 
 /**
  * @openapi
  * '/users/{userId}':
- *  patch:
+ *  delete:
  *    tags:
  *    - User
- *    summary: Update single user by userId
+ *    summary: Delete single user by userId
  *    parameters:
  *    - name: userId
  *      in: path
  *      description: The id of User
  *      required: true
  *    responses:
- *      200:
+ *      204:
  *        description: Success
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/components/schemas/UserResponse'
  *      404:
  *        description: User not found
  */
-router.patch(
-  "/users/:uid",
-  ajvWrapper(patchUserValidationSchema),
-  tryCatch(User.patchRecord)
-);
+router.delete("/users/:userId", tryCatch(User.removeRecord));
 
 export default router;

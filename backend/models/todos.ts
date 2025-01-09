@@ -150,3 +150,8 @@ Todo.patchRecord = async (req: Request, res: Response) => {
   await todo.update(req.body);
   res.send(todo);
 };
+
+Todo.removeRecord = async (req: Request, res: Response) => {
+  const todo = await Todo.destroy({ where: { uid: req.params.uid } });
+  res.status(204).send();
+};

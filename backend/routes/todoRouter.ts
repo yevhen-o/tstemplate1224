@@ -66,12 +66,6 @@ router.get("/todos", tryCatch(Todo.getRecords));
  *    tags:
  *    - Todo
  *    summary: Get single todo by todoId
- *    requestBody:
- *      required: true
- *      content:
- *        application/json:
- *          schema:
- *            $ref: '#/components/schemas/CreateTodoInput'
  *    parameters:
  *    - name: todoId
  *      in: path
@@ -96,6 +90,12 @@ router.get("/todos/:uid", tryCatch(Todo.getRecord));
  *    tags:
  *    - Todo
  *    summary: Update single todo by todoId
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/CreateTodoInput'
  *    parameters:
  *    - name: todoId
  *      in: path
@@ -116,5 +116,25 @@ router.patch(
   ajvWrapper(patchTodoValidationSchema),
   tryCatch(Todo.patchRecord)
 );
+
+/**
+ * @openapi
+ * '/todos/{todoId}':
+ *  delete:
+ *    tags:
+ *    - Todo
+ *    summary: Delete single todo by todoId
+ *    parameters:
+ *    - name: todoId
+ *      in: path
+ *      description: The id of Todo
+ *      required: true
+ *    responses:
+ *      204:
+ *        description: Success
+ *      404:
+ *        description: Todo not found
+ */
+router.delete("/todos/:uid", tryCatch(Todo.removeRecord));
 
 export default router;

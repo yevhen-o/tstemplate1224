@@ -35,6 +35,8 @@ const db = require("../db_connect");
  *     UserResponse:
  *       type: object
  *       properties:
+ *         userId:
+ *           type: number
  *         firstName:
  *           type: string
  *         lastName:
@@ -48,6 +50,8 @@ const db = require("../db_connect");
  *       items:
  *         type: object
  *         properties:
+ *           userId:
+ *             type: number
  *           firstName:
  *             type: string
  *           age:
@@ -55,7 +59,7 @@ const db = require("../db_connect");
  */
 
 export const User = db.define("user", {
-  id: {
+  userId: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
     primaryKey: true,
@@ -89,6 +93,8 @@ export const User = db.define("user", {
   },
 });
 
+// User.sync({ force: true });
+
 export type UserInterface = {
   firstName: string;
   lastName?: string;
@@ -98,29 +104,32 @@ export type UserInterface = {
 };
 
 User.addRecord = async (req: Request, res: Response) => {
-  console.log(req.body);
   const user = await User.create(req.body);
-  console.log(user);
   res.send(user);
 };
 
 User.getRecords = async (req: Request, res: Response) => {
   const users = await User.findAll({
-    attributes: ["firstName", "age"],
+    attributes: ["userId", "firstName", "age"],
   });
   res.send(users);
 };
 
 User.getRecord = async (req: Request, res: Response) => {
   const user = await User.findOne({
-    where: { uid: req.params.uid },
-    attributes: ["firstName", "lastName", "email", "age"],
+    where: { userId: req.params.userId },
+    attributes: ["userId", "firstName", "lastName", "email", "age"],
   });
   res.send(user);
 };
 
 User.patchRecord = async (req: Request, res: Response) => {
-  const user = await User.findOne({ where: { uid: req.params.uid } });
+  const user = await User.findOne({ where: { userId: req.params.userId } });
   await user.update(req.body);
   res.send(user);
+};
+
+User.removeRecord = async (req: Request, res: Response) => {
+  await User.destroy({ where: { userId: req.params.userId } });
+  res.status(204).send();
 };
