@@ -4,6 +4,7 @@ const Sequelize = require("sequelize");
 import { Organization } from "./organizations";
 import { User } from "./users";
 import { Todo } from "./todos";
+import { Project } from "./projects";
 
 const OrganizationUser = db.define("organization_user", {
   role: {
@@ -32,9 +33,19 @@ Organization.belongsTo(User, {
   as: "owner",
 });
 
+Organization.hasMany(Project, {
+  foreignKey: "organizationId",
+  as: "organizationProjects",
+});
+
+Project.belongsTo(Organization, {
+  foreignKey: "organizationId",
+  as: "organization",
+});
+
 // Sync models with the database
 // (async () => {
 //   await db.sync({ alter: true }); // Adjust options as necessary
 // })();
 
-export { Todo, Organization, User, OrganizationUser };
+export { Todo, Organization, User, OrganizationUser, Project };

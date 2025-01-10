@@ -12,3 +12,8 @@ export {
   postOrgValidationSchema,
   patchOrgValidationSchema,
 } from "./OrganizationSchemas";
+
+export {
+  postProjectValidationSchema,
+  patchProjectValidationSchema,
+} from "./ProjectSchemas";

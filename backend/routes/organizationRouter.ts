@@ -268,4 +268,31 @@ router.get(
   tryCatch(Organization.getUsers)
 );
 
+/**
+ * @openapi
+ * '/organizations/{organizationId}/projects':
+ *  get:
+ *    tags:
+ *    - Organization
+ *    summary: Get list of organization projects
+ *    parameters:
+ *    - name: organizationId
+ *      in: path
+ *      description: The id of organization
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/ProjectListResponse'
+ *      404:
+ *        description: Organization not found
+ */
+router.get(
+  "/organizations/:organizationId/projects",
+  tryCatch(Organization.getProjects)
+);
+
 export default router;

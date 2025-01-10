@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 const Sequelize = require("sequelize");
-import { User } from "./";
+import { User, Project } from "./";
 
 const db = require("../db_connect");
 
@@ -148,4 +148,11 @@ Organization.getUsers = async (req: Request, res: Response) => {
     include: [{ model: User }],
   });
   res.send(Org.users);
+};
+
+Organization.getProjects = async (req: Request, res: Response) => {
+  const Org = await Organization.findByPk(req.params.organizationId, {
+    include: [{ model: Project, as: "organizationProjects" }],
+  });
+  res.send(Org.organizationProjects);
 };
