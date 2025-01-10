@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 const Sequelize = require("sequelize");
+import { Organization } from "./";
 
 const db = require("../db_connect");
 
@@ -145,4 +146,20 @@ User.patchRecord = async (req: Request, res: Response) => {
 User.removeRecord = async (req: Request, res: Response) => {
   await User.destroy({ where: { userId: req.params.userId } });
   res.status(204).send();
+};
+
+User.getUserOrganizations = async (req: Request, res: Response) => {
+  const user = await User.findByPk(req.params.userId, {
+    attributes: ["userId", "firstName", "lastName", "email", "age"],
+    include: Organization,
+  });
+  res.send(user.organizations);
+};
+
+User.getOwnedOrganizations = async (req: Request, res: Response) => {
+  const user = await User.findByPk(req.params.userId, {
+    attributes: ["userId", "firstName", "lastName", "email", "age"],
+    include: [{ model: Organization, as: "ownedOrganizations" }],
+  });
+  res.send(user.ownedOrganizations);
 };

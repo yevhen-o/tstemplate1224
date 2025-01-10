@@ -137,4 +137,55 @@ router.patch(
  */
 router.delete("/users/:userId", tryCatch(User.removeRecord));
 
+/**
+ * @openapi
+ * '/users/{userId}/organizations':
+ *  get:
+ *    tags:
+ *    - User
+ *    summary: Get user list of organizations
+ *    parameters:
+ *    - name: userId
+ *      in: path
+ *      description: The id of User
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/OrganizationListResponse'
+ *      404:
+ *        description: User not found
+ */
+router.get("/users/:userId/organizations", tryCatch(User.getUserOrganizations));
+
+/**
+ * @openapi
+ * '/users/{userId}/owned-organizations':
+ *  get:
+ *    tags:
+ *    - User
+ *    summary: Get user list of owned organizations
+ *    parameters:
+ *    - name: userId
+ *      in: path
+ *      description: The id of User
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/OrganizationListResponse'
+ *      404:
+ *        description: User not found
+ */
+router.get(
+  "/users/:userId/owned-organizations",
+  tryCatch(User.getOwnedOrganizations)
+);
+
 export default router;

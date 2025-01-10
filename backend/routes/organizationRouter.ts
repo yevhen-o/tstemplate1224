@@ -142,17 +142,26 @@ router.delete(
 
 /**
  * @openapi
- * '/organizations/add-user':
+ * '/organizations/{organizationId}/user/{userId}':
  *  post:
  *    tags:
  *    - Organization
  *    summary: Attach user to organization
+ *    parameters:
+ *    - name: organizationId
+ *      in: path
+ *      description: The id of organization
+ *      required: true
+ *    - name: userId
+ *      in: path
+ *      description: The id of user
+ *      required: true
  *    requestBody:
  *      required: true
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/OrganizationAddUserInput'
+ *            $ref: '#/components/schemas/OrganizationUserInput'
  *    responses:
  *      200:
  *        description: Success
@@ -163,6 +172,100 @@ router.delete(
  *      404:
  *        description: Organization not found
  */
-router.post("/organizations/add-user", tryCatch(Organization.handleAddUser));
+router.post(
+  "/organizations/:organizationId/user/:userId",
+  tryCatch(Organization.handleAddUser)
+);
+
+/**
+ * @openapi
+ * '/organizations/{organizationId}/user/{userId}':
+ *  patch:
+ *    tags:
+ *    - Organization
+ *    summary: Change user in organization
+ *    parameters:
+ *    - name: organizationId
+ *      in: path
+ *      description: The id of organization
+ *      required: true
+ *    - name: userId
+ *      in: path
+ *      description: The id of user
+ *      required: true
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/OrganizationUserInput'
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/OrganizationResponse'
+ *      404:
+ *        description: Organization not found
+ */
+router.patch(
+  "/organizations/:organizationId/user/:userId",
+  tryCatch(Organization.handleAddUser)
+);
+
+/**
+ * @openapi
+ * '/organizations/{organizationId}/user/{userId}':
+ *  delete:
+ *    tags:
+ *    - Organization
+ *    summary: Remove user from organization
+ *    parameters:
+ *    - name: organizationId
+ *      in: path
+ *      description: The id of organization
+ *      required: true
+ *    - name: userId
+ *      in: path
+ *      description: The id of user
+ *      required: true
+ *    responses:
+ *      204:
+ *        description: Success
+ *      404:
+ *        description: Not found
+ */
+router.delete(
+  "/organizations/:organizationId/user/:userId",
+  tryCatch(Organization.handleRemoveUser)
+);
+
+/**
+ * @openapi
+ * '/organizations/{organizationId}/users':
+ *  get:
+ *    tags:
+ *    - Organization
+ *    summary: Get list of organization users
+ *    parameters:
+ *    - name: organizationId
+ *      in: path
+ *      description: The id of organization
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/OrganizationListResponse'
+ *      404:
+ *        description: Organization not found
+ */
+router.get(
+  "/organizations/:organizationId/users",
+  tryCatch(Organization.getUsers)
+);
 
 export default router;

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 const Sequelize = require("sequelize");
-import { User } from "./users";
+import { User } from "./";
 
 const db = require("../db_connect");
 
@@ -35,6 +35,9 @@ const db = require("../db_connect");
  *           type: string
  *         ownerId:
  *           type: number
+ *         owner:
+ *           type: object
+ *           $ref: '#/components/schemas/UserResponse'
  *     OrganizationListResponse:
  *       type: array
  *       items:
@@ -48,19 +51,11 @@ const db = require("../db_connect");
  *             type: string
  *           ownerId:
  *             type: string
- *     OrganizationAddUserInput:
+ *     OrganizationUserInput:
  *       type: object
  *       required:
- *         - organizationId
- *         - userId
  *         - role
  *       properties:
- *         organizationId:
- *           type: number
- *           default: 1
- *         userId:
- *           type: number
- *           default: 1
  *         role:
  *           type: string
  *           default: Admin
@@ -111,10 +106,7 @@ Organization.getRecords = async (req: Request, res: Response) => {
 
 Organization.getRecord = async (req: Request, res: Response) => {
   const Org = await Organization.findByPk(req.params.organizationId, {
-    include: [
-      { model: User }, // Regular User association
-      { model: User, as: "owner" }, // Owner relationship
-    ],
+    include: [{ model: User, as: "owner" }],
   });
   res.send(Org);
 };
@@ -135,9 +127,25 @@ Organization.removeRecord = async (req: Request, res: Response) => {
 };
 
 Organization.handleAddUser = async (req: Request, res: Response) => {
-  const { organizationId, userId, role } = req.body;
+  const { role } = req.body;
+  const { organizationId, userId } = req.params;
   const organization = await Organization.findByPk(organizationId);
   const user = await User.findByPk(userId);
   const result = await organization.addUser(user, { through: { role } });
   res.send(result);
+};
+
+Organization.handleRemoveUser = async (req: Request, res: Response) => {
+  const { userId, organizationId } = req.params;
+  const organization = await Organization.findByPk(organizationId);
+  const user = await User.findByPk(userId);
+  await organization.removeUser(user);
+  res.status(204).send();
+};
+
+Organization.getUsers = async (req: Request, res: Response) => {
+  const Org = await Organization.findByPk(req.params.organizationId, {
+    include: [{ model: User }],
+  });
+  res.send(Org.users);
 };
