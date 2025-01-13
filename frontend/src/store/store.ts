@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import todosReducer from "./todo/todoSlice";
+import organizationReducer from "./organization/organizationSlice";
 import clientScreenReducer from "./clientScreen/clientScreenSlice";
 
 export const store = configureStore({
   reducer: {
     todo: todosReducer,
+    organization: organizationReducer,
     clientScreen: clientScreenReducer,
   },
   devTools: process.env.NODE_ENV !== "production",

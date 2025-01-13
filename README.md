@@ -15,7 +15,7 @@ localhost:3050/api - api
 ## Plans to implement
 
 - [x] Redux basic setup
-- [ ] Redux advanced setup
+- [x] Redux advanced setup (Store data under id and create and use default state object if data not provided yet)
 - [x] Caching based on redux // It conflicting with abort signal, and don't see way outsource it more
 - [ ] useApiHook? // don't see reason to implement right now.
 - [x] useFormHook

@@ -3,6 +3,10 @@ export enum IDENTIFIERS {
   DROP_DOWNS = "/dropdowns",
   TODOS = "/todos",
   TODO_VIEW = "/todos/[todoId]",
+  ORGANIZATION_LIST = "/organizations",
+  ORGANIZATION_VIEW = "/organization/[organizationId]",
+  ORGANIZATION_MEMBERS = "/organization/[organizationId]/members",
+  ORGANIZATION_PROJECTS = "/organization/[organizationId]/projects",
   PAGE_401 = "/401",
   PAGE_404 = "/404",
 }
@@ -16,7 +20,7 @@ type Primitive =
   | Date
   | { toString(): string };
 type Params = Record<string, Primitive | Primitive[]>;
-type RequiredParams<K extends string> = [Params & Record<K, string>];
+type RequiredParams<K extends string> = [Params & Record<K, string | number>];
 type NoRequiredParams = [Params?];
 
 const itemToString = (
@@ -77,6 +81,12 @@ const buildUrl = (identifier: string, params: Params = {}): string => {
 
 type IdentifierParams<I> = I extends IDENTIFIERS.TODO_VIEW
   ? RequiredParams<"todoId">
+  : I extends IDENTIFIERS.ORGANIZATION_VIEW
+  ? RequiredParams<"organizationId">
+  : I extends IDENTIFIERS.ORGANIZATION_MEMBERS
+  ? RequiredParams<"organizationId">
+  : I extends IDENTIFIERS.ORGANIZATION_PROJECTS
+  ? RequiredParams<"organizationId">
   : NoRequiredParams;
 
 export const getUrl = <I extends IDENTIFIERS>(

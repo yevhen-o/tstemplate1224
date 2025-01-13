@@ -1,93 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { TodoInterface } from "src/Types";
-
-// TODO: move app when will get more slices
-
-type SliceError = KnownError | null | undefined;
-
-interface KnownError {
-  message: string;
-}
-
-type ActionMeta = {
-  requestId: string;
-  aborted: boolean;
-  condition: boolean;
-} & (
-  | {
-      rejectedWithValue: true;
-    }
-  | ({
-      rejectedWithValue: false;
-    } & {})
-);
-
-const initialFetchingState = {
-  latestRequestId: "",
-  isFetching: false,
-  isFetched: false,
-  error: null,
-};
-
-const setFetchingState = <T>(section: T, latestRequestId: string) => ({
-  ...section,
-  latestRequestId,
-  isFetching: true,
-  isFetched: false,
-  error: null,
-});
-
-const setFulfilledState = <T>(section: T) => ({
-  ...section,
-  isFetching: false,
-  isFetched: true,
-});
-
-const setRejectedState = <T extends RequestState>(
-  section: T,
-  meta: ActionMeta,
-  actionPayload: SliceError,
-  actionErrorMessage: string | undefined = "Something goes wrong"
-) => {
-  const { requestId, condition, aborted } = meta;
-  section = { ...section, isFetched: false, isFetching: false };
-  if (section.latestRequestId === requestId) {
-    if (!condition && !aborted) {
-      if (!!actionPayload) {
-        section.error = actionPayload;
-      } else {
-        section.error = new Error(actionErrorMessage);
-      }
-    }
-  }
-  return section;
-};
-
-const updateItemById = <
-  T extends { [key: string]: any },
-  V extends { uid: string }
->(
-  section: T,
-  item: V
-) => ({
-  ...section,
-  [item.uid]: {
-    ...(section[item.uid] || {}),
-    ...item,
-    fetchedTime: Date.now(),
-  },
-});
-
-interface RequestState {
-  latestRequestId: string;
-  isFetching: boolean;
-  isFetched: boolean;
-  error: SliceError;
-}
-
-interface FetchedTime {
-  fetchedTime?: number;
-}
+import {
+  KnownError,
+  RequestState,
+  FetchedTime,
+  initialFetchingState,
+  setFetchingState,
+  setFulfilledState,
+  setRejectedState,
+  updateItemById,
+  RequestConfig,
+  genericRequest,
+} from "../shared";
 
 type StateType = {
   list: RequestState &
@@ -213,14 +137,6 @@ type RejectValueType = {
   rejectValue: KnownError;
 };
 
-type RequestConfig = {
-  url: string;
-  method: "PATCH" | "POST" | "GET" | "PUT";
-  headers?: Record<string, string>;
-  body?: string;
-  signal?: AbortSignal;
-};
-
 export const todoPatchItem = createAsyncThunk<
   TodoInterface,
   { uid: string; item: Partial<TodoInterface>; signal?: AbortSignal },
@@ -304,23 +220,5 @@ export const todoGetList = createAsyncThunk<
 //     thunkApi
 //   );
 // });
-
-async function genericRequest<T, R>(
-  config: RequestConfig,
-  thunkApi: { rejectWithValue: (value: KnownError) => R }
-): Promise<T | R> {
-  try {
-    const response = await fetch(config.url, { ...config });
-    if (!response.ok) {
-      throw new Error(`Request failed with status ${response.status}`);
-    }
-    return await response.json();
-  } catch (error: unknown) {
-    return thunkApi.rejectWithValue({
-      message:
-        error instanceof Error ? error.message : "Unknown error occurred",
-    });
-  }
-}
 
 export default todosSlice.reducer;

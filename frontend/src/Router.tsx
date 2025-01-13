@@ -8,10 +8,16 @@ import {
 
 import "./App.scss";
 
+import OrganizationLayout from "./Layouts/OrganizationLayout";
+
 import HomePage from "./pages/HomePage";
 import TodosPage from "./pages/TodosPage";
 import DropDownsPage from "./pages/DropDownsPage";
 import ViewTodo from "./components/Todos/ViewTodo";
+import OrganizationList from "./pages/OrganizationsList";
+import OrganizationOverView from "./pages/OrganizationOverView";
+import OrganizationMembers from "./pages/OrganizationMembers";
+import OrganizationProjects from "./pages/OrganizationProjects";
 import { storageGetKey, storageGetLatest } from "src/services/localStorage";
 import {
   getUrl,
@@ -58,6 +64,27 @@ function Router() {
         path={getReactRouterPath(IDENTIFIERS.DROP_DOWNS)}
         element={<RouterParams element={<DropDownsPage />} />}
       />
+      <Route
+        path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_LIST)}
+        element={<RouterParams element={<OrganizationList />} />}
+      />
+      <Route
+        path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_VIEW)}
+        element={<OrganizationLayout />}
+      >
+        <Route
+          path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_VIEW)}
+          element={<RouterParams element={<OrganizationOverView />} />}
+        />
+        <Route
+          path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_MEMBERS)}
+          element={<RouterParams element={<OrganizationMembers />} />}
+        />
+        <Route
+          path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_PROJECTS)}
+          element={<RouterParams element={<OrganizationProjects />} />}
+        />
+      </Route>
     </Routes>
   );
 }
