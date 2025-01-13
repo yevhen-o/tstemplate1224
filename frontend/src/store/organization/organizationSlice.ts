@@ -31,12 +31,13 @@ type OrgType = {
   getOrgProjects: RequestStateFetchData;
 };
 
-type UserType = {
+export type UserType = {
   userId: number;
   firstName: string;
   lastName: string;
   email: string;
   age: number;
+  createdAt: string;
 };
 
 type ProjectType = {

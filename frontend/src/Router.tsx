@@ -16,7 +16,7 @@ import DropDownsPage from "./pages/DropDownsPage";
 import ViewTodo from "./components/Todos/ViewTodo";
 import OrganizationList from "./pages/OrganizationsList";
 import OrganizationOverView from "./pages/OrganizationOverView";
-import OrganizationMembers from "./pages/OrganizationMembers";
+import OrganizationMembers from "./pages/OrganizationMembers/OrganizationMembers";
 import OrganizationProjects from "./pages/OrganizationProjects";
 import { storageGetKey, storageGetLatest } from "src/services/localStorage";
 import {

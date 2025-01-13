@@ -4,15 +4,18 @@ import Button from "../Buttons";
 import type { ButtonProps } from "../Buttons/Buttons";
 import "./DropDownCss.scss";
 import { useMemo } from "react";
+import classNames from "classnames";
 
 interface DropDownCssProps extends ButtonProps {
   children: React.ReactNode;
+  className?: string;
   options: { label: string; value: string; onClick: () => void }[];
 }
 
 const DropDownCss: React.FC<DropDownCssProps> = ({
   children,
   options,
+  className,
   ...restProps
 }) => {
   const menuId = useMemo(nanoid, []);
@@ -25,7 +28,7 @@ const DropDownCss: React.FC<DropDownCssProps> = ({
         //@ts-ignore
         popoverTarget={menuId}
         id={`anchor__${menuId}`}
-        className="drop-down-menu-button"
+        className={classNames("drop-down-menu-button", className)}
         {...restProps}
       >
         {children}
@@ -36,7 +39,7 @@ const DropDownCss: React.FC<DropDownCssProps> = ({
         id={menuId}
         //@ts-ignore
         popover="auto"
-        className="profile-menu rounded-md"
+        className={classNames("profile-menu rounded-md", className)}
       >
         {options.map(({ label, onClick, value }, index) => {
           return (

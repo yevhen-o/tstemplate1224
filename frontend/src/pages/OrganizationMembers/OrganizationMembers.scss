@@ -1,0 +1,11 @@
+.org-members {
+  &__menu {
+    & > button {
+      text-align: left;
+    }
+  }
+}
+
+.organization__members__cell--actions {
+  width: 48px;
+}
