@@ -3,14 +3,14 @@ import { createSelector } from "reselect";
 import { useParams } from "react-router";
 import { RootState } from "src/store";
 import { useActions } from "src/hooks/useActions";
-import { useTypedSelector, isOutdated } from "src/hooks";
+import { useTypedSelector, isOutdated, useSortWorker } from "src/hooks";
 import Table from "src/components/Table";
 import DropDownCss from "src/components/DropDownCss";
 import { UserType } from "src/store/organization/organizationSlice";
 
 import "./OrganizationMembers.scss";
 import { formatDate } from "src/helpers/formatDate";
-import sortBy, { SortTypes } from "src/helpers/utils/sortBy/sortBy";
+import { SortTypes } from "src/helpers/utils/sortBy/sortBy";
 
 type Params = {
   organizationId: string;
@@ -56,10 +56,6 @@ const OrganizationMembers: React.FC = () => {
 
   const [sort, setSort] = useState({ sortBy: "", isSortedAsc: true });
 
-  if (!orgMembers) {
-    return <>Loading...</>;
-  }
-
   const headerFields = [
     { title: "ID", field: "userId" },
     {
@@ -87,8 +83,6 @@ const OrganizationMembers: React.FC = () => {
       field: "actions",
     },
   ];
-
-  const { isFetching, isFetched, error, users } = orgMembers;
 
   const renderActions = (record: UserType) => {
     return (
@@ -125,9 +119,15 @@ const OrganizationMembers: React.FC = () => {
   const renderCreatedAt = (record: UserType) => (
     <>{formatDate(record.createdAt)}</>
   );
-  let sortType =
+  const sortType =
     sort.sortBy === "createdAt" ? SortTypes.date : SortTypes.string;
-  const usersToDisplay = sortBy(users, sort.sortBy, sort.isSortedAsc, sortType);
+  const sortedUsers = useSortWorker(orgMembers?.users || [], sort, sortType);
+
+  if (!orgMembers) {
+    return <>Loading...</>;
+  }
+
+  const { isFetching, isFetched, error } = orgMembers;
 
   return (
     <div className="px-8">
@@ -136,7 +136,7 @@ const OrganizationMembers: React.FC = () => {
       {error && <div>{error.message || `Something went wrong...`}</div>}
       {isFetched && (
         <Table
-          data={usersToDisplay}
+          data={sortedUsers}
           renderFunctions={{
             actions: renderActions,
             createdAt: renderCreatedAt,

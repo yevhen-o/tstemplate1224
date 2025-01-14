@@ -22,6 +22,7 @@ localhost:3050/api - api
 - [x] useObserveElementSize
 - [x] useClickOutside
 - [x] hook withContextMenu
+- [x] hook useSortWorker // move sort functionality into separate thread
 - [x] validation helper
 - [x] url builder helper
 - [x] HOC withPagination

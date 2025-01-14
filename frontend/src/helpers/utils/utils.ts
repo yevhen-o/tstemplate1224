@@ -1,16 +1,25 @@
 export function debounce(fn: Function, wait: number) {
   let timerId: ReturnType<typeof setTimeout> | null = null;
 
-  return function (this: any, ...args: any[]) {
+  function debounced(this: any, ...args: any[]) {
     if (timerId) {
-      clearInterval(timerId);
+      clearTimeout(timerId);
     }
     const context = this;
     timerId = setTimeout(() => {
       timerId = null;
       fn.apply(context, args);
     }, wait);
+  }
+
+  debounced.cancel = () => {
+    if (timerId) {
+      clearTimeout(timerId);
+      timerId = null;
+    }
   };
+
+  return debounced;
 }
 
 export const countBy = <T>(

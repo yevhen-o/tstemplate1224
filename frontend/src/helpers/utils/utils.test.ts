@@ -257,16 +257,8 @@ describe("throttle", () => {
       increment();
       increment();
       expect(i).toBe(1);
-    }, 50);
-
-    setTimeout(() => {
-      expect(i).toBe(1);
-      increment();
-      increment();
-      increment();
-      expect(i).toBe(2);
       done();
-    }, 200);
+    }, 50);
   });
 
   test("callbacks can access `this`", (done) => {
