@@ -121,7 +121,11 @@ const OrganizationMembers: React.FC = () => {
   );
   const sortType =
     sort.sortBy === "createdAt" ? SortTypes.date : SortTypes.string;
-  const sortedUsers = useSortWorker(orgMembers?.users || [], sort, sortType);
+  const { sortedData: sortedUsers, isWorking } = useSortWorker(
+    orgMembers?.users || [],
+    sort,
+    sortType
+  );
 
   if (!orgMembers) {
     return <>Loading...</>;
@@ -137,6 +141,7 @@ const OrganizationMembers: React.FC = () => {
       {isFetched && (
         <Table
           data={sortedUsers}
+          isDataFetching={isWorking}
           renderFunctions={{
             actions: renderActions,
             createdAt: renderCreatedAt,

@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { SortTypes } from "src/helpers/utils/sortBy/sortBy";
 
 export const useSortWorker = (
@@ -6,15 +6,13 @@ export const useSortWorker = (
   sort: { sortBy: string; isSortedAsc: boolean },
   sortType: SortTypes = SortTypes.string
 ) => {
-  const worker = useMemo(
-    () =>
-      new Worker(new URL("src/helpers/utils/sortWorker.ts", import.meta.url)),
-    []
-  );
-
   const [sortedData, setSortedData] = useState<any[]>([]);
+  const [isWorking, setIsWorking] = useState(false);
 
   useEffect(() => {
+    const worker = new Worker(
+      new URL("src/helpers/utils/sortWorker.ts", import.meta.url)
+    );
     if (data.length && sort.sortBy) {
       worker.postMessage({
         data,
@@ -22,25 +20,28 @@ export const useSortWorker = (
         isSortedAsc: sort.isSortedAsc,
         sortType,
       });
+      setIsWorking(true);
 
       worker.onmessage = function (event) {
         setSortedData(event.data);
+        setIsWorking(false);
       };
 
       worker.onerror = function (error) {
         console.error("Worker Error:", error);
         setSortedData(data || []);
+        setIsWorking(false);
       };
     } else {
       setSortedData(data || []);
     }
 
     return () => {
-      //worker.terminate();
+      worker.terminate();
     };
-  }, [data, sort, worker, sortType]);
+  }, [data, sort, sortType]);
 
-  return sortedData;
+  return { sortedData, isWorking };
 };
 
 export default useSortWorker;
