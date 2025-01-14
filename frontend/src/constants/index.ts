@@ -13,3 +13,6 @@ export const KEY_CODES = {
   ESC: "Escape",
   SPACE: "Space",
 };
+
+export const FILTER_ALL_VALUE =
+  "someLongRandomStringThatNotMatchAnyPossibleValue";

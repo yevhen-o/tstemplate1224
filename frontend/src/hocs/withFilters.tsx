@@ -4,6 +4,7 @@ import Filters from "src/components/Filters";
 import { getUrl, IDENTIFIERS } from "src/services/urlsHelper";
 import { FormValueType, FieldType, Value } from "src/hooks/useForm";
 import { storageSet, storageGetKey } from "src/services/localStorage";
+import useFilterWorker from "src/hooks/useFilterWorker";
 
 interface WithFiltersProps<T> {
   items: T[];
@@ -56,21 +57,28 @@ export function withFilters<T>(
       null
     );
 
-    // Apply filters based on the current values
-    const itemsToDisplay = items.filter(
-      (item) =>
-        !appliedValues ||
-        Object.entries(appliedValues).every(([key, value]) => {
-          const filterFn =
-            filterFunctions[key] ||
-            (filterFields.find((field) => field.name === key)?.fieldType ===
-            "input"
-              ? defaultSearchFilterFunction
-              : defaultSelectFilterFunction);
-          return !!value && !["page", "perPage"].includes(key)
-            ? filterFn(item, key, value as NonNullable<Value>)
-            : true;
-        })
+    // // Apply filters based on the current values
+    // const itemsToDisplay = items.filter(
+    //   (item) =>
+    //     !appliedValues ||
+    //     Object.entries(appliedValues).every(([key, value]) => {
+    //       const filterFn =
+    //         filterFunctions[key] ||
+    //         (filterFields.find((field) => field.name === key)?.fieldType ===
+    //         "input"
+    //           ? defaultSearchFilterFunction
+    //           : defaultSelectFilterFunction);
+    //       return !!value && !["page", "perPage"].includes(key)
+    //         ? filterFn(item, key, value as NonNullable<Value>)
+    //         : true;
+    //     })
+    // );
+
+    const { filteredData: itemsToDisplay } = useFilterWorker(
+      items,
+      appliedValues,
+      filterFields,
+      filterFunctions
     );
 
     const { pathname } = useLocation();
