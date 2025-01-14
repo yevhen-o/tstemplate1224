@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createSelector } from "reselect";
 import { useParams } from "react-router";
 import { RootState } from "src/store";
@@ -10,6 +10,7 @@ import { UserType } from "src/store/organization/organizationSlice";
 
 import "./OrganizationMembers.scss";
 import { formatDate } from "src/helpers/formatDate";
+import sortBy, { SortTypes } from "src/helpers/utils/sortBy/sortBy";
 
 type Params = {
   organizationId: string;
@@ -53,6 +54,8 @@ const OrganizationMembers: React.FC = () => {
     }
   }, [organizationId, getOrgUsers, orgMembers]);
 
+  const [sort, setSort] = useState({ sortBy: "", isSortedAsc: true });
+
   if (!orgMembers) {
     return <>Loading...</>;
   }
@@ -62,18 +65,22 @@ const OrganizationMembers: React.FC = () => {
     {
       title: "First name",
       field: "firstName",
+      isSortable: true,
     },
     {
       title: "Last name",
       field: "lastName",
+      isSortable: true,
     },
     {
       title: "Email",
       field: "email",
+      isSortable: true,
     },
     {
       title: "Created at",
       field: "createdAt",
+      isSortable: true,
     },
     {
       title: "",
@@ -118,6 +125,9 @@ const OrganizationMembers: React.FC = () => {
   const renderCreatedAt = (record: UserType) => (
     <>{formatDate(record.createdAt)}</>
   );
+  let sortType =
+    sort.sortBy === "createdAt" ? SortTypes.date : SortTypes.string;
+  const usersToDisplay = sortBy(users, sort.sortBy, sort.isSortedAsc, sortType);
 
   return (
     <div className="px-8">
@@ -126,11 +136,16 @@ const OrganizationMembers: React.FC = () => {
       {error && <div>{error.message || `Something went wrong...`}</div>}
       {isFetched && (
         <Table
-          data={users}
+          data={usersToDisplay}
           renderFunctions={{
             actions: renderActions,
             createdAt: renderCreatedAt,
           }}
+          sortBy={sort.sortBy}
+          isSortedAsc={sort.isSortedAsc}
+          onSortChange={(sortBy, isSortedAsc) =>
+            setSort({ sortBy, isSortedAsc })
+          }
           headerFields={headerFields}
           name="organization__members"
         />

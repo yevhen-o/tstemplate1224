@@ -35,5 +35,26 @@
 
   &--head {
     border: none;
+
+  }
+
+  &--sortable {
+    cursor: pointer;
+  }
+
+  &__sort-indicator {
+    opacity: .3;
+    display: inline-block;
+    vertical-align: middle;
+    padding-left: var(--spacer-sm);
+
+    &:hover, &--active {
+      opacity: 1;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   }
 }
