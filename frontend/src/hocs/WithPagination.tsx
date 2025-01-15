@@ -23,7 +23,7 @@ export function withPagination<T>(
     const { items } = props;
 
     const { pathname } = useLocation();
-    let [searchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
     const [appliedValues, setAppliedValues] = useState<FormValueType | null>(

@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import TextEllipsis from "src/components/TextEllipsis";
-import CheckBox from "../FormFields/CheckBox";
 
 interface MultipleChoiceItemProps {
   id?: string;
