@@ -27,12 +27,12 @@ localhost:3050/api - api
 - [x] validation helper
 - [x] url builder helper
 - [x] HOC withPagination
-- [x] HOC withFilters
+- [x] HOC withFilters // hm... looks hoc is outdated
 - [x] HOC withFilters reflect url changing on filter change // also add reflect pagination
 - [x] Write localStorage helper to store all client data under uniq key
 - [x] HOC withDeviceMedia
 - [x] ~~HOC withWrapperSize~~ deprecated: to complicated to use, hook is more straight forward
-- [ ] Table
+- [x] Table
 - [x] FormFields basic
 - [ ] FormFields advanced
 - [x] DropDown hm implementation much harder that with css only, work correctly when anchor shifted with translate, but instead buggy on scroll

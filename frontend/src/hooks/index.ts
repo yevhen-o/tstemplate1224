@@ -1,12 +1,14 @@
 export { useActions } from "./useActions";
 export { useClientScreen } from "./useClientScreen";
 export { useTypedSelector } from "./useTypedSelector";
-export type { FormValueType, FieldType } from "./useForm";
+export type { FormValueType, FieldType, Value } from "./useForm";
 export { useForm } from "./useForm";
 export { useOutsideClick } from "./useOutsideClick";
 export { useObserveElementSize } from "./useObserveElementSize";
 export { useSortWorker } from "./useSortWorker";
 export { useSearchParamsOrLocalStorage } from "./useSearchParamsOrLocalStorage";
+export { usePagination } from "./usePagination";
+export { useFilters } from "./useFilters";
 
 export const isOutdated = <
   T extends { fetchedTime?: number; isFetching?: boolean }

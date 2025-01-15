@@ -7,16 +7,27 @@ import React, {
 } from "react";
 import classNames from "classnames";
 import { SortTypes } from "src/helpers/utils/sortBy/sortBy";
-import { useSortWorker, useSearchParamsOrLocalStorage } from "src/hooks";
+import {
+  Value,
+  FieldType,
+  useFilters,
+  FormValueType,
+  useSortWorker,
+  usePagination,
+  useSearchParamsOrLocalStorage,
+} from "src/hooks";
 
 import TableHead, { TableField } from "./TableHead";
 import TableBody from "./TableBody";
+const defaultObj = {};
 
 type TableProps<O> = {
   name: string;
   headerFields: TableField[];
+  initialFilterValues?: FormValueType;
+  filterFields?: FieldType[];
+  filterFunctions?: Record<string, (i: O, k: string, v: Value) => boolean>;
   wrapperClassName?: string;
-  topWidget?: ReactElement;
   data: O[];
   sortBy?: string;
   isSortedAsc?: boolean;
@@ -33,9 +44,11 @@ const Table = <O extends Record<string, unknown>>({
   data,
   name,
   sortBy,
-  topWidget,
   isSortedAsc,
   headerFields,
+  filterFields,
+  initialFilterValues = defaultObj,
+  filterFunctions = defaultObj,
   isDataFetching,
   wrapperClassName,
   showEmptyDataMessage,
@@ -60,6 +73,7 @@ const Table = <O extends Record<string, unknown>>({
   );
 
   const appliedIsSortedAsc = typeof appliedValues?.isSortedAsc === "undefined";
+
   const sortType =
     appliedValues?.sortBy === "createdAt" ? SortTypes.date : SortTypes.string;
   const { sortedData, isWorking } = useSortWorker(
@@ -67,6 +81,18 @@ const Table = <O extends Record<string, unknown>>({
     appliedValues?.sortBy,
     appliedIsSortedAsc,
     sortType
+  );
+
+  const { filters, filteredData } = useFilters(
+    sortedData,
+    initialFilterValues,
+    filterFields,
+    filterFunctions
+  );
+
+  const { pagination, paginatedItems } = usePagination<O>(
+    filteredData,
+    initialFilterValues
   );
 
   const handleSort = (field: TableField) => () => {
@@ -88,7 +114,7 @@ const Table = <O extends Record<string, unknown>>({
     <div
       className={classNames(wrapperClassName, "wrapper", `${name}__wrapper`)}
     >
-      {topWidget && topWidget}
+      {filters}
       <table className={classNames("table", `${name}__table`)}>
         <TableHead
           name={name}
@@ -102,7 +128,7 @@ const Table = <O extends Record<string, unknown>>({
         />
         <TableBody
           name={name}
-          data={sortedData}
+          data={paginatedItems}
           getRowClasses={getRowClasses}
           renderFunctions={renderFunctions}
           configuredFields={configuredFields}
@@ -115,6 +141,7 @@ const Table = <O extends Record<string, unknown>>({
       {!!showEmptyDataMessage && (
         <>{emptyDataMessageText ? emptyDataMessageText : "No data found."}</>
       )}
+      {pagination}
     </div>
   );
 };

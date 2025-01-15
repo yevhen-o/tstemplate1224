@@ -3,10 +3,11 @@ import { createSelector } from "reselect";
 import { useParams } from "react-router";
 import { RootState } from "src/store";
 import { useActions } from "src/hooks/useActions";
-import { useTypedSelector, isOutdated } from "src/hooks";
+import { useTypedSelector, isOutdated, FieldType } from "src/hooks";
 import Table from "src/components/Table";
 import DropDownCss from "src/components/DropDownCss";
 import { UserType } from "src/store/organization/organizationSlice";
+import { FILTER_ALL_VALUE } from "src/constants";
 
 import "./OrganizationMembers.scss";
 import { formatDate } from "src/helpers/formatDate";
@@ -122,6 +123,41 @@ const OrganizationMembers: React.FC = () => {
     return <>Loading...</>;
   }
 
+  const filterFields: FieldType[] = [
+    { fieldType: "input", name: "search", label: "Search" },
+    {
+      fieldType: "select",
+      name: "priority",
+      label: "Priority",
+      options: [
+        { value: FILTER_ALL_VALUE, label: "All" },
+        { value: "low", label: "Low" },
+        { value: "medium", label: "Medium" },
+        { value: "high", label: "High" },
+      ],
+    },
+    {
+      fieldType: "select",
+      name: "scope",
+      label: "Scope",
+      options: [
+        { value: FILTER_ALL_VALUE, label: "All" },
+        { value: "forWork", label: "For Work" },
+        { value: "forFun", label: "For Fun" },
+      ],
+    },
+    {
+      fieldType: "select",
+      name: "isImportant",
+      label: "Is Important",
+      options: [
+        { value: FILTER_ALL_VALUE, label: "All" },
+        { value: "true", label: "Important" },
+        { value: "false", label: "Not important" },
+      ],
+    },
+  ];
+
   const { isFetching, isFetched, error, users } = orgMembers;
 
   return (
@@ -132,6 +168,7 @@ const OrganizationMembers: React.FC = () => {
       {isFetched && (
         <Table
           data={users}
+          filterFields={filterFields}
           renderFunctions={{
             actions: renderActions,
             createdAt: renderCreatedAt,

@@ -1,8 +1,6 @@
 import React from "react";
-import Filters from "src/components/Filters";
-import useFilterWorker from "src/hooks/useFilterWorker";
-import { useSearchParamsOrLocalStorage } from "src/hooks";
 import { FieldType, FormValueType, Value } from "src/hooks/useForm";
+import { useFilters } from "src/hooks/useFilters";
 
 const defaultObj = {};
 const defaultArr: FieldType[] = [];
@@ -24,28 +22,17 @@ export function withFilters<T extends Record<string, Value>>(
       (i: T, k: keyof typeof initialValues, v: Value) => boolean
     >;
   }) {
-    const { appliedValues, handleValuesChange } = useSearchParamsOrLocalStorage(
-      {
-        initialValues,
-      }
-    );
-
-    const { filteredData: itemsToDisplay } = useFilterWorker(
+    const { filters, filteredData } = useFilters(
       items,
-      appliedValues,
+      initialValues,
       filterFields,
       filterFunctions
     );
 
     return (
       <>
-        <Filters
-          initialValues={initialValues}
-          filterFields={filterFields}
-          appliedValues={appliedValues || {}}
-          onChange={handleValuesChange}
-        />
-        <Component items={itemsToDisplay} />
+        {filters}
+        <Component items={filteredData} />
       </>
     );
   };
