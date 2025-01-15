@@ -1,17 +1,13 @@
 import "./Table.scss";
-import classNames from "classnames";
 import React, {
+  useMemo,
   useState,
-  useEffect,
   ReactElement,
   PropsWithChildren,
 } from "react";
-import { useSearchParams, useNavigate, useLocation } from "react-router";
+import classNames from "classnames";
 import { SortTypes } from "src/helpers/utils/sortBy/sortBy";
-import { FormValueType } from "src/hooks/useForm";
-import { useSortWorker } from "src/hooks";
-import { getUrl, IDENTIFIERS } from "src/services/urlsHelper";
-import { storageSet, storageGetKey } from "src/services/localStorage";
+import { useSortWorker, useSearchParamsOrLocalStorage } from "src/hooks";
 
 import TableHead, { TableField } from "./TableHead";
 import TableBody from "./TableBody";
@@ -47,9 +43,12 @@ const Table = <O extends Record<string, unknown>>({
   getRowClasses,
   renderFunctions = defaultRenderFunction,
 }: PropsWithChildren<TableProps<O>>): ReactElement => {
-  const [appliedValues, setAppliedValues] = useState<FormValueType | null>({
-    sortBy: sortBy,
-    isSortedAsc: isSortedAsc,
+  const initialValues = useMemo(
+    () => ({ sortBy, isSortedAsc }),
+    [sortBy, isSortedAsc]
+  );
+  const { appliedValues, handleValuesChange } = useSearchParamsOrLocalStorage({
+    initialValues,
   });
 
   const [fieldsToDisplay, setFieldsToDisplay] = useState<string[]>(
@@ -59,16 +58,6 @@ const Table = <O extends Record<string, unknown>>({
   const configuredFields = headerFields.filter((f) =>
     fieldsToDisplay.includes(f.field)
   );
-
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    const filterValues: FormValueType = { sortBy, isSortedAsc };
-    searchParams.forEach((value, key) => (filterValues[key] = value));
-    setAppliedValues(filterValues);
-  }, [searchParams, sortBy, isSortedAsc]);
 
   const appliedIsSortedAsc = typeof appliedValues?.isSortedAsc === "undefined";
   const sortType =
@@ -92,20 +81,7 @@ const Table = <O extends Record<string, unknown>>({
       updatedValues.sortBy = field.field;
       updatedValues.isSortedAsc = true;
     }
-    const valuesImpactUrl: FormValueType = {};
-    Object.entries(updatedValues).forEach(([key, v]) => {
-      if (["sortBy", "isSortedAsc"].includes(key)) {
-        if (key === "sortBy" && !!v) {
-          valuesImpactUrl[key] = v;
-        } else if (key === "isSortedAsc" && !v) {
-          valuesImpactUrl[key] = v;
-        }
-      } else {
-        valuesImpactUrl[key] = v;
-      }
-    });
-    storageSet(storageGetKey(pathname), valuesImpactUrl);
-    navigate(getUrl(pathname as IDENTIFIERS, valuesImpactUrl));
+    handleValuesChange(updatedValues);
   };
 
   return (

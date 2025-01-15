@@ -8,7 +8,8 @@ import AddTodoModal from "./AddEditTodoModal";
 import Button from "src/components/Buttons";
 import TodoList from "./TodoList";
 import { FieldType } from "src/hooks/useForm";
-import { FILTER_ALL_VALUE, withWrapperSize } from "src/hocs";
+import { withWrapperSize } from "src/hocs";
+import { FILTER_ALL_VALUE } from "src/constants";
 
 const Todos: React.FC<{ wrapperWidth: number; wrapperHeight: number }> = ({
   wrapperWidth,

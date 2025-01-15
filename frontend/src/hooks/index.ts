@@ -6,6 +6,7 @@ export { useForm } from "./useForm";
 export { useOutsideClick } from "./useOutsideClick";
 export { useObserveElementSize } from "./useObserveElementSize";
 export { useSortWorker } from "./useSortWorker";
+export { useSearchParamsOrLocalStorage } from "./useSearchParamsOrLocalStorage";
 
 export const isOutdated = <
   T extends { fetchedTime?: number; isFetching?: boolean }
