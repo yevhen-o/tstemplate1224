@@ -11,6 +11,7 @@ import { nanoid } from "@reduxjs/toolkit";
 
 import DropDown from "src/components/DropDown";
 import FieldLabel from "src/components/FormFields/FieldLabel";
+import { Close, ChevronDown, ChevronUp } from "src/components/Icons";
 
 import { KEY_CODES } from "src/constants/";
 import { checkValidity } from "src/helpers/validation";
@@ -166,7 +167,7 @@ const MultiSelect: ForwardRefRenderFunction<
                       onClick={(e) => handleRemoveOption(value, e)}
                       className="select__remove-item"
                     >
-                      <CloseIcon />
+                      <Close size={20} />
                     </div>
                   </div>
                 ))}
@@ -223,55 +224,11 @@ const MultiSelect: ForwardRefRenderFunction<
   );
 };
 
-const CloseIcon = () => (
-  <svg
-    className="w-3 h-3"
-    aria-hidden="true"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 14 14"
-  >
-    <path
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-    />
-  </svg>
-);
-
 const ArrowIcon: React.FC<{ isDropDownShown: boolean }> = ({
   isDropDownShown,
 }) => (
   <div className="select__arrow">
-    {isDropDownShown ? (
-      <svg
-        className="pointer-events-none"
-        viewBox="0 0 16 16"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          fillRule="evenodd"
-          d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
-          clipRule="evenodd"
-        />
-      </svg>
-    ) : (
-      <svg
-        className="pointer-events-none"
-        viewBox="0 0 16 16"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          fillRule="evenodd"
-          d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
-          clipRule="evenodd"
-        />
-      </svg>
-    )}
+    {isDropDownShown ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
   </div>
 );
 

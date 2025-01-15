@@ -1,8 +1,10 @@
 import { nanoid } from "nanoid";
 import classNames from "classnames";
-import React, { PropsWithChildren, ReactElement } from "react";
-
+import React, { PropsWithChildren, ReactElement, useState } from "react";
+import { Settings, ArrowDown, ArrowUp } from "src/components/Icons";
 import "./Table.scss";
+
+import MultipleChoiceDropDown from "../MultipleChoiceDropDown/MultipleChoiceDropDown";
 
 interface TableField {
   title?: string;
@@ -42,6 +44,24 @@ const Table = <O extends Record<string, unknown>>({
   onSortChange,
   renderFunctions = {},
 }: PropsWithChildren<TableProps<O>>): ReactElement => {
+  const hasConfiguration = headerFields.some((f) => !f.isAlwaysVisible);
+
+  const handleToggleField = (field: string) => () => {
+    setFieldsToDisplay((prev: string[]) =>
+      prev.includes(field) ? prev.filter((f) => f !== field) : [...prev, field]
+    );
+  };
+
+  const configurationOptions = headerFields.map((f) => ({
+    label: f.title || f.field,
+    value: f.field,
+    onClick: handleToggleField(f.field),
+    disabled: f.isAlwaysVisible,
+  }));
+
+  const [fieldsToDisplay, setFieldsToDisplay] = useState<string[]>(
+    headerFields.map((f) => f.field)
+  );
   const handleSort = (field: TableField) => () => {
     if (!field.isSortable) {
       return;
@@ -53,6 +73,10 @@ const Table = <O extends Record<string, unknown>>({
     }
   };
 
+  const configuredFields = headerFields.filter((f) =>
+    fieldsToDisplay.includes(f.field)
+  );
+
   return (
     <div
       className={classNames(wrapperClassName, "wrapper", `${name}__wrapper`)}
@@ -61,7 +85,7 @@ const Table = <O extends Record<string, unknown>>({
       <table className={classNames("table", `${name}__table`)}>
         <thead>
           <tr className={classNames("row", "row--head", `${name}__row--head`)}>
-            {headerFields.map((f) => (
+            {configuredFields.map((f, index) => (
               <th
                 key={f.field}
                 className={classNames(
@@ -84,39 +108,19 @@ const Table = <O extends Record<string, unknown>>({
                     })}
                   >
                     {isSortedAsc || sortBy !== f.field ? (
-                      <svg
-                        width="100%"
-                        height="100%"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M12 4V20M12 20L18 14M12 20L6 14"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                      <ArrowDown size={20} />
                     ) : (
-                      <svg
-                        width="100%"
-                        height="100%"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M12 20V4M12 4L6 10M12 4L18 10"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                      <ArrowUp size={20} />
                     )}
                   </span>
+                )}
+                {hasConfiguration && configuredFields.length - 1 === index && (
+                  <MultipleChoiceDropDown
+                    value={fieldsToDisplay}
+                    menuItems={configurationOptions}
+                  >
+                    <Settings size="20" />
+                  </MultipleChoiceDropDown>
                 )}
               </th>
             ))}
@@ -132,7 +136,7 @@ const Table = <O extends Record<string, unknown>>({
                 getRowClasses ? getRowClasses(record) : ""
               )}
             >
-              {headerFields.map((f) => (
+              {configuredFields.map((f) => (
                 <td
                   key={`${index}__${f.field}`}
                   className={classNames(

@@ -8,6 +8,8 @@ const VirtualizedList = ({
   CMP,
   handleClick,
   handleClose,
+  value,
+  isItemSelected,
   itemHeight = 40,
   extraItems = 20,
   visibleSpace,
@@ -18,6 +20,8 @@ const VirtualizedList = ({
   })[];
   itemHeight?: number;
   extraItems?: number;
+  value?: any;
+  isItemSelected?: (itemValue: string, newValue: string | string[]) => void;
   CMP: ComponentType<any>;
   handleClick?: (callback?: () => void) => void;
   handleClose?: () => void;
@@ -45,7 +49,7 @@ const VirtualizedList = ({
   };
 
   const generateRows = () => {
-    let itemsToDisplay: JSX.Element[] = [];
+    const itemsToDisplay: JSX.Element[] = [];
     for (let i = 0; i < renderedNodesCount; i++) {
       const index = i + startIndex;
       itemsToDisplay.push(
@@ -55,6 +59,8 @@ const VirtualizedList = ({
           index={index}
           activeIndex={activeIndex}
           onMouseEnter={handleMouseEnter(index)}
+          value={value}
+          isItemSelected={isItemSelected}
         />
       );
     }

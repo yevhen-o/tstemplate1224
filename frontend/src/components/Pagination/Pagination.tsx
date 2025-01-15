@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 
-import Button from "src/components/Buttons";
-import Select from "src/components/FormFields/Select";
 import { FormValueType } from "src/hooks";
-import { DEFAULT_PAGE_SIZE, PREDEFINED_PAGE_SIZES } from "src/constants";
+import Button from "src/components/Buttons";
 import { deepEqual } from "src/helpers/utils";
+import Select from "src/components/FormFields/Select";
+import { ChevronLeft, ChevronRight } from "src/components/Icons";
+import { DEFAULT_PAGE_SIZE, PREDEFINED_PAGE_SIZES } from "src/constants";
 
 interface PaginationProps {
   totalItems: number;
@@ -59,19 +60,7 @@ const Pagination: React.FC<PaginationProps> = ({
             disabled={page === 1}
           >
             <span className="sr-only">Previous</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-              className="w-5 h-5"
-            >
-              <path
-                fillRule="evenodd"
-                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
+            <ChevronLeft size={20} />
           </Button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map(
             (pageItem) => (
@@ -94,19 +83,7 @@ const Pagination: React.FC<PaginationProps> = ({
             isBordered
           >
             <span className="sr-only">Next</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-              className="w-5 h-5"
-            >
-              <path
-                fillRule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
+            <ChevronRight size={20} />
           </Button>
         </nav>
         <span className="block">

@@ -57,7 +57,7 @@ const OrganizationMembers: React.FC = () => {
   const [sort, setSort] = useState({ sortBy: "", isSortedAsc: true });
 
   const headerFields = [
-    { title: "ID", field: "userId" },
+    { title: "ID", field: "userId", isAlwaysVisible: true },
     {
       title: "First name",
       field: "firstName",
@@ -81,6 +81,7 @@ const OrganizationMembers: React.FC = () => {
     {
       title: "",
       field: "actions",
+      isAlwaysVisible: true,
     },
   ];
 

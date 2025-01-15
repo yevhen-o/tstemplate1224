@@ -46,6 +46,8 @@ interface VirtualScroll {
 const VirtualScrollWrapper: React.FC<VirtualScroll> = ({
   items,
   CMP,
+  value,
+  isItemSelected,
   handleClick,
   handleClose,
   itemHeight = 40,
@@ -56,6 +58,8 @@ const VirtualScrollWrapper: React.FC<VirtualScroll> = ({
   return (
     <VirtualizedList
       items={items}
+      value={value}
+      isItemSelected={isItemSelected}
       itemHeight={itemHeight}
       extraItems={extraItems}
       handleClick={handleClick}

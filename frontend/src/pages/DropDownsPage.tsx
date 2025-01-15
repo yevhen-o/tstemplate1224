@@ -150,7 +150,7 @@ const DropDownsPage: React.FC = () => {
           options={menuOptions}
           isCloseOnSelect
           onChange={(e) => {
-            Array.isArray(e) && setSelectedOptions(e);
+            if (Array.isArray(e)) setSelectedOptions(e);
           }}
         />
         <MultiSelect
@@ -162,7 +162,7 @@ const DropDownsPage: React.FC = () => {
           isCloseOnSelect
           isSearchable
           onChange={(e) => {
-            Array.isArray(e) && setSelectedOptions(e);
+            if (Array.isArray(e)) setSelectedOptions(e);
           }}
         />
       </div>

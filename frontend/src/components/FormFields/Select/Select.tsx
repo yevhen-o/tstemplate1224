@@ -1,15 +1,15 @@
 import {
+  useRef,
   useState,
   forwardRef,
   PropsWithChildren,
   ForwardRefRenderFunction,
-  useRef,
 } from "react";
+import classNames from "classnames";
 
 import FieldLabel from "../FieldLabel/FieldLabel";
-
+import { ChevronDown } from "src/components/Icons";
 import { checkValidity } from "src/helpers/validation";
-import classNames from "classnames";
 import { DefaultFormProps, SelectType } from "src/Types/FormTypes";
 
 type Props = SelectType & DefaultFormProps;
@@ -90,19 +90,10 @@ const Select: ForwardRefRenderFunction<
             </option>
           ))}
         </select>
-        <svg
+        <ChevronDown
           className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-          viewBox="0 0 16 16"
-          fill="currentColor"
-          aria-hidden="true"
-          data-slot="icon"
-        >
-          <path
-            fillRule="evenodd"
-            d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
-            clipRule="evenodd"
-          />
-        </svg>
+          size={16}
+        />
       </div>
 
       {!isValid && errorMessage && isTouched && (
