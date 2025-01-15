@@ -6,7 +6,7 @@ describe("debounce", () => {
     expect(increment).toBeTruthy();
   });
 
-  test("executes after duration", (done) => {
+  test("executes after duration", () => {
     let i = 0;
     const increment = debounce(() => {
       i++;
@@ -15,15 +15,16 @@ describe("debounce", () => {
     expect(i).toBe(0);
     increment();
     expect(i).toBe(0);
-
-    setTimeout(() => {
-      expect(i).toBe(1);
-      done();
-    }, 20);
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(i).toBe(1);
+        resolve();
+      }, 20);
+    });
   });
 
   describe("uses arguments", () => {
-    test("called once", (done) => {
+    test("called once", () => {
       let i = 21;
       const increment = debounce((a: number, b: number) => {
         i += a * b;
@@ -32,14 +33,15 @@ describe("debounce", () => {
       expect(i).toBe(21);
       increment(3, 7);
       expect(i).toBe(21);
-
-      setTimeout(() => {
-        expect(i).toBe(42);
-        done();
-      }, 20);
+      return new Promise<void>((resolve) => {
+        setTimeout(() => {
+          expect(i).toBe(42);
+          resolve();
+        }, 20);
+      });
     });
 
-    test("uses arguments of latest invocation", (done) => {
+    test("uses arguments of latest invocation", () => {
       let i = 21;
       const increment = debounce((a: number, b: number) => {
         i += a * b;
@@ -49,15 +51,16 @@ describe("debounce", () => {
       increment(3, 7);
       increment(4, 5);
       expect(i).toBe(21);
-
-      setTimeout(() => {
-        expect(i).toBe(41);
-        done();
-      }, 20);
+      return new Promise<void>((resolve) => {
+        setTimeout(() => {
+          expect(i).toBe(41);
+          resolve();
+        }, 20);
+      });
     });
   });
 
-  test("execute once even after calling it multiple times", (done) => {
+  test("execute once even after calling it multiple times", async () => {
     let i = 0;
     const increment = debounce(() => {
       i++;
@@ -71,17 +74,21 @@ describe("debounce", () => {
     expect(i).toBe(0);
 
     // Should not fire yet.
-    setTimeout(() => {
-      expect(i).toBe(0);
-    }, 10);
-
-    setTimeout(() => {
-      expect(i).toBe(1);
-      done();
-    }, 30);
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(i).toBe(0);
+        resolve();
+      }, 10);
+    });
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(i).toBe(1);
+        resolve();
+      }, 30);
+    });
   });
 
-  test("duration extended if called again during window", (done) => {
+  test("duration extended if called again during window", () => {
     let i = 0;
     const increment = debounce(() => {
       i++;
@@ -103,15 +110,16 @@ describe("debounce", () => {
       // Still 0 because we fired again at t=50, increment will only happen at t=150
       expect(i).toBe(0);
     }, 125);
-
-    setTimeout(() => {
-      expect(i).toBe(1);
-      done();
-      // Add a longer delay because the browser timer is unreliable.
-    }, 1500);
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(i).toBe(1);
+        resolve();
+        // Add a longer delay because the browser timer is unreliable.
+      }, 1500);
+    });
   });
 
-  test("callbacks can access `this`", (done) => {
+  test("callbacks can access `this`", () => {
     const increment = debounce(function (this: any, delta: number) {
       this.val += delta;
     }, 10);
@@ -124,11 +132,12 @@ describe("debounce", () => {
     expect(obj.val).toBe(2);
     obj.increment(3);
     expect(obj.val).toBe(2);
-
-    setTimeout(() => {
-      expect(obj.val).toBe(5);
-      done();
-    }, 20);
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(obj.val).toBe(5);
+        resolve();
+      }, 20);
+    });
   });
 });
 
@@ -289,11 +298,25 @@ describe("throttle", () => {
 
 describe("deepClone", () => {
   describe("primitive values", () => {
-    expect(deepClone("foo")).toEqual("foo");
-    expect(deepClone(123)).toEqual(123);
-    expect(deepClone(true)).toEqual(true);
-    expect(deepClone(false)).toEqual(false);
-    expect(deepClone(null)).toEqual(null);
+    test("should clone a string", () => {
+      expect(deepClone("foo")).toEqual("foo");
+    });
+
+    test("should clone a number", () => {
+      expect(deepClone(123)).toEqual(123);
+    });
+
+    test("should clone a boolean (true)", () => {
+      expect(deepClone(true)).toEqual(true);
+    });
+
+    test("should clone a boolean (false)", () => {
+      expect(deepClone(false)).toEqual(false);
+    });
+
+    test("should clone null", () => {
+      expect(deepClone(null)).toEqual(null);
+    });
   });
 
   describe("objects", () => {

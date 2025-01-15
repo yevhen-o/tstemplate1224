@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FormValueType, FieldType, Value } from "src/hooks/useForm";
-
+import FilterWorker from "src/helpers/utils/filterWorker?worker";
 export const useFilterWorker = <T>(
   items: T[],
   appliedValues: FormValueType | null,
@@ -10,13 +10,11 @@ export const useFilterWorker = <T>(
     (item: T, key: string, value: NonNullable<Value>) => boolean
   >
 ) => {
-  const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [filteredData, setFilteredData] = useState<T[]>([]);
   const [isWorking, setIsWorking] = useState(false);
 
   useEffect(() => {
-    const worker = new Worker(
-      new URL("src/helpers/utils/filterWorker.ts", import.meta.url)
-    );
+    const worker = new FilterWorker();
     if (items.length) {
       worker.postMessage({
         items,

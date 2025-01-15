@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   postgres:
     image: postgres
@@ -19,7 +19,7 @@ services:
       dockerfile: Dockerfile.dev
       context: ./nginx
     ports:
-      - '3050:80'
+      - "3050:80"
   backend:
     build:
       dockerfile: Dockerfile.dev
@@ -41,5 +41,8 @@ services:
       dockerfile: Dockerfile.dev
       context: ./frontend
     volumes:
-      - ./frontend/node_modules:/app/node_modules
       - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+
+volumes:
+  frontend_node_modules:

@@ -13,6 +13,7 @@ import {
   DatePickType,
 } from "src/Types/FormTypes";
 import { deepEqual } from "src/helpers/utils";
+import { Rule } from "src/helpers/validation/constants";
 
 export type Value = string | number | boolean | null | undefined;
 type ErrorsType = Record<string, string | undefined | null> | undefined;
@@ -27,7 +28,7 @@ export type FieldType =
   | DatePickType;
 
 export const useForm = <T extends FormValueType>(
-  rules: Partial<Record<keyof T, any>>,
+  rules: Partial<Record<keyof T, Rule>>,
   initialValues: T = {} as T
 ) => {
   const [values, setValues] = useState<T>(initialValues);

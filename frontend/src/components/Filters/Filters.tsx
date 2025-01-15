@@ -47,7 +47,7 @@ const Filters: React.FC<FilterProps> = ({
       }}
     >
       {filterFields.map((field) => renderFormField(field))}
-      {hasFormChanges() && (
+      {hasFormChanges() && values && Object.values(values).some((v) => !!v) && (
         <Button isPrimary onClick={resetForm}>
           Clear
         </Button>

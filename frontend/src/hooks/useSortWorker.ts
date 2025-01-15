@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
 import { SortTypes } from "src/helpers/utils/sortBy/sortBy";
+import SortWorker from "src/helpers/utils/sortWorker.ts?worker";
 
-export const useSortWorker = (
-  data: any[],
+export const useSortWorker = <T>(
+  data: T[],
   sort: { sortBy: string; isSortedAsc: boolean },
   sortType: SortTypes = SortTypes.string
 ) => {
-  const [sortedData, setSortedData] = useState<any[]>([]);
+  const [sortedData, setSortedData] = useState<T[]>([]);
   const [isWorking, setIsWorking] = useState(false);
 
   useEffect(() => {
-    const worker = new Worker(
-      new URL("src/helpers/utils/sortWorker.ts", import.meta.url)
-    );
+    const worker = new SortWorker();
     if (data.length && sort.sortBy) {
       worker.postMessage({
         data,

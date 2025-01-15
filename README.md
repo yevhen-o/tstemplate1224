@@ -23,6 +23,7 @@ localhost:3050/api - api
 - [x] useClickOutside
 - [x] hook withContextMenu
 - [x] hook useSortWorker // move sort functionality into separate thread
+- [x] hook useFilterWorker // move filter functionality into separate thread
 - [x] validation helper
 - [x] url builder helper
 - [x] HOC withPagination
@@ -39,6 +40,7 @@ localhost:3050/api - api
 - [x] MultiSelect // Should work yet on style improvement and types improvements
 - [x] VirtualScroll component // get some performance issues, maybe better to use some library instead, but in this case it will be less flexible
 - [x] Add openapi and swagger to api
+- [x] Migrate CRA to VITE can confirm VITE is much faster :)
 - [ ] Create Authentication flow with email and password, try to use browser hashing functionality
 - [ ] Build Authorization Logic
 - [ ] Use localForage for cross tab communication
