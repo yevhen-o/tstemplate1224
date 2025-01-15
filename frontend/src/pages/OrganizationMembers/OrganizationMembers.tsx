@@ -1,16 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { createSelector } from "reselect";
 import { useParams } from "react-router";
 import { RootState } from "src/store";
 import { useActions } from "src/hooks/useActions";
-import { useTypedSelector, isOutdated, useSortWorker } from "src/hooks";
+import { useTypedSelector, isOutdated } from "src/hooks";
 import Table from "src/components/Table";
 import DropDownCss from "src/components/DropDownCss";
 import { UserType } from "src/store/organization/organizationSlice";
 
 import "./OrganizationMembers.scss";
 import { formatDate } from "src/helpers/formatDate";
-import { SortTypes } from "src/helpers/utils/sortBy/sortBy";
 
 type Params = {
   organizationId: string;
@@ -53,8 +52,6 @@ const OrganizationMembers: React.FC = () => {
       getOrgUsers({ organizationId: +organizationId });
     }
   }, [organizationId, getOrgUsers, orgMembers]);
-
-  const [sort, setSort] = useState({ sortBy: "", isSortedAsc: true });
 
   const headerFields = [
     { title: "ID", field: "userId", isAlwaysVisible: true },
@@ -120,19 +117,12 @@ const OrganizationMembers: React.FC = () => {
   const renderCreatedAt = (record: UserType) => (
     <>{formatDate(record.createdAt)}</>
   );
-  const sortType =
-    sort.sortBy === "createdAt" ? SortTypes.date : SortTypes.string;
-  const { sortedData: sortedUsers, isWorking } = useSortWorker(
-    orgMembers?.users || [],
-    sort,
-    sortType
-  );
 
   if (!orgMembers) {
     return <>Loading...</>;
   }
 
-  const { isFetching, isFetched, error } = orgMembers;
+  const { isFetching, isFetched, error, users } = orgMembers;
 
   return (
     <div className="px-8">
@@ -141,17 +131,12 @@ const OrganizationMembers: React.FC = () => {
       {error && <div>{error.message || `Something went wrong...`}</div>}
       {isFetched && (
         <Table
-          data={sortedUsers}
-          isDataFetching={isWorking}
+          data={users}
           renderFunctions={{
             actions: renderActions,
             createdAt: renderCreatedAt,
           }}
-          sortBy={sort.sortBy}
-          isSortedAsc={sort.isSortedAsc}
-          onSortChange={(sortBy, isSortedAsc) =>
-            setSort({ sortBy, isSortedAsc })
-          }
+          sortBy="lastName"
           headerFields={headerFields}
           name="organization__members"
         />

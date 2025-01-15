@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { SortTypes } from "src/helpers/utils/sortBy/sortBy";
 import SortWorker from "src/helpers/utils/sortWorker.ts?worker";
+import { Value } from "./useForm";
 
 export const useSortWorker = <T>(
   data: T[],
-  sort: { sortBy: string; isSortedAsc: boolean },
+  sortBy?: Value,
+  isSortedAsc?: Value,
   sortType: SortTypes = SortTypes.string
 ) => {
   const [sortedData, setSortedData] = useState<T[]>([]);
@@ -12,11 +14,11 @@ export const useSortWorker = <T>(
 
   useEffect(() => {
     const worker = new SortWorker();
-    if (data.length && sort.sortBy) {
+    if (data.length && sortBy) {
       worker.postMessage({
         data,
-        sortByField: sort.sortBy,
-        isSortedAsc: sort.isSortedAsc,
+        sortByField: sortBy,
+        isSortedAsc: isSortedAsc,
         sortType,
       });
       setIsWorking(true);
@@ -37,8 +39,9 @@ export const useSortWorker = <T>(
 
     return () => {
       worker.terminate();
+      setIsWorking(false);
     };
-  }, [data, sort, sortType]);
+  }, [data, sortBy, isSortedAsc, sortType]);
 
   return { sortedData, isWorking };
 };

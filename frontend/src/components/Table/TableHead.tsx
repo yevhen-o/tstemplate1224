@@ -14,11 +14,11 @@ type TableHeadProps = {
   name: string;
   fieldsToDisplay: string[];
   headerFields: TableField[];
+  onSortChange: (f: TableField) => () => void;
   setFieldsToDisplay: React.Dispatch<React.SetStateAction<string[]>>;
   configuredFields: TableField[];
   sortBy?: string;
   isSortedAsc?: boolean;
-  onSortChange?: (sortBy: string, isSortedAsc: boolean) => void;
 };
 
 const TableHead: React.FC<TableHeadProps> = ({
@@ -26,9 +26,9 @@ const TableHead: React.FC<TableHeadProps> = ({
   sortBy,
   isSortedAsc,
   headerFields,
-  onSortChange,
   fieldsToDisplay,
   configuredFields,
+  onSortChange,
   setFieldsToDisplay,
 }) => {
   const hasConfiguration = headerFields.some((f) => !f.isAlwaysVisible);
@@ -46,16 +46,6 @@ const TableHead: React.FC<TableHeadProps> = ({
     disabled: f.isAlwaysVisible,
   }));
 
-  const handleSort = (field: TableField) => () => {
-    if (!field.isSortable) {
-      return;
-    }
-    if (field.field === sortBy) {
-      onSortChange?.(sortBy, !isSortedAsc);
-    } else {
-      onSortChange?.(field.field, true);
-    }
-  };
   return (
     <thead>
       <tr className={classNames("row", "row--head", `${name}__row--head`)}>
@@ -70,7 +60,7 @@ const TableHead: React.FC<TableHeadProps> = ({
               `${name}__cell--${f.field}`,
               { "cell--sortable": f.isSortable }
             )}
-            onClick={handleSort(f)}
+            onClick={onSortChange(f)}
             aria-label={`Change sort field to ${f.title}`}
             role="button"
           >
