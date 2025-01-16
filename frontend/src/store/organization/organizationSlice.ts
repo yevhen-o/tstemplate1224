@@ -1,17 +1,15 @@
 import { buildCreateSlice, asyncThunkCreator } from "@reduxjs/toolkit";
 import { deepClone } from "src/helpers/utils";
 import { OrgInterface } from "src/Types";
+import { RequestConfig } from "src/Types/httpTypes";
 import {
-  KnownError,
   RequestState,
   FetchedTime,
   initialFetchingState,
   setFetchingState,
   setFulfilledState,
   setRejectedState,
-  updateItemById,
   SliceError,
-  RequestConfig,
   genericRequest,
 } from "../shared";
 
@@ -106,7 +104,7 @@ const organizationSlice = createSliceWithThunks({
   reducers: (create) => ({
     getOrgList: create.asyncThunk<OrgInterface[], { signal?: AbortSignal }>(
       async (args, thunkApi) => {
-        const fetchOptions: RequestConfig = {
+        const fetchOptions: RequestConfig<OrgInterface[]> = {
           method: "GET",
           url: `/api/organizations`,
           signal: args.signal,
@@ -158,7 +156,7 @@ const organizationSlice = createSliceWithThunks({
       { signal?: AbortSignal; organizationId: number }
     >(
       async (args, thunkApi) => {
-        const fetchOptions: RequestConfig = {
+        const fetchOptions: RequestConfig<OrgInterface> = {
           method: "GET",
           url: `/api/organizations/${args.organizationId}`,
           signal: args.signal,
@@ -207,7 +205,7 @@ const organizationSlice = createSliceWithThunks({
       { signal?: AbortSignal; organizationId: number }
     >(
       async (args, thunkApi) => {
-        const fetchOptions: RequestConfig = {
+        const fetchOptions: RequestConfig<UserType[]> = {
           method: "GET",
           url: `/api/organizations/${args.organizationId}/users`,
           signal: args.signal,
@@ -262,7 +260,7 @@ const organizationSlice = createSliceWithThunks({
       { signal?: AbortSignal; organizationId: number }
     >(
       async (args, thunkApi) => {
-        const fetchOptions: RequestConfig = {
+        const fetchOptions: RequestConfig<ProjectType[]> = {
           method: "GET",
           url: `/api/organizations/${args.organizationId}/projects`,
           signal: args.signal,

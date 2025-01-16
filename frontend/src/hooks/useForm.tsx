@@ -29,11 +29,21 @@ export type FieldType =
 
 export const useForm = <T extends FormValueType>(
   rules: Partial<Record<keyof T, Rule>>,
-  initialValues: T = {} as T
+  initialValues: T = {} as T,
+  formFields: FieldType[] = []
 ) => {
+  const [fields, setFields] = useState<FieldType[]>(formFields);
   const [values, setValues] = useState<T>(initialValues);
   const [formErrors, setFormErrors] = useState<ErrorsType>(
     getValidationErrors(initialValues, rules)
+  );
+
+  const setFieldsTouched = useCallback(
+    () =>
+      setFields((fields) => [
+        ...fields.map((field) => ({ ...field, isTouched: true })),
+      ]),
+    []
   );
 
   const updateValues = useCallback(
@@ -101,6 +111,7 @@ export const useForm = <T extends FormValueType>(
   };
 
   return {
+    fields,
     values,
     resetForm,
     formErrors,
@@ -108,6 +119,7 @@ export const useForm = <T extends FormValueType>(
     updateValues,
     hasFormChanges,
     renderFormField,
+    setFieldsTouched,
     handleInputChange,
   };
 };

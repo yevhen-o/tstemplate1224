@@ -103,10 +103,15 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
     },
   ];
 
-  const [fields, setFields] = React.useState<FieldType[]>(formFields);
-
-  const { values, resetForm, isFormValid, hasFormChanges, renderFormField } =
-    useForm(RULES, initialValue);
+  const {
+    fields,
+    values,
+    resetForm,
+    isFormValid,
+    hasFormChanges,
+    renderFormField,
+    setFieldsTouched,
+  } = useForm(RULES, initialValue, formFields);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -125,9 +130,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
         });
       }
     } else {
-      setFields((fields) => [
-        ...fields.map((field) => ({ ...field, isTouched: true })),
-      ]);
+      setFieldsTouched();
     }
   };
 

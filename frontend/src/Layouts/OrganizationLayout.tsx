@@ -12,13 +12,15 @@ const ListItem: React.FC<ListItemType> = ({ to, children }) => {
   return (
     <li
       className={classNames({
-        "relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white":
+        "bg-gray-200 rounded hover:bg-gray-300 cursor-pointer":
           location.pathname !== to,
-        "bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium":
+        "bg-gray-400 rounded hover:bg-gray-300 cursor-pointer":
           location.pathname === to,
       })}
     >
-      <Link to={to}>{children}</Link>
+      <Link className="p-2 w-full block" to={to}>
+        {children}
+      </Link>
     </li>
   );
 };
@@ -26,47 +28,52 @@ const ListItem: React.FC<ListItemType> = ({ to, children }) => {
 function OrganizationLayout() {
   const { organizationId } = useParams<{ organizationId: string }>();
   return (
-    <div>
-      <header>
-        <h1>Organizations</h1>
-        <nav className="bg-gray-800">
-          <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-            <ul className="relative flex h-16 items-center justify-between">
-              <ListItem to={getUrl(IDENTIFIERS.ORGANIZATION_LIST)}>
-                Back to list
-              </ListItem>
-              {!!organizationId && (
-                <>
-                  <ListItem
-                    to={getUrl(IDENTIFIERS.ORGANIZATION_VIEW, {
-                      organizationId,
-                    })}
-                  >
-                    Overview
-                  </ListItem>
-                  <ListItem
-                    to={getUrl(IDENTIFIERS.ORGANIZATION_MEMBERS, {
-                      organizationId,
-                    })}
-                  >
-                    Members
-                  </ListItem>
-                  <ListItem
-                    to={getUrl(IDENTIFIERS.ORGANIZATION_PROJECTS, {
-                      organizationId,
-                    })}
-                  >
-                    Projects
-                  </ListItem>
-                </>
-              )}
-            </ul>
-          </div>
-        </nav>
-      </header>
-      <main>
-        <Outlet />
-      </main>
+    <div className="flex h-screen">
+      {/* Left Menu Section */}
+      <div className="bg-gray-100 flex-shrink-0 w-full max-w-[360px] min-w-[200px] overflow-y-auto border-r border-gray-300">
+        <div className="p-4">
+          <h2 className="text-lg font-semibold mb-4">Menu</h2>
+          <ul className="space-y-2">
+            <ListItem to={getUrl(IDENTIFIERS.ORGANIZATION_LIST)}>
+              Back to list
+            </ListItem>
+            {!!organizationId && (
+              <>
+                <ListItem
+                  to={getUrl(IDENTIFIERS.ORGANIZATION_VIEW, {
+                    organizationId,
+                  })}
+                >
+                  Overview
+                </ListItem>
+                <ListItem
+                  to={getUrl(IDENTIFIERS.ORGANIZATION_MEMBERS, {
+                    organizationId,
+                  })}
+                >
+                  Members
+                </ListItem>
+                <ListItem
+                  to={getUrl(IDENTIFIERS.ORGANIZATION_PROJECTS, {
+                    organizationId,
+                  })}
+                >
+                  Projects
+                </ListItem>
+              </>
+            )}
+          </ul>
+        </div>
+      </div>
+
+      {/* Right Main Section */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-6">
+          <main>
+            <Outlet />
+          </main>
+        </div>
+      </div>
     </div>
   );
 }

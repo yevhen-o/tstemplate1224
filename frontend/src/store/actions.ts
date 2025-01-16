@@ -13,3 +13,5 @@ export {
   getOrgUsers,
   getOrgProjects,
 } from "./organization/organizationSlice";
+
+export { login } from "./user/userSlice";

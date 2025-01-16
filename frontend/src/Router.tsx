@@ -24,6 +24,7 @@ import {
   getReactRouterPath,
   IDENTIFIERS,
 } from "src/services/urlsHelper";
+import RootLayout from "./Layouts/RootLayout";
 
 type RouterParamsProps =
   | { children: React.ReactElement; element?: never }
@@ -31,7 +32,7 @@ type RouterParamsProps =
 
 const RouterParams: React.FC<RouterParamsProps> = ({ children, element }) => {
   const { pathname } = useLocation();
-  let [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const storedValues = storageGetLatest(storageGetKey(pathname), {});
 
   return (
@@ -50,40 +51,45 @@ function Router() {
     <Routes>
       <Route
         path={getReactRouterPath(IDENTIFIERS.HOME)}
-        element={<RouterParams element={<HomePage />} />}
-      />
-      <Route
-        path={getReactRouterPath(IDENTIFIERS.TODOS)}
-        element={<RouterParams element={<TodosPage />} />}
-      />
-      <Route
-        path={getReactRouterPath(IDENTIFIERS.TODO_VIEW)}
-        element={<RouterParams element={<ViewTodo />} />}
-      />
-      <Route
-        path={getReactRouterPath(IDENTIFIERS.DROP_DOWNS)}
-        element={<RouterParams element={<DropDownsPage />} />}
-      />
-      <Route
-        path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_LIST)}
-        element={<RouterParams element={<OrganizationList />} />}
-      />
-      <Route
-        path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_VIEW)}
-        element={<OrganizationLayout />}
+        element={<RootLayout />}
       >
         <Route
+          path={getReactRouterPath(IDENTIFIERS.HOME)}
+          element={<RouterParams element={<HomePage />} />}
+        />
+        <Route
+          path={getReactRouterPath(IDENTIFIERS.TODOS)}
+          element={<RouterParams element={<TodosPage />} />}
+        />
+        <Route
+          path={getReactRouterPath(IDENTIFIERS.TODO_VIEW)}
+          element={<RouterParams element={<ViewTodo />} />}
+        />
+        <Route
+          path={getReactRouterPath(IDENTIFIERS.DROP_DOWNS)}
+          element={<RouterParams element={<DropDownsPage />} />}
+        />
+        <Route
+          path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_LIST)}
+          element={<RouterParams element={<OrganizationList />} />}
+        />
+        <Route
           path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_VIEW)}
-          element={<RouterParams element={<OrganizationOverView />} />}
-        />
-        <Route
-          path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_MEMBERS)}
-          element={<RouterParams element={<OrganizationMembers />} />}
-        />
-        <Route
-          path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_PROJECTS)}
-          element={<RouterParams element={<OrganizationProjects />} />}
-        />
+          element={<OrganizationLayout />}
+        >
+          <Route
+            path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_VIEW)}
+            element={<RouterParams element={<OrganizationOverView />} />}
+          />
+          <Route
+            path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_MEMBERS)}
+            element={<RouterParams element={<OrganizationMembers />} />}
+          />
+          <Route
+            path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_PROJECTS)}
+            element={<RouterParams element={<OrganizationProjects />} />}
+          />
+        </Route>
       </Route>
     </Routes>
   );
