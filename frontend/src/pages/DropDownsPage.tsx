@@ -7,6 +7,8 @@ import VirtualScroll from "src/components/VirtualScroll";
 import MenuButton from "src/components/MenuButton";
 import MultiSelect from "src/components/FormFields/MultiSelect";
 import { OptionType } from "src/Types/FormTypes";
+import { useToastStore } from "src/store/toasts/toastsStore";
+import Button from "src/components/Buttons";
 
 const ItemRenderer =
   (selectedOptions: Array<string | number>) =>
@@ -53,6 +55,8 @@ const DropDownsPage: React.FC = () => {
     );
   };
 
+  const { addToast } = useToastStore();
+
   const menuOptions = [
     {
       label: "Option A",
@@ -79,6 +83,13 @@ const DropDownsPage: React.FC = () => {
 
   return (
     <div style={{ padding: "20px" }}>
+      <Button
+        onClick={() =>
+          addToast({ message: `Toast at ${Date.now()}`, isSuccess: true })
+        }
+      >
+        Add Toast
+      </Button>
       <div>
         <DropDownCss isPrimary options={menuOptions}>
           Menu button css

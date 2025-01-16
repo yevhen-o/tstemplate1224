@@ -16,3 +16,7 @@ export const KEY_CODES = {
 
 export const FILTER_ALL_VALUE =
   "someLongRandomStringThatNotMatchAnyPossibleValue";
+
+export const MAX_TOASTS_TO_DISPLAY = 3;
+
+export const TIME_TO_DISPLAY_TOAST = 1000 * 5;

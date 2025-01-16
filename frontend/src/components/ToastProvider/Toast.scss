@@ -1,0 +1,106 @@
+.toasts {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1100;
+  bottom: 5%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 90%;
+  max-width: var(--width-container-md);
+
+  &-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-gray-100);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 12px 16px;
+    width: 100%;
+  }
+}
+
+$types: (
+  success: green,
+  warning: orange,
+  error: red,
+  info: blue,
+);
+
+@each $variant in map-keys($types) {
+  .message-#{$variant} {
+    .message-title {
+      color: map-get($types, $variant);
+    }
+
+    .message-description {
+      color: lighten($color: map-get($types, $variant), $amount: 10%);
+    }
+
+    .message-close-btn {
+
+      &:hover,
+      &:focus {
+        svg {
+          path {
+            stroke: map-get($types, $variant);
+          }
+        }
+      }
+    }
+  }
+}
+
+.message {
+  font-style: normal;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-gray-0);
+  margin-right: 12px;
+}
+
+.message-title {
+  font-weight: bold;
+  letter-spacing: 0.02em;
+}
+
+.message-description {
+  font-weight: normal;
+  margin: 0;
+}
+
+.message-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.message-close-btn {
+  border: none;
+  background-color: transparent;
+  font-size: 36px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+
+  svg {
+    path {
+      stroke: white;
+    }
+  }
+
+  &:hover,
+  &:focus {
+    svg {
+      path {
+        stroke: var(--color-gray-75);
+      }
+    }
+  }
+}

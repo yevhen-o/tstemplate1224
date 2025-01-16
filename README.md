@@ -34,17 +34,18 @@ localhost:3050/api - api
 - [x] ~~HOC withWrapperSize~~ deprecated: to complicated to use, hook is more straight forward
 - [x] Table
 - [x] FormFields basic
-- [ ] FormFields advanced
+- [ ] FormFields advanced, normalize all Types
 - [x] DropDown hm implementation much harder that with css only, work correctly when anchor shifted with translate, but instead buggy on scroll
 - [x] DropDown with just css simple implementation, work great, but don't set dropdown correctly when anchor is shifted with translate, and not the best browser support yet
 - [x] MultiSelect // Should work yet on style improvement and types improvements
 - [x] VirtualScroll component // get some performance issues, maybe better to use some library instead, but in this case it will be less flexible
 - [x] Add openapi and swagger to api
 - [x] Migrate CRA to VITE can confirm VITE is much faster :)
+- [ ] Use Zustand for toast management, and just practice
 - [ ] Create Authentication flow with email and password, try to use browser hashing functionality
 - [ ] Build Authorization Logic
 - [ ] Use localForage for cross tab communication
 - [ ] Widget communication flow
 - [ ] Add Sentry, New Relic, Data Dog
-- [ ]
-- [ ]
+- [ ] Add Playwrite/cypress tests
+- [ ] Add husky pre push hook for testing and linting

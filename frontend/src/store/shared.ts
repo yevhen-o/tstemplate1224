@@ -1,8 +1,7 @@
-export type SliceError = KnownError | null | undefined;
+import { useToastStore } from "./toasts/toastsStore";
+import { RequestConfig, KnownError } from "src/Types/httpTypes";
 
-export interface KnownError {
-  message: string;
-}
+export type SliceError = KnownError | null | undefined;
 
 export type ActionMeta = {
   requestId: string;
@@ -48,7 +47,7 @@ export const setRejectedState = <T extends RequestState>(
   section = { ...section, isFetched: false, isFetching: false };
   if (section.latestRequestId === requestId) {
     if (!condition && !aborted) {
-      if (!!actionPayload) {
+      if (actionPayload) {
         section.error = actionPayload;
       } else {
         section.error = new Error(actionErrorMessage);
@@ -59,7 +58,7 @@ export const setRejectedState = <T extends RequestState>(
 };
 
 export const updateItemById = <
-  T extends { [key: string]: any },
+  T extends { [key: string]: unknown },
   V extends { uid: string }
 >(
   section: T,
@@ -84,25 +83,38 @@ export interface FetchedTime {
   fetchedTime?: number;
 }
 
-export type RequestConfig = {
-  url: string;
-  method: "PATCH" | "POST" | "GET" | "PUT";
-  headers?: Record<string, string>;
-  body?: string;
-  signal?: AbortSignal;
-};
-
 export async function genericRequest<T, R>(
-  config: RequestConfig,
+  config: RequestConfig<T>,
   thunkApi: { rejectWithValue: (value: KnownError) => R }
 ): Promise<T | R> {
+  const addToast = useToastStore.getState().addToast;
+  const { url, additionalOptions: options, ...restConfig } = config;
   try {
-    const response = await fetch(config.url, { ...config });
+    const response = await fetch(url, { ...restConfig });
     if (!response.ok) {
       throw new Error(`Request failed with status ${response.status}`);
     }
-    return await response.json();
+    const json = await response.json();
+    if (
+      options &&
+      options.deriveSuccessMessage &&
+      !!options.deriveSuccessMessage(json)
+    ) {
+      addToast({ message: options.deriveSuccessMessage(json) });
+    } else if (options && options.successMessage) {
+      addToast({ message: options.successMessage });
+    }
+    return json;
   } catch (error: unknown) {
+    if (
+      options &&
+      options.deriveErrorMessage &&
+      !!options.deriveErrorMessage(error)
+    ) {
+      addToast({ message: options.deriveErrorMessage(error) });
+    } else if (options && options.errorMessage) {
+      addToast({ message: options.errorMessage });
+    }
     return thunkApi.rejectWithValue({
       message:
         error instanceof Error ? error.message : "Unknown error occurred",

@@ -1,6 +1,10 @@
-import { useEffect } from "react";
-import { FormValueType, FieldType, useForm } from "src/hooks";
-import { withWrapperSize } from "src/hocs/withWrapperSize";
+import { useEffect, useRef } from "react";
+import {
+  FormValueType,
+  FieldType,
+  useForm,
+  useObserveElementSize,
+} from "src/hooks";
 import Button from "../Buttons";
 
 interface FilterProps {
@@ -8,8 +12,6 @@ interface FilterProps {
   initialValues: FormValueType;
   appliedValues?: FormValueType;
   onChange: (values: FormValueType) => void;
-  wrapperWidth: number;
-  wrapperHeight: number;
 }
 
 const Filters: React.FC<FilterProps> = ({
@@ -17,15 +19,16 @@ const Filters: React.FC<FilterProps> = ({
   filterFields,
   initialValues = {},
   appliedValues,
-  wrapperHeight,
-  wrapperWidth,
 }) => {
+  const el = useRef(null);
   const { values, renderFormField, hasFormChanges, resetForm, updateValues } =
     useForm({}, initialValues);
 
   useEffect(() => {
     onChange(values);
   }, [values, onChange]);
+
+  const { wrapperHeight } = useObserveElementSize(el);
 
   useEffect(() => {
     if (appliedValues) updateValues(appliedValues);
@@ -39,6 +42,7 @@ const Filters: React.FC<FilterProps> = ({
   }, [wrapperHeight]);
   return (
     <div
+      ref={el}
       style={{
         display: "flex",
         alignItems: "flex-end",
@@ -52,9 +56,8 @@ const Filters: React.FC<FilterProps> = ({
           Clear
         </Button>
       )}
-      {`Wrapper width: ${wrapperWidth} && wrapperHeight ${wrapperHeight}`}
     </div>
   );
 };
 
-export default withWrapperSize(Filters);
+export default Filters;

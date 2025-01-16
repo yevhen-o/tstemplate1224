@@ -1,7 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { TodoInterface } from "src/Types";
 import {
-  KnownError,
   RequestState,
   FetchedTime,
   initialFetchingState,
@@ -9,9 +8,13 @@ import {
   setFulfilledState,
   setRejectedState,
   updateItemById,
-  RequestConfig,
-  genericRequest,
 } from "../shared";
+import {
+  todoGetItem,
+  todoGetList,
+  todoPatchItem,
+  todoPostItem,
+} from "./todoApi";
 
 type StateType = {
   list: RequestState &
@@ -132,93 +135,5 @@ const todosSlice = createSlice({
       });
   },
 });
-
-type RejectValueType = {
-  rejectValue: KnownError;
-};
-
-export const todoPatchItem = createAsyncThunk<
-  TodoInterface,
-  { uid: string; item: Partial<TodoInterface>; signal?: AbortSignal },
-  RejectValueType
->("todos/patchItem", async ({ uid, item, signal }, thunkApi) => {
-  const fetchOptions: RequestConfig = {
-    method: "PATCH",
-    url: `/api/todos/${uid}`,
-    signal: signal,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(item),
-  };
-  return genericRequest(fetchOptions, thunkApi);
-});
-
-export const todoGetItem = createAsyncThunk<
-  TodoInterface,
-  { uid: string; signal?: AbortSignal },
-  RejectValueType
->("todos/getItem", async ({ uid, signal }, thunkApi) => {
-  const fetchOptions: RequestConfig = {
-    method: "GET",
-    url: `/api/todos/${uid}`,
-    signal: signal,
-  };
-  return genericRequest(fetchOptions, thunkApi);
-});
-
-export const todoPostItem = createAsyncThunk<
-  TodoInterface,
-  { item: TodoInterface; signal?: AbortSignal },
-  RejectValueType
->("todos/postItem", async ({ item, signal }, thunkApi) => {
-  const fetchOptions: RequestConfig = {
-    method: "POST",
-    url: `/api/todos`,
-    signal: signal,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(item),
-  };
-  return genericRequest(fetchOptions, thunkApi);
-});
-
-export const todoGetList = createAsyncThunk<
-  TodoInterface[],
-  { signal?: AbortSignal },
-  RejectValueType
->("todos/getList", async ({ signal }, thunkApi) => {
-  const fetchOptions: RequestConfig = {
-    method: "GET",
-    url: `/api/todos`,
-    signal: signal,
-  };
-  return genericRequest(fetchOptions, thunkApi);
-});
-
-// function createTodoThunk<T, A>(
-//   type: string,
-//   requestFn: (
-//     args: A,
-//     thunkApi: { rejectWithValue: (value: KnownError) => any }
-//   ) => Promise<T>
-// ) {
-//   return createAsyncThunk<T, A, RejectValueType>(type, requestFn);
-// }
-
-// export const todoGetList = createTodoThunk<
-//   TodoInterface[],
-//   { signal?: AbortSignal }
-// >("todos/getList", async ({ signal }, thunkApi) => {
-//   return genericRequest(
-//     {
-//       method: "GET",
-//       url: "/api/todos",
-//       signal,
-//     },
-//     thunkApi
-//   );
-// });
 
 export default todosSlice.reducer;

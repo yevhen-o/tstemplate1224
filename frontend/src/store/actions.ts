@@ -3,7 +3,7 @@ export {
   todoPostItem,
   todoGetItem,
   todoPatchItem,
-} from "./todo/todoSlice";
+} from "./todo/todoApi";
 
 export { setClientScreen } from "./clientScreen/clientScreenSlice";
 

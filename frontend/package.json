@@ -27,7 +27,8 @@
     "react-router-dom": "^7.1.1",
     "reselect": "^5.1.1",
     "sass": "^1.83.4",
-    "web-vitals": "^4.2.4"
+    "web-vitals": "^4.2.4",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
