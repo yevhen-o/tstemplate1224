@@ -1,6 +1,6 @@
 import Filters from "src/components/Filters";
-import useFilterWorker from "src/hooks/useFilterWorker";
 import { useSearchParamsOrLocalStorage } from "src/hooks";
+import { useFilterWorker } from "src/hooks/useFilterWorker";
 import { FieldType, FormValueType, Value } from "src/hooks/useForm";
 
 const defaultObj = {};

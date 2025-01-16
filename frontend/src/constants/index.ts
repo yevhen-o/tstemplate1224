@@ -14,6 +14,8 @@ export const KEY_CODES = {
   SPACE: "Space",
 };
 
+export const ITEMS_COUNT_TO_USE_WORKER = 100;
+
 export const FILTER_ALL_VALUE =
   "someLongRandomStringThatNotMatchAnyPossibleValue";
 

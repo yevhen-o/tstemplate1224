@@ -173,7 +173,6 @@ const OrganizationMembers: React.FC = () => {
             actions: renderActions,
             createdAt: renderCreatedAt,
           }}
-          sortBy="lastName"
           headerFields={headerFields}
           name="organization__members"
         />
