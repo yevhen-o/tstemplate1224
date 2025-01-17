@@ -6,6 +6,7 @@ import {
 } from "../validationSchemas";
 import { Organization } from "../models";
 import { tryCatch } from "../utils/tryCatch";
+import authenticateToken from "../middlewares/authenticateToken";
 
 const router = Router();
 
@@ -292,6 +293,7 @@ router.get(
  */
 router.get(
   "/organizations/:organizationId/projects",
+  authenticateToken,
   tryCatch(Organization.getProjects)
 );
 

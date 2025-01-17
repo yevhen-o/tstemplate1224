@@ -34,7 +34,7 @@ const authenticateToken: RequestHandler = async (
     next();
   } catch (err) {
     console.error("Token verification failed:", err);
-    res.status(403).send("Forbidden: Invalid token.");
+    res.status(401).send("Forbidden: Invalid token.");
     return;
   }
 };

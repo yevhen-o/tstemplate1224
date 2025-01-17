@@ -256,4 +256,25 @@ router.post("/users/logout", tryCatch(User.logout));
  */
 router.post("/users/token", tryCatch(User.getNewAccessToken));
 
+/**
+ * @openapi
+ * '/users/init':
+ *  post:
+ *    tags:
+ *    - User
+ *    summary: Get new access token
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/UserLoginResponse'
+ *      401:
+ *        description: Unauthorized
+ *      403:
+ *        description: Forbidden
+ */
+router.post("/users/init", tryCatch(User.getNewAccessToken));
+
 export default router;

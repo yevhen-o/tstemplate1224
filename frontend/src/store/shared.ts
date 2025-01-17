@@ -1,5 +1,5 @@
-import { useToastStore } from "./toasts/toastsStore";
-import { RequestConfig, KnownError } from "src/Types/httpTypes";
+import { KnownError } from "src/Types/httpTypes";
+export { genericRequest } from "./GenericRequest";
 
 export type SliceError = KnownError | null | undefined;
 
@@ -81,43 +81,4 @@ export interface RequestState {
 
 export interface FetchedTime {
   fetchedTime?: number;
-}
-
-export async function genericRequest<T, R>(
-  config: RequestConfig<T>,
-  thunkApi: { rejectWithValue: (value: KnownError) => R }
-): Promise<T | R> {
-  const addToast = useToastStore.getState().addToast;
-  const { url, additionalOptions: options, ...restConfig } = config;
-  try {
-    const response = await fetch(url, { ...restConfig });
-    if (!response.ok) {
-      throw new Error(`Request failed with status ${response.status}`);
-    }
-    const json = await response.json();
-    if (
-      options &&
-      options.deriveSuccessMessage &&
-      !!options.deriveSuccessMessage(json)
-    ) {
-      addToast({ message: options.deriveSuccessMessage(json) });
-    } else if (options && options.successMessage) {
-      addToast({ message: options.successMessage });
-    }
-    return json;
-  } catch (error: unknown) {
-    if (
-      options &&
-      options.deriveErrorMessage &&
-      !!options.deriveErrorMessage(error)
-    ) {
-      addToast({ message: options.deriveErrorMessage(error) });
-    } else if (options && options.errorMessage) {
-      addToast({ message: options.errorMessage });
-    }
-    return thunkApi.rejectWithValue({
-      message:
-        error instanceof Error ? error.message : "Unknown error occurred",
-    });
-  }
 }

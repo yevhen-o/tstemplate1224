@@ -9,7 +9,7 @@ import {
   SliceError,
   genericRequest,
 } from "../shared";
-import { hashString } from "src/helpers/utils/hashString";
+//import { hashString } from "src/helpers/utils/hashString";
 
 export type UserType = {
   userId: number;
@@ -20,17 +20,25 @@ export type UserType = {
   createdAt: string;
 };
 
+export type UserTypeAccess = UserType & { accessToken: string };
+
 type StateType = {
+  init: RequestState;
   login: RequestState & {
     data: Partial<UserType>;
   };
+  user: UserTypeAccess | null | undefined;
 };
 
 const initialState: StateType = {
+  init: {
+    ...initialFetchingState,
+  },
   login: {
     ...initialFetchingState,
     data: {},
   },
+  user: undefined,
 };
 
 const createSliceWithThunks = buildCreateSlice({
@@ -40,23 +48,48 @@ const createSliceWithThunks = buildCreateSlice({
 });
 
 const userSlice = createSliceWithThunks({
-  name: "organization",
+  name: "user",
   initialState,
   reducers: (create) => ({
-    login: create.asyncThunk<
-      UserType,
-      { email: string; password: string; signal?: AbortSignal }
-    >(
+    init: create.asyncThunk<UserTypeAccess, { signal?: AbortSignal }>(
       async (args, thunkApi) => {
-        const passwordHash = await hashString(args.password);
-        const fetchOptions: RequestConfig<UserType> = {
+        const fetchOptions: RequestConfig<UserTypeAccess> = {
           method: "POST",
-          url: `/api/user/login`,
+          url: `/api/users/init`,
           signal: args.signal,
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email: args.email, password: passwordHash }),
+        };
+        return genericRequest(fetchOptions, thunkApi);
+      },
+      {
+        pending: (state, action) => {
+          state.init = setFetchingState(state.init, action.meta.requestId);
+        },
+        rejected: (state) => {
+          state.init = setFulfilledState(state.init);
+        },
+        fulfilled: (state, action) => {
+          state.init = setFulfilledState(state.init);
+          state.user = action.payload;
+        },
+      }
+    ),
+    login: create.asyncThunk<
+      UserTypeAccess,
+      { email: string; password: string; signal?: AbortSignal }
+    >(
+      async (args, thunkApi) => {
+        //const passwordHash = await hashString(args.password);
+        const fetchOptions: RequestConfig<UserTypeAccess> = {
+          method: "POST",
+          url: `/api/users/login`,
+          signal: args.signal,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: args.email, password: args.password }),
         };
         return genericRequest(fetchOptions, thunkApi);
       },
@@ -75,11 +108,19 @@ const userSlice = createSliceWithThunks({
         fulfilled: (state, action) => {
           state.login = setFulfilledState(state.login);
           state.login.data = action.payload;
+          state.user = action.payload;
         },
       }
     ),
+    setUser: create.reducer((state, action: { payload: UserTypeAccess }) => {
+      state.user = action.payload;
+    }),
   }),
+  selectors: {
+    isAuthenticated: (state) => state.user,
+  },
 });
 
-export const { login } = userSlice.actions;
+export const { login, init } = userSlice.actions;
+export const { isAuthenticated } = userSlice.selectors;
 export default userSlice.reducer;

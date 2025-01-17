@@ -1,8 +1,10 @@
 import classNames from "classnames";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Button from "src/components/Buttons";
 import SignIn from "src/components/SignIn/Signin";
+import { useActions, useTypedSelector } from "src/hooks";
+import { useIsAuthenticated } from "src/hooks/useIsAuthenticated";
 import { getUrl, IDENTIFIERS, Link } from "src/services/urlsHelper";
 
 type ListItemType = {
@@ -27,34 +29,52 @@ const ListItem: React.FC<ListItemType> = ({ to, children }) => {
 
 function RootLayout() {
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const isAuthenticated = useIsAuthenticated();
+  const { init } = useActions();
+  const initState = useTypedSelector((state) => state.user.init);
+
+  useEffect(() => {
+    init({});
+  }, [init]);
+
+  const { isFetched, isFetching } = initState;
+
   return (
     <>
-      <div>
-        <header>
-          <nav className="bg-gray-800">
-            <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-              <ul className="relative flex h-16 items-center justify-start gap-2">
-                <ListItem to={getUrl(IDENTIFIERS.HOME)}>Home</ListItem>
-                <ListItem to={getUrl(IDENTIFIERS.TODOS)}>Todos</ListItem>
-                <ListItem to={getUrl(IDENTIFIERS.ORGANIZATION_LIST)}>
-                  Organization
-                </ListItem>
-                <ListItem to={getUrl(IDENTIFIERS.DROP_DOWNS)}>
-                  Dropdowns
-                </ListItem>
-                <li className={classNames("ml-auto")}>
-                  <Button isPrimary onClick={() => setShowSignInModal(true)}>
-                    Sign In
-                  </Button>
-                </li>
-              </ul>
-            </div>
-          </nav>
-        </header>
+      {isFetching && <>Loading...</>}
+      {isFetched && (
         <div>
-          <Outlet />
+          <header>
+            <nav className="bg-gray-800">
+              <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+                <ul className="relative flex h-16 items-center justify-start gap-2">
+                  <ListItem to={getUrl(IDENTIFIERS.HOME)}>Home</ListItem>
+                  <ListItem to={getUrl(IDENTIFIERS.TODOS)}>Todos</ListItem>
+                  <ListItem to={getUrl(IDENTIFIERS.ORGANIZATION_LIST)}>
+                    Organization
+                  </ListItem>
+                  <ListItem to={getUrl(IDENTIFIERS.DROP_DOWNS)}>
+                    Dropdowns
+                  </ListItem>
+                  {!isAuthenticated && (
+                    <li className={classNames("ml-auto")}>
+                      <Button
+                        isPrimary
+                        onClick={() => setShowSignInModal(true)}
+                      >
+                        Sign In
+                      </Button>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            </nav>
+          </header>
+          <div>
+            <Outlet />
+          </div>
         </div>
-      </div>
+      )}
       {showSignInModal && <SignIn onClose={() => setShowSignInModal(false)} />}
     </>
   );

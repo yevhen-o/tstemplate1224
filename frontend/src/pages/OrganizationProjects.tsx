@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createSelector } from "reselect";
 import { useParams } from "react-router";
 import { RootState } from "src/store";
@@ -9,7 +9,7 @@ type Params = {
   organizationId: string;
 };
 
-export const selectUsersFromOrganizationById = createSelector(
+export const selectProjectsFromOrganizationById = createSelector(
   [
     (state: RootState) => state.organization.orgById,
     (state: RootState) => state.organization.projectById,
@@ -35,23 +35,32 @@ export const selectUsersFromOrganizationById = createSelector(
 const OrganizationProjects: React.FC = () => {
   const { organizationId } = useParams<Params>();
 
-  const orgMembers = useTypedSelector((state) =>
-    selectUsersFromOrganizationById(state, organizationId)
+  const orgProjects = useTypedSelector((state) =>
+    selectProjectsFromOrganizationById(state, organizationId)
   );
+
+  const orgProjectsRef = useRef(orgProjects);
+
+  useEffect(() => {
+    orgProjectsRef.current = orgProjects; // Update the ref whenever orgProjects changes
+  }, [orgProjects]);
 
   const { getOrgProjects } = useActions();
 
   useEffect(() => {
-    if (organizationId && (!orgMembers || isOutdated(orgMembers))) {
+    if (
+      organizationId &&
+      (!orgProjectsRef.current || isOutdated(orgProjectsRef.current))
+    ) {
       getOrgProjects({ organizationId: +organizationId });
     }
-  }, [organizationId, getOrgProjects, orgMembers]);
+  }, [organizationId, getOrgProjects]);
 
-  if (!orgMembers) {
+  if (!orgProjects) {
     return <>Loading...</>;
   }
 
-  const { isFetching, isFetched, error, projects } = orgMembers;
+  const { isFetching, isFetched, error, projects } = orgProjects;
 
   return (
     <div className="px-8">
