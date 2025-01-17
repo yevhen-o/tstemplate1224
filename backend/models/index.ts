@@ -5,6 +5,7 @@ import { Organization } from "./organizations";
 import { User } from "./users";
 import { Todo } from "./todos";
 import { Project } from "./projects";
+import { Token } from "./tokens";
 
 const OrganizationUser = db.define("organization_user", {
   role: {
@@ -48,4 +49,4 @@ Project.belongsTo(Organization, {
 //   await db.sync({ alter: true }); // Adjust options as necessary
 // })();
 
-export { Todo, Organization, User, OrganizationUser, Project };
+export { Todo, Organization, User, OrganizationUser, Project, Token };

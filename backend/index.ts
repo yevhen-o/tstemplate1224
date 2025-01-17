@@ -1,6 +1,7 @@
+require("dotenv").config();
 const keys = require("./keys");
 import express, { Express } from "express";
-
+const cookieParser = require("cookie-parser");
 import swaggerDocs from "./utils/swagger";
 
 import todoRouter from "./routes/todoRouter";
@@ -17,6 +18,7 @@ const cors = require("cors");
 const app: Express = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 // Express route handlers
 

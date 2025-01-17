@@ -3,6 +3,7 @@ import ajvWrapper from "../middlewares/ajvValidation";
 import {
   postUserValidationSchema,
   patchUserValidationSchema,
+  loginUserValidationSchema,
 } from "../validationSchemas";
 import { User } from "../models";
 import { tryCatch } from "../utils/tryCatch";
@@ -187,5 +188,72 @@ router.get(
   "/users/:userId/owned-organizations",
   tryCatch(User.getOwnedOrganizations)
 );
+
+/**
+ * @openapi
+ * '/users/login':
+ *  post:
+ *    tags:
+ *    - User
+ *    summary: Login User
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/LoginUserInput'
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/UserLoginResponse'
+ *      409:
+ *        description: Conflict
+ *      400:
+ *        description: Bad request
+ */
+router.post(
+  "/users/login",
+  ajvWrapper(loginUserValidationSchema),
+  tryCatch(User.login)
+);
+
+/**
+ * @openapi
+ * '/users/logout':
+ *  post:
+ *    tags:
+ *    - User
+ *    summary: Log out User
+ *    responses:
+ *      204:
+ *        description: Success
+ *      400:
+ *        description: Bad request
+ */
+router.post("/users/logout", tryCatch(User.logout));
+
+/**
+ * @openapi
+ * '/users/token':
+ *  post:
+ *    tags:
+ *    - User
+ *    summary: Get new access token
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/UserLoginResponse'
+ *      401:
+ *        description: Unauthorized
+ *      403:
+ *        description: Forbidden
+ */
+router.post("/users/token", tryCatch(User.getNewAccessToken));
 
 export default router;

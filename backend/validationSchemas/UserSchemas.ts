@@ -12,6 +12,15 @@ export const postUserValidationSchema = {
   additionalProperties: true,
 };
 
+export const loginUserValidationSchema = {
+  type: "object",
+  properties: {
+    email: { type: "string", format: "email" },
+    password: { type: "string", minLength: 6, maxLength: 1000 },
+  },
+  required: ["email", "password"],
+};
+
 export const patchUserValidationSchema = {
   ...postUserValidationSchema,
   required: [],

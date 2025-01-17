@@ -51,7 +51,7 @@ const userSlice = createSliceWithThunks({
         const passwordHash = await hashString(args.password);
         const fetchOptions: RequestConfig<UserType> = {
           method: "POST",
-          url: `/api/user-login`,
+          url: `/api/user/login`,
           signal: args.signal,
           headers: {
             "Content-Type": "application/json",

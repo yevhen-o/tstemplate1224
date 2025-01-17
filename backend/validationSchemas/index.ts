@@ -6,6 +6,7 @@ export {
 export {
   postUserValidationSchema,
   patchUserValidationSchema,
+  loginUserValidationSchema,
 } from "./UserSchemas";
 
 export {

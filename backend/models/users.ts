@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 const Sequelize = require("sequelize");
-import { Organization } from "./";
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+import { Organization, Token } from "./";
 
 const db = require("../db_connect");
 
@@ -33,6 +35,18 @@ const db = require("../db_connect");
  *           default: strongPassword123
  *         age:
  *           type: number
+ *     LoginUserInput:
+ *       type: object
+ *       required:
+ *         - email
+ *         - password
+ *       properties:
+ *         email:
+ *           type: string
+ *           default: james_bond@google.com
+ *         password:
+ *           type: string
+ *           default: strongPassword123
  *     UserResponse:
  *       type: object
  *       properties:
@@ -46,6 +60,21 @@ const db = require("../db_connect");
  *           type: string
  *         age:
  *           type: number
+ *     UserLoginResponse:
+ *       type: object
+ *       properties:
+ *         userId:
+ *           type: number
+ *         firstName:
+ *           type: string
+ *         lastName:
+ *           type: string
+ *         email:
+ *           type: string
+ *         age:
+ *           type: number
+ *         accessToken:
+ *           type: string
  *     UserListResponse:
  *       type: array
  *       items:
@@ -110,15 +139,60 @@ export const User = db.define(
 // User.sync({ force: true });
 
 export type UserInterface = {
+  userId: number;
   firstName: string;
   lastName?: string;
   email: string;
-  password: string;
+  password?: string;
   age?: number;
+  createdAt: string;
+  updatedAt: string;
 };
 
+export type OrganizationInterface = {
+  organizationId: number;
+  name: string;
+  domain: string;
+  ownerId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type OrganizationUser = {
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+  organizationId: number;
+  userId: number;
+};
+
+export type UserWithOrganizations = UserInterface & {
+  organizations: Array<
+    OrganizationInterface & { organization_user: OrganizationUser }
+  >;
+};
+
+export type JwtUser = {
+  iat?: number;
+  userId: number;
+  firstName: string;
+  lastName?: string;
+  roles: {
+    organizationId: number;
+    domain: string;
+    role: string;
+  }[];
+};
+
+function generateAccessToken(user: JwtUser) {
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "30s" });
+}
+
 User.addRecord = async (req: Request, res: Response) => {
-  const user = await User.create(req.body);
+  const { password, confirmPassword, ...rest } = req.body;
+  if (password !== confirmPassword) return res.status(400).send();
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = await User.create({ ...rest, password: hashedPassword });
   res.send(user);
 };
 
@@ -162,4 +236,73 @@ User.getOwnedOrganizations = async (req: Request, res: Response) => {
     include: [{ model: Organization, as: "ownedOrganizations" }],
   });
   res.send(user.ownedOrganizations);
+};
+
+User.login = async (req: Request, res: Response) => {
+  const user: UserWithOrganizations = await User.scope("withPassword").findOne({
+    where: { email: req.body.email },
+    include: Organization,
+  });
+  if (await bcrypt.compare(req.body.password, user.password)) {
+    const { userId, organizations, firstName, lastName } = user;
+    const jwtUser = {
+      userId,
+      firstName,
+      lastName,
+      roles: organizations.map((org) => {
+        const {
+          organizationId,
+          domain,
+          organization_user: { role },
+        } = org;
+        return {
+          organizationId,
+          domain,
+          role,
+        };
+      }),
+    };
+    const accessToken = generateAccessToken(jwtUser);
+    const refreshToken = jwt.sign(jwtUser, process.env.REFRESH_TOKEN_SECRET);
+    Token.addRecord(refreshToken, userId);
+    res.cookie("token", refreshToken, {
+      httpOnly: true, // Prevents JavaScript access
+      sameSite: "strict", // Prevents cross-origin requests from sending the cookie
+      maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie expiration time (1 day)
+    });
+    res.json({ ...jwtUser, accessToken });
+  } else {
+    res.status(400).send();
+  }
+};
+
+User.logout = async (req: Request, res: Response) => {
+  const token = req?.cookies?.token;
+  if (token) {
+    Token.removeRecord(token);
+    res.cookie("token", "", {
+      httpOnly: true, // Prevents JavaScript access
+      sameSite: "strict", // Prevents cross-origin requests from sending the cookie
+      maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie expiration time (1 day)
+    });
+    res.status(204).send();
+  } else {
+    res.status(400).send();
+  }
+};
+
+User.getNewAccessToken = async (req: Request, res: Response) => {
+  const token = req?.cookies?.token;
+  if (!token) return res.sendStatus(401);
+  if (!Token.hasToken(token)) return res.sendStatus(403);
+  jwt.verify(
+    token,
+    process.env.REFRESH_TOKEN_SECRET,
+    (err: Error, user: JwtUser) => {
+      if (err) return res.sendStatus(403);
+      delete user.iat;
+      const accessToken = generateAccessToken(user);
+      res.json({ ...user, accessToken: accessToken });
+    }
+  );
 };
