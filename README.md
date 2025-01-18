@@ -42,7 +42,7 @@ localhost:3050/api - api
 - [x] Add openapi and swagger to api
 - [x] Migrate CRA to VITE can confirm VITE is much faster :)
 - [x] Use Zustand for toast management, and just practice
-- [ ] Create Authentication flow with email and password, try to use browser hashing functionality
+- [x] Create Authentication flow with email and password, try to use browser hashing functionality
 - [ ] Build Authorization Logic
 - [ ] Use localForage for cross tab communication
 - [ ] Widget communication flow

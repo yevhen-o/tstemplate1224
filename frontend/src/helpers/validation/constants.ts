@@ -1,12 +1,3 @@
-export type Value =
-  | string
-  | number
-  | boolean
-  | null
-  | undefined
-  | string[]
-  | object;
-
 export type Rule = {
   hasLength?: number;
   hasLetters?: boolean;
@@ -28,8 +19,6 @@ export type Rule = {
   numbersOnly?: boolean;
   numbersWithDecimalOnly?: boolean;
 };
-
-export type ErrorMessage = string | null;
 
 export const regex = {
   hasUpperCase: /(?=.*[A-Z])/,

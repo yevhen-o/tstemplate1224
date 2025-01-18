@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { Link } from "react-router";
 import TextEllipsis from "src/components/TextEllipsis";
 
 interface DropDownItemProps {
@@ -55,8 +56,8 @@ const DropDownItem: React.FC<DropDownItemProps> = ({
 
   if (href) {
     return (
-      <a
-        href={href}
+      <Link
+        to={href}
         style={style}
         target={target}
         onClick={handleClose}
@@ -70,7 +71,7 @@ const DropDownItem: React.FC<DropDownItemProps> = ({
         <span className="drop-down__item-text">
           <TextEllipsis>{label}</TextEllipsis>
         </span>
-      </a>
+      </Link>
     );
   }
 

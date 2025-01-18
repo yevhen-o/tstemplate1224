@@ -33,7 +33,6 @@ const RadioInput: ForwardRefRenderFunction<
     style,
     value,
     values,
-    fieldType,
     ...restProps
   },
   ref
@@ -48,7 +47,8 @@ const RadioInput: ForwardRefRenderFunction<
     const { value, name: field } = target;
     const { errorMessage } = checkValidity(
       value,
-      rules[field as keyof typeof rules]
+      rules[field as keyof typeof rules],
+      values
     );
     onChange?.(value, { formErrors: { ...formErrors, [field]: errorMessage } });
   };

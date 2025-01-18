@@ -7,6 +7,7 @@ export enum IDENTIFIERS {
   ORGANIZATION_VIEW = "/organization/[organizationId]",
   ORGANIZATION_MEMBERS = "/organization/[organizationId]/members",
   ORGANIZATION_PROJECTS = "/organization/[organizationId]/projects",
+  USER_SETTINGS = "/member/settings",
   PAGE_401 = "/401",
   PAGE_404 = "/404",
 }

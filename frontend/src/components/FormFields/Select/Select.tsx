@@ -33,7 +33,6 @@ const Select: ForwardRefRenderFunction<
     style,
     values,
     options,
-    fieldType,
     ...restProps
   },
   ref
@@ -48,7 +47,8 @@ const Select: ForwardRefRenderFunction<
     const { value, name: field } = target;
     const { errorMessage } = checkValidity(
       value,
-      rules[field as keyof typeof rules]
+      rules[field as keyof typeof rules],
+      values
     );
     onChange?.(value, { formErrors: { ...formErrors, [field]: errorMessage } });
   };

@@ -1,8 +1,12 @@
 import classNames from "classnames";
 import { useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Settings } from "src/components/Icons";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+
 import Button from "src/components/Buttons";
-import SignIn from "src/components/SignIn/Signin";
+import SignIn from "src/components/SignIn";
+import SignUp from "src/components/SignUp";
+import MenuButton from "src/components/MenuButton";
 import { useActions, useTypedSelector } from "src/hooks";
 import { useIsAuthenticated } from "src/hooks/useIsAuthenticated";
 import { getUrl, IDENTIFIERS, Link } from "src/services/urlsHelper";
@@ -29,8 +33,10 @@ const ListItem: React.FC<ListItemType> = ({ to, children }) => {
 
 function RootLayout() {
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [showSignUpModal, setShowSignUpModal] = useState(false);
   const isAuthenticated = useIsAuthenticated();
-  const { init } = useActions();
+  const { init, logout } = useActions();
+  const navigate = useNavigate();
   const initState = useTypedSelector((state) => state.user.init);
 
   useEffect(() => {
@@ -38,6 +44,25 @@ function RootLayout() {
   }, [init]);
 
   const { isFetched, isFetching } = initState;
+
+  const handleLogout = async () => {
+    await logout({});
+    navigate(getUrl(IDENTIFIERS.HOME));
+  };
+
+  const userOptions = [
+    {
+      label: "Setting",
+      value: "settings",
+      onClick: () => {},
+      href: getUrl(IDENTIFIERS.USER_SETTINGS),
+    },
+    {
+      label: "Log out",
+      value: "logout",
+      onClick: handleLogout,
+    },
+  ];
 
   return (
     <>
@@ -57,13 +82,26 @@ function RootLayout() {
                     Dropdowns
                   </ListItem>
                   {!isAuthenticated && (
-                    <li className={classNames("ml-auto")}>
+                    <li className={classNames("ml-auto gap-2 flex")}>
                       <Button
                         isPrimary
                         onClick={() => setShowSignInModal(true)}
                       >
                         Sign In
                       </Button>
+                      <Button
+                        isBordered
+                        onClick={() => setShowSignUpModal(true)}
+                      >
+                        Sign Up
+                      </Button>
+                    </li>
+                  )}
+                  {isAuthenticated && (
+                    <li className={classNames("ml-auto")}>
+                      <MenuButton menuItems={userOptions}>
+                        <Settings className="text-white" size="20" />
+                      </MenuButton>
                     </li>
                   )}
                 </ul>
@@ -76,6 +114,7 @@ function RootLayout() {
         </div>
       )}
       {showSignInModal && <SignIn onClose={() => setShowSignInModal(false)} />}
+      {showSignUpModal && <SignUp onClose={() => setShowSignUpModal(false)} />}
     </>
   );
 }

@@ -44,7 +44,7 @@ export async function genericRequest<T, R>(
       throw new Error(`Request failed with status ${response.status}`);
     }
 
-    const json = await response.json();
+    const json = response.status !== 204 ? await response.json() : {};
 
     if (
       options &&
@@ -91,10 +91,12 @@ export async function genericRequest<T, R>(
           type: "user/setUser",
           payload: null,
         });
-        addToast({
-          message: "Session expired. Please log in again.",
-          isError: true,
-        });
+        if (state.user.user) {
+          addToast({
+            message: "Session expired. Please log in again.",
+            isError: true,
+          });
+        }
         return thunkApi.rejectWithValue({
           message: "Failed to refresh token. Please log in again.",
         });

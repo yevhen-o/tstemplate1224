@@ -18,6 +18,7 @@ import OrganizationList from "./pages/OrganizationsList";
 import OrganizationOverView from "./pages/OrganizationOverView";
 import OrganizationMembers from "./pages/OrganizationMembers/OrganizationMembers";
 import OrganizationProjects from "./pages/OrganizationProjects";
+import { UserSettings } from "./pages/UserSetting";
 import { storageGetKey, storageGetLatest } from "src/services/localStorage";
 import {
   getUrl,
@@ -72,6 +73,10 @@ function Router() {
         <Route
           path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_LIST)}
           element={<RouterParams element={<OrganizationList />} />}
+        />
+        <Route
+          path={getReactRouterPath(IDENTIFIERS.USER_SETTINGS)}
+          element={<RouterParams element={<UserSettings />} />}
         />
         <Route
           path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_VIEW)}

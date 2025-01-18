@@ -7,6 +7,7 @@ import {
 } from "../validationSchemas";
 import { User } from "../models";
 import { tryCatch } from "../utils/tryCatch";
+import authenticateToken from "../middlewares/authenticateToken";
 
 const router = Router();
 
@@ -29,7 +30,7 @@ const router = Router();
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/UserResponse'
+ *              $ref: '#/components/schemas/UserLoginResponse'
  *      409:
  *        description: Conflict
  *      400:
@@ -234,6 +235,21 @@ router.post(
  *        description: Bad request
  */
 router.post("/users/logout", tryCatch(User.logout));
+
+/**
+ * @openapi
+ * '/users/logout-all':
+ *  post:
+ *    tags:
+ *    - User
+ *    summary: Log out User from all devices
+ *    responses:
+ *      204:
+ *        description: Success
+ *      400:
+ *        description: Bad request
+ */
+router.post("/users/logout-all", authenticateToken, tryCatch(User.logoutAll));
 
 /**
  * @openapi

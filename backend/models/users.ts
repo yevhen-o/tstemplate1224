@@ -188,12 +188,44 @@ function generateAccessToken(user: JwtUser) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "30s" });
 }
 
+function generateJwtUserAndTokens(user: UserWithOrganizations) {
+  const { userId, organizations, firstName, lastName } = user;
+  const jwtUser = {
+    userId,
+    firstName,
+    lastName,
+    roles: (organizations || []).map((org) => {
+      const {
+        organizationId,
+        domain,
+        organization_user: { role },
+      } = org;
+      return {
+        organizationId,
+        domain,
+        role,
+      };
+    }),
+  };
+  const accessToken = generateAccessToken(jwtUser);
+  const refreshToken = jwt.sign(jwtUser, process.env.REFRESH_TOKEN_SECRET);
+  return { jwtUser, accessToken, refreshToken };
+}
+
 User.addRecord = async (req: Request, res: Response) => {
   const { password, confirmPassword, ...rest } = req.body;
   if (password !== confirmPassword) return res.status(400).send();
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await User.create({ ...rest, password: hashedPassword });
-  res.send(user);
+  const { jwtUser, accessToken, refreshToken } = generateJwtUserAndTokens(user);
+  const { userId } = user;
+  Token.addRecord(refreshToken, userId);
+  res.cookie("token", refreshToken, {
+    httpOnly: true,
+    sameSite: "strict",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+  res.json({ ...jwtUser, accessToken });
 };
 
 User.getRecords = async (req: Request, res: Response) => {
@@ -244,31 +276,14 @@ User.login = async (req: Request, res: Response) => {
     include: Organization,
   });
   if (await bcrypt.compare(req.body.password, user.password)) {
-    const { userId, organizations, firstName, lastName } = user;
-    const jwtUser = {
-      userId,
-      firstName,
-      lastName,
-      roles: organizations.map((org) => {
-        const {
-          organizationId,
-          domain,
-          organization_user: { role },
-        } = org;
-        return {
-          organizationId,
-          domain,
-          role,
-        };
-      }),
-    };
-    const accessToken = generateAccessToken(jwtUser);
-    const refreshToken = jwt.sign(jwtUser, process.env.REFRESH_TOKEN_SECRET);
+    const { jwtUser, accessToken, refreshToken } =
+      generateJwtUserAndTokens(user);
+    const { userId } = user;
     Token.addRecord(refreshToken, userId);
     res.cookie("token", refreshToken, {
-      httpOnly: true, // Prevents JavaScript access
-      sameSite: "strict", // Prevents cross-origin requests from sending the cookie
-      maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie expiration time (1 day)
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
     res.json({ ...jwtUser, accessToken });
   } else {
@@ -281,9 +296,24 @@ User.logout = async (req: Request, res: Response) => {
   if (token) {
     Token.removeRecord(token);
     res.cookie("token", "", {
-      httpOnly: true, // Prevents JavaScript access
-      sameSite: "strict", // Prevents cross-origin requests from sending the cookie
-      maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie expiration time (1 day)
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+    res.status(204).send();
+  } else {
+    res.status(400).send();
+  }
+};
+
+User.logoutAll = async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  if (userId) {
+    Token.revokeByUser(userId);
+    res.cookie("token", "", {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
     res.status(204).send();
   } else {

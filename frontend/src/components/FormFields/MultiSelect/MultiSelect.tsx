@@ -64,10 +64,11 @@ const MultiSelect: ForwardRefRenderFunction<
   const onInputChange = (value: (string | number)[]) => {
     const { errorMessage } = checkValidity(
       value,
-      rules[name as keyof typeof rules]
+      rules[name as keyof typeof rules],
+      values
     );
     onChange?.(value, { formErrors: { ...formErrors, [name]: errorMessage } });
-    isCloseOnSelect && setIsDropDownShown(false);
+    if (isCloseOnSelect) setIsDropDownShown(false);
   };
 
   const errorMessage = formErrors[name];

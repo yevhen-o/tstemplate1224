@@ -32,7 +32,6 @@ const CheckBox: ForwardRefRenderFunction<
     rules = {},
     style,
     values,
-    fieldType,
     ...restProps
   },
   ref
@@ -47,7 +46,8 @@ const CheckBox: ForwardRefRenderFunction<
     const { checked: value, name: field } = target;
     const { errorMessage } = checkValidity(
       value.toString(),
-      rules[field as keyof typeof rules]
+      rules[field as keyof typeof rules],
+      values
     );
     onChange?.(value, {
       formErrors: { ...formErrors, [field]: errorMessage },

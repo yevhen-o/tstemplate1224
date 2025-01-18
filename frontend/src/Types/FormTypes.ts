@@ -1,8 +1,26 @@
 import { ValidationErrors } from "src/helpers/validation";
+import { Rule } from "src/helpers/validation/constants";
+
+export type Value =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | string[]
+  | object;
+
+export type ErrorMessage = string | null;
+
+export type Values = Record<string, Value>;
+export type Rules<V extends Values = Values> = Partial<Record<keyof V, Rule>>;
+export type ValidationErrors<V extends Values = Values> = Partial<
+  Record<keyof V, ErrorMessage>
+>;
 
 type BaseFieldType = {
   name: string;
-  ref?: React.Ref<any>;
+  ref?: React.Ref<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
   label?: string;
   helpText?: string;
   className?: string;
@@ -15,7 +33,7 @@ type BaseFieldType = {
 export type DefaultFormProps = {
   formErrors?: ValidationErrors;
   rules?: object;
-  values?: object;
+  values?: Values;
   onChange?: (arg0: string | boolean, arg1: object) => void;
   onFocus?: () => void;
 };

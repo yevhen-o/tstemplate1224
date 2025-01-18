@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import jwt from "jsonwebtoken";
+import AppError from "../utils/AppError";
 import { JwtUser } from "../models/users";
 
 // Extend the Request interface to include the user property
@@ -20,7 +21,7 @@ const authenticateToken: RequestHandler = async (
   const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
-    res.status(401).send("Unauthorized: No token provided.");
+    next(new AppError({}, "Validation error", 401));
     return;
   }
 
@@ -33,8 +34,7 @@ const authenticateToken: RequestHandler = async (
     req.user = user;
     next();
   } catch (err) {
-    console.error("Token verification failed:", err);
-    res.status(401).send("Forbidden: Invalid token.");
+    next(new AppError(err, "Forbidden: Invalid token.", 401));
     return;
   }
 };

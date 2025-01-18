@@ -22,9 +22,7 @@ const DatePickerImpl: React.FC<Props> = ({
   onChange,
   onFocus,
   rules = {},
-  style,
   values,
-  fieldType,
   ...restProps
 }) => {
   const [internalIsTouched, setInternalIsTouched] = useState(false);
@@ -33,7 +31,8 @@ const DatePickerImpl: React.FC<Props> = ({
   const onInputChange = (value: Date): void => {
     const { errorMessage } = checkValidity(
       value.toString(),
-      rules[name as keyof typeof rules]
+      rules[name as keyof typeof rules],
+      values
     );
     onChange?.(value.toString(), {
       formErrors: { ...formErrors, [name]: errorMessage },

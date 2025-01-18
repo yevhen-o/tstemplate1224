@@ -1,11 +1,17 @@
 import memoize from "memoize-one";
 import getTypedKeys from "../getTypedKeys";
-import type { Value, ErrorMessage, Rule } from "./constants";
+import type { Rule } from "./constants";
+import type {
+  Value,
+  Values,
+  Rules,
+  ValidationErrors,
+} from "src/Types/FormTypes";
 import { Validity, RuleValidators } from "./validationFunction";
 
 type BaseFunction = (...args: any[]) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-type CustomRule = (value: Value) => Validity;
+type CustomRule = (value: Value, values?: Values) => Validity;
 
 export type ExtendedRule = Rule & {
   customRules?: CustomRule[];
@@ -13,7 +19,8 @@ export type ExtendedRule = Rule & {
 
 export const checkValidity = (
   value: Value,
-  rules: ExtendedRule | null | undefined
+  rules: ExtendedRule | null | undefined,
+  values?: Values
 ): Validity => {
   if (!rules) return { isValid: true, errorMessage: null };
 
@@ -27,19 +34,13 @@ export const checkValidity = (
   }
   if (rules?.customRules) {
     for (const customRule of rules.customRules) {
-      const result = customRule(value);
+      const result = customRule(value, values);
       if (!result.isValid) return result;
     }
   }
 
   return { isValid: true, errorMessage: null };
 };
-
-type Values = Record<string, Value>;
-export type Rules<V extends Values = Values> = Partial<Record<keyof V, Rule>>;
-export type ValidationErrors<V extends Values = Values> = Partial<
-  Record<keyof V, ErrorMessage>
->;
 
 const getValidationErrorsUnMemoized = <V extends Values = Values>(
   values: V,
@@ -49,7 +50,8 @@ const getValidationErrorsUnMemoized = <V extends Values = Values>(
     const validationResult = { ...result };
     validationResult[key] = checkValidity(
       values[key],
-      validation[key]
+      validation[key],
+      values
     ).errorMessage;
     return validationResult;
   }, {});
