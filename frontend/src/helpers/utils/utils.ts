@@ -1,16 +1,22 @@
-export function debounce(fn: Function, wait: number) {
+export function debounce<
+  T extends (
+    ...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+  ) => any // eslint-disable-line @typescript-eslint/no-explicit-any
+>(fn: T, wait: number) {
   let timerId: ReturnType<typeof setTimeout> | null = null;
 
-  function debounced(this: any, ...args: any[]) {
+  const debounced = function (
+    this: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    ...args: Parameters<T>
+  ) {
     if (timerId) {
       clearTimeout(timerId);
     }
-    const context = this;
     timerId = setTimeout(() => {
       timerId = null;
-      fn.apply(context, args);
+      fn.apply(this, args);
     }, wait);
-  }
+  } as T & { cancel: () => void };
 
   debounced.cancel = () => {
     if (timerId) {
@@ -33,22 +39,28 @@ export const countBy = <T>(
   }, result);
 };
 
-export function throttle<T>(func: Function, wait: number) {
+export function throttle<
+  T extends (
+    ...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+  ) => any // eslint-disable-line @typescript-eslint/no-explicit-any
+>(func: T, wait: number): T & { cancel: () => void } {
   let timerId: ReturnType<typeof setTimeout> | null = null;
   let lastInvocationTime: number | null = null;
 
-  function throttled(this: T, ...args: any[]) {
+  const throttled = function (
+    this: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    ...args: Parameters<T>
+  ) {
     const now = Date.now();
-    const context = this;
+
+    const applyFn = () => {
+      lastInvocationTime = now;
+      func.apply(this, args); // Directly use `this` here
+    };
 
     if (timerId) {
       clearTimeout(timerId);
     }
-
-    const applyFn = () => {
-      lastInvocationTime = now;
-      func.apply(context, args);
-    };
 
     if (lastInvocationTime === null || now - lastInvocationTime >= wait) {
       applyFn();
@@ -56,7 +68,7 @@ export function throttle<T>(func: Function, wait: number) {
       const remaining = wait - (now - lastInvocationTime);
       timerId = setTimeout(applyFn, remaining);
     }
-  }
+  } as T & { cancel: () => void };
 
   throttled.cancel = () => {
     if (timerId) {
@@ -158,8 +170,8 @@ export function deepEqual(valueA: unknown, valueB: unknown): boolean {
     for (const key of keysA) {
       if (
         !deepEqual(
-          (valueA as Record<string, any>)[key],
-          (valueB as Record<string, any>)[key]
+          (valueA as Record<string, unknown>)[key],
+          (valueB as Record<string, unknown>)[key]
         )
       ) {
         return false;

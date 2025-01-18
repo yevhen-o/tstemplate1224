@@ -7,7 +7,7 @@ interface MultipleChoiceItemProps {
   value?: (string | number)[];
   activeIndex: number;
   handleClose: () => void;
-  handleClick: (
+  handleClick?: (
     fn: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
   ) => (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   isItemSelected?: (
@@ -32,14 +32,12 @@ const MultipleChoiceItem: React.FC<MultipleChoiceItemProps> = ({
   index,
   value,
   activeIndex,
-  handleClick = (
-    fn: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
-  ) => fn,
-  isItemSelected = (i: string | number, v: Array<string | number>) => false,
+  handleClick,
+  isItemSelected,
   item: {
     label,
     style,
-    onClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {},
+    onClick,
     disabled,
     isDivider,
     className = "",
@@ -56,7 +54,7 @@ const MultipleChoiceItem: React.FC<MultipleChoiceItemProps> = ({
       style={style}
       disabled={disabled}
       data-focus-parent={id}
-      onClick={handleClick(onClick)}
+      onClick={handleClick && onClick && handleClick(onClick)}
       className={classNames("drop-down__item", className, {
         "drop-down__item--active": activeIndex === index,
         "drop-down__item--disabled": disabled,
@@ -67,7 +65,7 @@ const MultipleChoiceItem: React.FC<MultipleChoiceItemProps> = ({
           type="checkbox"
           name={label}
           readOnly
-          checked={value && isItemSelected(itemValue, value)}
+          checked={value && isItemSelected && isItemSelected(itemValue, value)}
         />
         <TextEllipsis>{label}</TextEllipsis>
       </span>

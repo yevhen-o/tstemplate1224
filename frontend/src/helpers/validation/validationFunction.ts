@@ -12,7 +12,7 @@ const isNumber = (value: Value): value is number => typeof value === "number";
 
 const createRegexValidator =
   (regex: RegExp, errorMessage: string) =>
-  (value: Value, _: any, isRequired?: boolean): Validity => {
+  (value: Value, _: unknown, isRequired?: boolean): Validity => {
     const isValid =
       isString(value) &&
       (regex.test(value) || valueIsStringNotRequired(value, isRequired));

@@ -5,7 +5,7 @@ import { OptionType } from "src/Types/FormTypes";
 import DropDownItem from "src/components/DropDown/DropDownItem";
 
 interface ContextMenuProps {
-  rightClickItem: any;
+  rightClickItem: unknown;
   positionX: number;
   positionY: number;
   isToggled: boolean;
@@ -15,7 +15,10 @@ interface ContextMenuProps {
 }
 
 export type ContextMenuOptionType = OptionType & {
-  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, i: any) => void;
+  onClick: (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    i: unknown
+  ) => void;
   disabled?: boolean;
 };
 

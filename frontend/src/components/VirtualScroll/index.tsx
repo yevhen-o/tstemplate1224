@@ -12,7 +12,7 @@ const ListItem = ({
 }: {
   index: number;
   activeIndex: number;
-  item: any;
+  item: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   onMouseEnter: () => void;
 }) => {
   return (
@@ -33,12 +33,12 @@ const ListItem = ({
 interface VirtualScroll {
   id?: string;
   items: OptionType[];
-  value?: any; // TODO: Fix usage of any here
+  value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   itemHeight?: number;
   extraItems?: number;
   hasActiveByDefault?: boolean;
   isItemSelected?: (itemValue: string, newValue: string | string[]) => void;
-  CMP?: ComponentType<any>;
+  CMP?: ComponentType<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
   handleClick?: (callback?: () => void) => void;
   handleClose?: () => void;
 }

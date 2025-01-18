@@ -28,9 +28,9 @@ const DropDownCss: React.FC<DropDownCssProps> = ({
   return (
     <>
       <Button
-        //@ts-ignore
+        //@ts-expect-error New anchorName css property
         style={{ anchorName: `--anchor__${menuId}` }}
-        //@ts-ignore
+        //@ts-expect-error New css popowerTarget propperty
         popoverTarget={menuId}
         id={`anchor__${menuId}`}
         className={classNames("drop-down-menu-button", className)}
@@ -39,10 +39,10 @@ const DropDownCss: React.FC<DropDownCssProps> = ({
         {children}
       </Button>
       <dialog
-        //@ts-ignore
+        //@ts-expect-error  New anchorName css property
         style={{ positionAnchor: `--anchor__${menuId}` }}
         id={menuId}
-        //@ts-ignore
+        //@ts-expect-error Popower auto by default
         popover="auto"
         className={classNames("profile-menu rounded-md", className)}
       >

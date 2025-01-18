@@ -34,16 +34,14 @@ const DropDownItem: React.FC<DropDownItemProps> = ({
   value,
   activeIndex,
   handleClose,
-  handleClick = (
-    fn: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
-  ) => fn,
-  isItemSelected = (i: string | number, v: Array<string | number>) => false,
+  handleClick,
+  isItemSelected,
   item: {
     href,
     label,
     style,
     target,
-    onClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {},
+    onClick,
     disabled,
     isDivider,
     className = "",
@@ -65,7 +63,7 @@ const DropDownItem: React.FC<DropDownItemProps> = ({
           "drop-down__item--active": activeIndex === index,
           "drop-down__item--disabled": disabled,
           "drop-down__item--selected":
-            value && isItemSelected(itemValue, value),
+            value && isItemSelected && isItemSelected(itemValue, value),
         })}
       >
         <span className="drop-down__item-text">
@@ -81,11 +79,12 @@ const DropDownItem: React.FC<DropDownItemProps> = ({
       style={style}
       disabled={disabled}
       data-focus-parent={id}
-      onClick={handleClick(onClick)}
+      onClick={onClick && handleClick(onClick)}
       className={classNames("drop-down__item", className, {
         "drop-down__item--active": activeIndex === index,
         "drop-down__item--disabled": disabled,
-        "drop-down__item--selected": value && isItemSelected(itemValue, value),
+        "drop-down__item--selected":
+          value && isItemSelected && isItemSelected(itemValue, value),
       })}
     >
       <span className={"drop-down__item-text"}>

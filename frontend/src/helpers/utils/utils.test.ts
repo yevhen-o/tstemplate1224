@@ -1,5 +1,6 @@
 import { debounce, countBy, throttle, deepClone, deepEqual } from "./utils";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 describe("debounce", () => {
   test("can be initialized", () => {
     const increment = debounce(() => {}, 50);
@@ -166,9 +167,7 @@ describe("countBy", () => {
     });
 
     test("keys that are also properties", () => {
-      expect(
-        countBy(["one", "two", "three"], (val: string) => "length")
-      ).toEqual({
+      expect(countBy(["one", "two", "three"], () => "length")).toEqual({
         length: 3,
       });
     });

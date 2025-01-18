@@ -75,7 +75,7 @@ const Sticker: React.FC<StickerProps> = ({
   useEffect(() => {
     const handleResize = () => {
       setPosition((prev) => {
-        let newPosition = { ...prev };
+        const newPosition = { ...prev };
 
         if (prev.left !== undefined && prev.left > screenWidth - wrapperWidth) {
           newPosition.left = screenWidth - wrapperWidth;

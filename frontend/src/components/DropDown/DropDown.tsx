@@ -10,7 +10,7 @@ import "./DropDown.scss";
 
 interface DropDownProps {
   id?: string;
-  CMP?: ComponentType<any>;
+  CMP?: ComponentType<unknown>;
   value?: string | number | Array<string | number>;
   menuItems: OptionType[];
   itemHeight: number;

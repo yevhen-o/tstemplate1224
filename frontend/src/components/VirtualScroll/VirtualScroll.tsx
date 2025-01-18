@@ -20,9 +20,9 @@ const VirtualizedList = ({
   })[];
   itemHeight?: number;
   extraItems?: number;
-  value?: any;
+  value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   isItemSelected?: (itemValue: string, newValue: string | string[]) => void;
-  CMP: ComponentType<any>;
+  CMP: ComponentType<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
   handleClick?: (callback?: () => void) => void;
   handleClose?: () => void;
   visibleSpace: number;
@@ -99,18 +99,20 @@ const VirtualizedList = ({
         case KEY_CODES.ESC:
           handleClose?.();
           break;
-        case KEY_CODES.ARROW_DOWN:
+        case KEY_CODES.ARROW_DOWN: {
           const nextActiveIndex =
             activeIndex + 1 < items.length ? activeIndex + 1 : activeIndex;
           setActiveIndex(nextActiveIndex);
           scrollToActiveIndex(nextActiveIndex);
           break;
-        case KEY_CODES.ARROW_UP:
+        }
+        case KEY_CODES.ARROW_UP: {
           const prevActiveIndex =
             activeIndex > 0 ? activeIndex - 1 : activeIndex;
           setActiveIndex(prevActiveIndex);
           scrollToActiveIndex(prevActiveIndex);
           break;
+        }
         default:
           break;
       }

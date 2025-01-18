@@ -9,7 +9,7 @@ type Params = {
   organizationId: string;
 };
 
-export const selectProjectsFromOrganizationById = createSelector(
+const selectProjectsFromOrganizationById = createSelector(
   [
     (state: RootState) => state.organization.orgById,
     (state: RootState) => state.organization.projectById,
@@ -32,7 +32,7 @@ export const selectProjectsFromOrganizationById = createSelector(
   }
 );
 
-const OrganizationProjects: React.FC = () => {
+export const OrganizationProjects: React.FC = () => {
   const { organizationId } = useParams<Params>();
 
   const orgProjects = useTypedSelector((state) =>

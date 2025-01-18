@@ -17,7 +17,7 @@ type Params = {
   organizationId: string;
 };
 
-export const selectUsersFromOrganizationById = createSelector(
+const selectUsersFromOrganizationById = createSelector(
   [
     (state: RootState) => state.organization.orgById,
     (state: RootState) => state.organization.userById,

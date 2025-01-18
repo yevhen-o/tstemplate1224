@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React from "react";
 
 type Props = {
@@ -13,7 +14,14 @@ const FieldLabel: React.FC<Props> = ({
   isValid = true,
   id,
 }) => (
-  <label htmlFor={id} className={"block text-sm/6 font-medium text-gray-900"}>
+  <label
+    htmlFor={id}
+    className={classNames(
+      "block text-sm/6 font-medium text-gray-900",
+      className,
+      { "text-red-500": !isValid }
+    )}
+  >
     {children}
   </label>
 );

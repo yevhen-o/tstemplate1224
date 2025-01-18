@@ -14,7 +14,7 @@ function getFieldValue(
 ): string | number {
   const value = fieldName
     .split(".")
-    .reduce((acc, part) => (acc as any)?.[part], obj);
+    .reduce((acc, part) => (acc as any)?.[part], obj); // eslint-disable-line @typescript-eslint/no-explicit-any
 
   if (sortAsDate) {
     return new Date((value as string | number) ?? 0).getTime();

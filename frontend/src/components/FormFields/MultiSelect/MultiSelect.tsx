@@ -48,7 +48,7 @@ const MultiSelect: ForwardRefRenderFunction<
     formErrors = {},
     isCloseOnSelect = true,
   },
-  ref
+  ref // eslint-disable-line @typescript-eslint/no-unused-vars
 ) => {
   // TODO: combine ref
   const inputEl = useRef<HTMLInputElement>(null);

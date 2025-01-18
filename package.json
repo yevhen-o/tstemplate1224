@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "pre-push": "npm run lint:all && npm run test:all",
+    "lint:all": "npm run lint:frontend",
+    "test:all": "npm run test:frontend",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && npm run lint",
+    "test:frontend": "cd frontend && npm test",
+    "test:backend": "cd backend && npm test"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}

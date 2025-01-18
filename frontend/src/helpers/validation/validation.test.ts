@@ -5,7 +5,7 @@ describe("checkValidity", () => {
   const createTest = (
     value: Value,
     rules: Rule,
-    expectedValidity: Boolean,
+    expectedValidity: boolean,
     expectedErrorMessage: string | null
   ) => {
     const result = checkValidity(value, rules);
