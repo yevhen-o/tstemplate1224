@@ -6,9 +6,10 @@
     "lint:frontend": "cd frontend && npm run lint",
     "lint:backend": "cd backend && npm run lint",
     "test:frontend": "cd frontend && npm test",
-    "test:backend": "cd backend && npm test"
+    "test:backend": "cd backend && npm test",
+    "prepare": "husky install"
   },
   "devDependencies": {
-    "husky": "^9.1.7"
+    "husky": "^8.0.0"
   }
 }
