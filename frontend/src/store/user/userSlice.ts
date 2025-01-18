@@ -10,6 +10,7 @@ import {
   genericRequest,
 } from "../shared";
 import { hashString } from "src/helpers/utils/hashString";
+import { Role } from "src/services/auth/abac";
 
 export type UserType = {
   userId: number;
@@ -20,7 +21,14 @@ export type UserType = {
   createdAt: string;
 };
 
-export type UserTypeAccess = UserType & { accessToken: string };
+export type UserTypeAccess = UserType & {
+  accessToken: string;
+  roles: {
+    organizationId: number;
+    domain: string;
+    role: Role;
+  }[];
+};
 
 type StateType = {
   init: RequestState;
@@ -244,10 +252,11 @@ const userSlice = createSliceWithThunks({
     }),
   }),
   selectors: {
-    isAuthenticated: (state) => state.user,
+    isAuthenticated: (state) => !!state.user,
+    authorizedUserSelector: (state) => state.user,
   },
 });
 
 export const { init, login, logout, logoutAll, signup } = userSlice.actions;
-export const { isAuthenticated } = userSlice.selectors;
+export const { isAuthenticated, authorizedUserSelector } = userSlice.selectors;
 export default userSlice.reducer;

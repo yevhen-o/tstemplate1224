@@ -11,6 +11,7 @@ import { FILTER_ALL_VALUE } from "src/constants";
 
 import "./OrganizationMembers.scss";
 import { formatDate } from "src/helpers/formatDate";
+import { useHasOrgPermission } from "src/hooks/useHasOrgPermission";
 
 type Params = {
   organizationId: string;
@@ -83,7 +84,7 @@ const OrganizationMembers: React.FC = () => {
     },
   ];
 
-  const renderActions = (record: UserType) => {
+  const RenderActions = (record: UserType) => {
     return (
       <DropDownCss
         className="org-members__menu"
@@ -104,9 +105,10 @@ const OrganizationMembers: React.FC = () => {
             onClick: () => console.log("do smth instead", record),
           },
           {
-            label: "Do something important",
+            label: "Delete",
             value: "4",
-            onClick: () => console.log("do smth important", record),
+            disabled: !useHasOrgPermission("users", "delete", record),
+            onClick: () => console.log("allow delete record", record),
           },
         ]}
       >
@@ -170,7 +172,7 @@ const OrganizationMembers: React.FC = () => {
           data={users}
           filterFields={filterFields}
           renderFunctions={{
-            actions: renderActions,
+            actions: RenderActions,
             createdAt: renderCreatedAt,
           }}
           headerFields={headerFields}

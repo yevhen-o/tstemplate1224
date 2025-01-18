@@ -43,7 +43,7 @@ localhost:3050/api - api
 - [x] Migrate CRA to VITE can confirm VITE is much faster :)
 - [x] Use Zustand for toast management, and just practice
 - [x] Create Authentication flow with email and password, try to use browser hashing functionality
-- [ ] Build Authorization Logic
+- [x] Build Authorization Logic
 - [ ] Use localForage for cross tab communication
 - [ ] Widget communication flow
 - [ ] Add Sentry, New Relic, Data Dog

@@ -44,6 +44,16 @@ Project.belongsTo(Organization, {
   as: "organization",
 });
 
+Project.belongsTo(User, {
+  foreignKey: "ownerId",
+  as: "owner",
+});
+
+User.hasMany(Project, {
+  foreignKey: "ownerId",
+  as: "ownedProjects",
+});
+
 // Sync models with the database
 // (async () => {
 //   await db.sync({ alter: true }); // Adjust options as necessary

@@ -38,6 +38,9 @@
     &:hover {
       background: #fafafa;
     }
+    &:disabled {
+      opacity: .5;
+    }
   }
 
   &:popover-open {

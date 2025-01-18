@@ -13,8 +13,12 @@ const db = require("../db_connect");
  *       required:
  *         - name
  *         - organizationId
+ *         - userId
  *       properties:
  *         organizationId:
+ *           type: number
+ *           default: 2
+ *         ownerId:
  *           type: number
  *           default: 2
  *         name:
@@ -28,6 +32,8 @@ const db = require("../db_connect");
  *         description:
  *           type: string
  *         imageUrl:
+ *           type: string
+ *         ownerId:
  *           type: string
  *     ProjectListResponse:
  *       type: array
@@ -64,6 +70,10 @@ export const Project = db.define("project", {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
+  ownerId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
 });
 
 // Project.sync({ force: true });
@@ -72,6 +82,7 @@ export type ProjectInterface = {
   name: string;
   description?: string;
   imageUrl: string;
+  organizationId: number;
 };
 
 Project.addRecord = async (req: Request, res: Response) => {

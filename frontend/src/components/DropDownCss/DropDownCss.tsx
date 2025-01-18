@@ -9,7 +9,12 @@ import classNames from "classnames";
 interface DropDownCssProps extends ButtonProps {
   children: React.ReactNode;
   className?: string;
-  options: { label: string; value: string; onClick: () => void }[];
+  options: {
+    label: string;
+    value: string;
+    onClick: () => void;
+    disabled?: boolean;
+  }[];
 }
 
 const DropDownCss: React.FC<DropDownCssProps> = ({
@@ -41,9 +46,13 @@ const DropDownCss: React.FC<DropDownCssProps> = ({
         popover="auto"
         className={classNames("profile-menu rounded-md", className)}
       >
-        {options.map(({ label, onClick, value }, index) => {
+        {options.map(({ label, onClick, value, disabled }, index) => {
           return (
-            <button key={`${label}__${value}__${index}`} onClick={onClick}>
+            <button
+              key={`${label}__${value}__${index}`}
+              onClick={onClick}
+              disabled={disabled}
+            >
               {label}
             </button>
           );
