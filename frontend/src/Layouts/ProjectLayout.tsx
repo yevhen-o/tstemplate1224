@@ -13,7 +13,7 @@ import db, {
   DexieChange,
   addLatestProject,
   removeLatestProject,
-} from "src/store/latestProjects/dexie";
+} from "src/services/indexedDB/dexie";
 
 type ListItemType = {
   to: string;

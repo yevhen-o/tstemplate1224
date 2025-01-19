@@ -212,7 +212,7 @@ describe("throttle", () => {
     expect(i).toBe(1);
   });
 
-  test("throttles delayed invocations", (done) => {
+  test("throttles delayed invocations", () => {
     let i = 0;
     const increment = throttle(() => {
       i++;
@@ -227,11 +227,13 @@ describe("throttle", () => {
       expect(i).toBe(1);
     }, 25);
 
-    setTimeout(() => {
-      increment();
-      expect(i).toBe(1);
-      done();
-    }, 50);
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        increment();
+        expect(i).toBe(1);
+        resolve();
+      }, 50);
+    });
   });
 
   test("uses arguments", () => {
@@ -245,7 +247,7 @@ describe("throttle", () => {
     expect(i).toBe(42);
   });
 
-  test("can be called again after first throttling window", (done) => {
+  test("can be called again after first throttling window", () => {
     let i = 0;
     const increment = throttle(() => {
       i++;
@@ -259,17 +261,19 @@ describe("throttle", () => {
     expect(i).toBe(1);
 
     // Should not fire yet.
-    setTimeout(() => {
-      expect(i).toBe(1);
-      increment();
-      increment();
-      increment();
-      expect(i).toBe(1);
-      done();
-    }, 50);
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(i).toBe(1);
+        increment();
+        increment();
+        increment();
+        expect(i).toBe(1);
+        resolve();
+      }, 50);
+    });
   });
 
-  test("callbacks can access `this`", (done) => {
+  test("callbacks can access `this`", () => {
     const increment = throttle(function (
       this: Record<string, number>,
       delta: number
@@ -287,11 +291,13 @@ describe("throttle", () => {
     obj.increment(3);
     expect(obj.val).toBe(5);
 
-    setTimeout(() => {
-      obj.increment(10);
-      expect(obj.val).toBe(15);
-      done();
-    }, 100);
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        obj.increment(10);
+        expect(obj.val).toBe(15);
+        resolve();
+      }, 100);
+    });
   });
 });
 

@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { withClientScreen } from "src/hocs";
-import { useObserveElementSize } from "src/hooks";
+import { useClientScreen, useObserveElementSize } from "src/hooks";
 
 type InitialPosition =
   | { top: number; bottom?: never; left: number; right?: never }
@@ -11,21 +10,19 @@ type InitialPosition =
 interface StickerProps {
   children: React.ReactNode;
   initialPosition?: InitialPosition;
-  screenWidth: number;
-  screenHeight: number;
 }
 
 const Sticker: React.FC<StickerProps> = ({
   children,
   initialPosition = { top: 100, left: 100 },
-  screenWidth,
-  screenHeight,
 }) => {
   const [position, setPosition] = useState(initialPosition);
   const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef<HTMLDivElement>(null);
 
   const { wrapperHeight, wrapperWidth } = useObserveElementSize(dragRef);
+
+  const { screenHeight, screenWidth } = useClientScreen();
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -121,4 +118,4 @@ const Sticker: React.FC<StickerProps> = ({
   );
 };
 
-export default withClientScreen(Sticker);
+export default Sticker;

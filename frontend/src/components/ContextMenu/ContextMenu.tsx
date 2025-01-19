@@ -4,25 +4,25 @@ import "./ContextMenu.scss";
 import { OptionType } from "src/Types/FormTypes";
 import DropDownItem from "src/components/DropDown/DropDownItem";
 
-interface ContextMenuProps {
-  rightClickItem: unknown;
+interface ContextMenuProps<T> {
+  rightClickItem: T | null;
   positionX: number;
   positionY: number;
   isToggled: boolean;
-  options: ContextMenuOptionType[];
+  options: ContextMenuOptionType<T>[];
   contextMenuRef: React.MutableRefObject<HTMLElement | null>;
   resetContextMenu: () => void;
 }
 
-export type ContextMenuOptionType = OptionType & {
+export type ContextMenuOptionType<T> = OptionType & {
   onClick: (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    i: unknown
+    i: T | null
   ) => void;
   disabled?: boolean;
 };
 
-const ContextMenu: React.FC<ContextMenuProps> = ({
+const ContextMenu = <T extends object>({
   rightClickItem,
   positionX,
   positionY,
@@ -30,9 +30,9 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   options,
   contextMenuRef,
   resetContextMenu,
-}) => {
+}: ContextMenuProps<T>) => {
   const handleClick =
-    (option: ContextMenuOptionType) =>
+    (option: ContextMenuOptionType<T>) =>
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.stopPropagation();
       option.onClick(e, rightClickItem);

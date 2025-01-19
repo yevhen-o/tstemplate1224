@@ -6,7 +6,7 @@ export const getContextMenuOptions = (item: TodoInterface) => [
     value: "1",
     onClick: (
       e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-      item: TodoInterface
+      item: TodoInterface | null
     ) => console.log(1, item),
     disabled: item.uid === "ecfkrupyb0n",
   },
@@ -15,7 +15,7 @@ export const getContextMenuOptions = (item: TodoInterface) => [
     value: "1",
     onClick: (
       e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-      item: TodoInterface
+      item: TodoInterface | null
     ) => console.log(2, item),
     disabled: item.uid === "ytqi6obpe",
   },
@@ -24,7 +24,7 @@ export const getContextMenuOptions = (item: TodoInterface) => [
     value: "1",
     onClick: (
       e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-      item: TodoInterface
+      item: TodoInterface | null
     ) => console.log(3, item),
     disabled: item.uid === "ham5pj2r2kc",
   },
@@ -34,7 +34,7 @@ export const getContextMenuOptions = (item: TodoInterface) => [
     value: "divider",
     onClick: (
       e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-      item: TodoInterface
+      item: TodoInterface | null
     ) => console.log(4, item),
   },
   {
@@ -42,7 +42,7 @@ export const getContextMenuOptions = (item: TodoInterface) => [
     value: "1",
     onClick: (
       e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-      item: TodoInterface
+      item: TodoInterface | null
     ) => console.log(5, item),
     disabled: item.uid === "7pa9u2ir8pe",
   },

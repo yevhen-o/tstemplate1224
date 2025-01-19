@@ -44,7 +44,7 @@ const Pagination: React.FC<PaginationProps> = ({
       setValues(appliedValues);
     }
     // TODO: Check how solve add value as a dependency
-  }, [appliedValues]);
+  }, [appliedValues]); //eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="items-center space-y-2 text-xs sm:space-y-0 sm:space-x-3 grid grid-cols-2">

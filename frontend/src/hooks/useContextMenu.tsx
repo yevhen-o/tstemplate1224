@@ -12,7 +12,7 @@ interface StateInterface<T> {
 }
 
 export const useContextMenu = <T extends object>(
-  getContextMenuOptions: (item: T) => ContextMenuOptionType[],
+  getContextMenuOptions: (item: T) => ContextMenuOptionType<T>[],
   hasRepositionOnScroll: boolean = true
 ) => {
   const contextMenuRef = useRef<HTMLElement | null>(null);
@@ -63,7 +63,7 @@ export const useContextMenu = <T extends object>(
     });
   }, [setContextMenu]);
 
-  let contextMenuOptions: ContextMenuOptionType[] = [];
+  let contextMenuOptions: ContextMenuOptionType<T>[] = [];
   if (contextMenu.item) {
     contextMenuOptions = getContextMenuOptions(contextMenu.item);
   }

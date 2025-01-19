@@ -3,18 +3,13 @@ import { createSelector } from "reselect";
 
 import { useActions } from "src/hooks/useActions";
 import { useTypedSelector } from "src/hooks/useTypedSelector";
-import { useClientScreen } from "src/hooks/useClientScreen";
 import AddTodoModal from "./AddEditTodoModal";
 import Button from "src/components/Buttons";
-import TodoList from "./TodoList";
+import TodoList from "./TodoListWithHOC";
 import { FieldType } from "src/hooks/useForm";
-import { withWrapperSize } from "src/hocs";
 import { FILTER_ALL_VALUE } from "src/constants";
 
-const Todos: React.FC<{ wrapperWidth: number; wrapperHeight: number }> = ({
-  wrapperWidth,
-  wrapperHeight,
-}) => {
+const Todos: React.FC = () => {
   const { isFetching, isFetched, hasError, todos } = useTypedSelector(
     createSelector(
       [(state) => state.todo.list, (state) => state.todo.itemsById],
@@ -28,7 +23,6 @@ const Todos: React.FC<{ wrapperWidth: number; wrapperHeight: number }> = ({
   );
 
   const { todoGetList } = useActions();
-  const { screenWidth, screenHeight } = useClientScreen();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -103,11 +97,8 @@ const Todos: React.FC<{ wrapperWidth: number; wrapperHeight: number }> = ({
           initialValues={initialFilterValues}
         />
       )}
-      {`Wrapper width: ${wrapperWidth} && wrapperHeight ${wrapperHeight}`}
-      <br />
-      {`Window innerWidth: ${screenWidth} && innerHeight ${screenHeight}`}
     </div>
   );
 };
 
-export default withWrapperSize(Todos);
+export default Todos;

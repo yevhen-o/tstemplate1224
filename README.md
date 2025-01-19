@@ -44,7 +44,7 @@ localhost:3050/api - api
 - [x] Use Zustand for toast management, and just practice
 - [x] Create Authentication flow with email and password, try to use browser hashing functionality
 - [x] Build Authorization Logic
-- [ ] Use localForage for cross tab communication
+- [x] Use localForage for cross tab communication // use dexie instead as it support subscription for data in indexDb change
 - [ ] Widget communication flow
 - [ ] Add Sentry, New Relic, Data Dog
 - [ ] Add Playwrite/cypress tests

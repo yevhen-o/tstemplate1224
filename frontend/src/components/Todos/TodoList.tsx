@@ -3,7 +3,6 @@ import classNames from "classnames";
 import { TodoInterface } from "src/Types";
 import { formatDate } from "src/helpers/formatDate";
 import { Link, getUrl, IDENTIFIERS } from "src/services/urlsHelper";
-import { withFilters, withPagination } from "src/hocs";
 import { getContextMenuOptions } from "./TodoContextMenuOptions";
 
 import useContextMenu from "src/hooks/useContextMenu";
@@ -43,4 +42,4 @@ const TodoList: React.FC<TodoListProps> = ({ items }) => {
     </div>
   );
 };
-export default withFilters(withPagination(TodoList));
+export default TodoList;
