@@ -3,16 +3,22 @@ import classNames from "classnames";
 import { Outlet, useLocation, useParams } from "react-router-dom";
 import { createSelector } from "reselect";
 
-import { useActions, useTypedSelector } from "src/hooks";
+import { useTypedSelector } from "src/hooks";
 import { Close } from "src/components/Icons";
 import { getUrl, IDENTIFIERS, Link } from "src/services/urlsHelper";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Button from "src/components/Buttons";
+
+import db, {
+  DexieChange,
+  addLatestProject,
+  removeLatestProject,
+} from "src/store/latestProjects/dexie";
 
 type ListItemType = {
   to: string;
   children: React.ReactNode;
-  projectToRemove?: number;
+  projectToRemove?: { projectId: number; organizationId: number };
 };
 const ListItem: React.FC<ListItemType> = ({
   to,
@@ -20,7 +26,7 @@ const ListItem: React.FC<ListItemType> = ({
   projectToRemove,
 }) => {
   const location = useLocation();
-  const { removeLatestProject } = useActions();
+
   return (
     <li
       className={classNames({
@@ -59,7 +65,7 @@ const selectProjectById = createSelector(
 const selectProjectsById = createSelector(
   [
     (state: RootState) => state.organization.projectById,
-    (state: RootState) => state.latestProjects.latestProjects,
+    (_: RootState, projectIds: number[]) => projectIds,
   ],
   (itemsById, projectIds) => {
     if (!projectIds) return undefined;
@@ -75,13 +81,46 @@ const ProjectLayout: React.FC = () => {
     selectProjectById(state, projectId)
   );
 
-  const latestProjects = useTypedSelector(selectProjectsById);
+  const [latestProjectsIds, setLatestProjectsIds] = useState<number[]>([]);
 
-  const { addLatestProject } = useActions();
+  const latestProjects = useTypedSelector((state) =>
+    selectProjectsById(state, latestProjectsIds)
+  );
+
+  const organizationId = project?.organizationId;
 
   useEffect(() => {
-    if (projectId) addLatestProject(+projectId);
-  }, [projectId, addLatestProject]);
+    const handleChange = async (changes: DexieChange[]) => {
+      for (const change of changes) {
+        if (change.type === 2 && change.table === "latestProjects") {
+          const storedProjectIds = await db.latestProjects.get({
+            organizationId,
+          });
+          if (storedProjectIds) {
+            const latestIds = JSON.parse(storedProjectIds.projects);
+            setLatestProjectsIds(latestIds);
+          }
+        }
+      }
+    };
+
+    db.addChangeHandler(handleChange);
+
+    return () => {
+      db.removeChangeHandler(handleChange);
+    };
+  }, [organizationId]);
+
+  useEffect(() => {
+    const updateLatestProjects = async () => {
+      const latestProjectIds = await addLatestProject(project);
+      if (latestProjectIds) setLatestProjectsIds(latestProjectIds);
+    };
+
+    if (project?.projectId) {
+      updateLatestProjects();
+    }
+  }, [project]);
 
   return (
     <>
@@ -105,7 +144,7 @@ const ProjectLayout: React.FC = () => {
                         to={getUrl(IDENTIFIERS.PROJECT_VIEW, {
                           projectId: project.projectId,
                         })}
-                        projectToRemove={project.projectId}
+                        projectToRemove={project}
                       >
                         {project.name}
                       </ListItem>
