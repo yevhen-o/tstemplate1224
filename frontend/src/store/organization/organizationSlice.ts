@@ -43,6 +43,7 @@ type ProjectType = {
   name: string;
   description: string;
   imageUrl: string;
+  organizationId: number;
 };
 
 type StateType = {

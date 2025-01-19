@@ -48,4 +48,4 @@ localhost:3050/api - api
 - [ ] Widget communication flow
 - [ ] Add Sentry, New Relic, Data Dog
 - [ ] Add Playwrite/cypress tests
-- [ ] Add husky pre push hook for testing and linting
+- [x] Add husky pre push hook for testing and linting

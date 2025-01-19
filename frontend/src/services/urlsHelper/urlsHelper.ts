@@ -8,6 +8,7 @@ export enum IDENTIFIERS {
   ORGANIZATION_MEMBERS = "/organization/[organizationId]/members",
   ORGANIZATION_PROJECTS = "/organization/[organizationId]/projects",
   USER_SETTINGS = "/member/settings",
+  PROJECT_VIEW = "/project/[projectId]",
   PAGE_401 = "/401",
   PAGE_404 = "/404",
 }
@@ -88,6 +89,8 @@ type IdentifierParams<I> = I extends IDENTIFIERS.TODO_VIEW
   ? RequiredParams<"organizationId">
   : I extends IDENTIFIERS.ORGANIZATION_PROJECTS
   ? RequiredParams<"organizationId">
+  : I extends IDENTIFIERS.PROJECT_VIEW
+  ? RequiredParams<"projectId">
   : NoRequiredParams;
 
 export const getUrl = <I extends IDENTIFIERS>(

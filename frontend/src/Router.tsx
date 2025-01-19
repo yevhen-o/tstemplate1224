@@ -8,6 +8,8 @@ import {
 
 import "./App.scss";
 
+import RootLayout from "./Layouts/RootLayout";
+import ProjectLayout from "./Layouts/ProjectLayout";
 import OrganizationLayout from "./Layouts/OrganizationLayout";
 
 import HomePage from "./pages/HomePage";
@@ -19,13 +21,13 @@ import OrganizationOverView from "./pages/OrganizationOverView";
 import OrganizationMembers from "./pages/OrganizationMembers/OrganizationMembers";
 import OrganizationProjects from "./pages/OrganizationProjects";
 import { UserSettings } from "./pages/UserSetting";
+import { ProjectView } from "./pages/ProjectView";
 import { storageGetKey, storageGetLatest } from "src/services/localStorage";
 import {
   getUrl,
   getReactRouterPath,
   IDENTIFIERS,
 } from "src/services/urlsHelper";
-import RootLayout from "./Layouts/RootLayout";
 
 type RouterParamsProps =
   | { children: React.ReactElement; element?: never }
@@ -93,6 +95,15 @@ function Router() {
           <Route
             path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_PROJECTS)}
             element={<RouterParams element={<OrganizationProjects />} />}
+          />
+        </Route>
+        <Route
+          path={getReactRouterPath(IDENTIFIERS.PROJECT_VIEW)}
+          element={<ProjectLayout />}
+        >
+          <Route
+            path={getReactRouterPath(IDENTIFIERS.PROJECT_VIEW)}
+            element={<ProjectView />}
           />
         </Route>
       </Route>

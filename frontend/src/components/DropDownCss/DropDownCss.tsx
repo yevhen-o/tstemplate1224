@@ -30,7 +30,7 @@ const DropDownCss: React.FC<DropDownCssProps> = ({
       <Button
         //@ts-expect-error New anchorName css property
         style={{ anchorName: `--anchor__${menuId}` }}
-        //@ts-expect-error New css popowerTarget propperty
+        //@ts-expect-error New css Target propperty
         popoverTarget={menuId}
         id={`anchor__${menuId}`}
         className={classNames("drop-down-menu-button", className)}

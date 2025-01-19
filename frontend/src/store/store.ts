@@ -3,6 +3,7 @@ import todosReducer from "./todo/todoSlice";
 import organizationReducer from "./organization/organizationSlice";
 import clientScreenReducer from "./clientScreen/clientScreenSlice";
 import userReducer from "./user/userSlice";
+import latestProjectsReducer from "./latestProjects/latestProjectsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     organization: organizationReducer,
     clientScreen: clientScreenReducer,
     user: userReducer,
+    latestProjects: latestProjectsReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
 });

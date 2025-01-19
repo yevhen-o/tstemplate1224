@@ -15,3 +15,8 @@ export {
 } from "./organization/organizationSlice";
 
 export { init, login, logout, logoutAll, signup } from "./user/userSlice";
+
+export {
+  addLatestProject,
+  removeLatestProject,
+} from "./latestProjects/latestProjectsSlice";

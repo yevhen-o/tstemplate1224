@@ -4,6 +4,7 @@ import { useParams } from "react-router";
 import { RootState } from "src/store";
 import { useActions } from "src/hooks/useActions";
 import { useTypedSelector, isOutdated } from "src/hooks";
+import { getUrl, IDENTIFIERS, Link } from "src/services/urlsHelper";
 
 type Params = {
   organizationId: string;
@@ -67,7 +68,19 @@ export const OrganizationProjects: React.FC = () => {
       <h1>Organization</h1>
       {isFetching && <div>Loading...</div>}
       {error && <div>{error.message || `Something went wrong...`}</div>}
-      {isFetched && projects.map((p) => <div key={p.projectId}>{p.name}</div>)}
+      {isFetched && (
+        <div className="gap-4 grid grid-cols-3">
+          {projects.map((p) => (
+            <Link
+              className="border border-slate-100 p-4 block rounded-lg shadow-md  min-w-40"
+              to={getUrl(IDENTIFIERS.PROJECT_VIEW, { projectId: p.projectId })}
+              key={p.projectId}
+            >
+              {p.name}
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
