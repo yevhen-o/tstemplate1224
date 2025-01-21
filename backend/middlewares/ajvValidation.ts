@@ -3,6 +3,7 @@ import Ajv from "ajv";
 import addFormats from "ajv-formats";
 const ajv = new Ajv();
 addFormats(ajv);
+
 import AppError from "../utils/AppError";
 
 const ajvWrapper = (schema: any): RequestHandler => {

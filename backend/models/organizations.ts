@@ -1,8 +1,4 @@
-import { Request, Response } from "express";
-const Sequelize = require("sequelize");
-import { User, Project } from "./";
-
-const db = require("../db_connect");
+import { Sequelize, DataTypes, Model } from "sequelize";
 
 /**
  * @openapi
@@ -61,98 +57,42 @@ const db = require("../db_connect");
  *           default: Admin
  */
 
-export const Organization = db.define("organization", {
-  organizationId: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  name: {
-    type: Sequelize.STRING,
-    unique: true,
-    allowNull: false,
-  },
-  domain: {
-    type: Sequelize.STRING,
-    unique: true,
-    allowNull: false,
-  },
-  ownerId: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-  },
-});
+export const defineOrganizationModel = (sequelize: Sequelize) => {
+  class Organization extends Model {
+    public organizationId!: number;
+    public name!: string;
+    public domain!: string;
+    public ownerId!: number;
 
-// Organization.sync({ force: true });
-
-export type OrganizationInterface = {
-  organizationId: number;
-  name: string;
-  domain: string;
-  ownerId: number;
-};
-
-Organization.addRecord = async (req: Request, res: Response) => {
-  const Org = await Organization.create(req.body);
-  res.send(Org);
-};
-
-Organization.getRecords = async (req: Request, res: Response) => {
-  const Orgs = await Organization.findAll({
-    attributes: ["organizationId", "name", "domain", "ownerId"],
-  });
-  res.send(Orgs);
-};
-
-Organization.getRecord = async (req: Request, res: Response) => {
-  const Org = await Organization.findByPk(req.params.organizationId, {
-    include: [{ model: User, as: "owner" }],
-  });
-  res.send(Org);
-};
-
-Organization.patchRecord = async (req: Request, res: Response) => {
-  const Org = await Organization.findOne({
-    where: { organizationId: req.params.organizationId },
-  });
-  await Org.update(req.body);
-  res.send(Org);
-};
-
-Organization.removeRecord = async (req: Request, res: Response) => {
-  await Organization.destroy({
-    where: { organizationId: req.params.organizationId },
-  });
-  res.status(204).send();
-};
-
-Organization.handleAddUser = async (req: Request, res: Response) => {
-  const { role } = req.body;
-  const { organizationId, userId } = req.params;
-  const organization = await Organization.findByPk(organizationId);
-  const user = await User.findByPk(userId);
-  const result = await organization.addUser(user, { through: { role } });
-  res.send(result);
-};
-
-Organization.handleRemoveUser = async (req: Request, res: Response) => {
-  const { userId, organizationId } = req.params;
-  const organization = await Organization.findByPk(organizationId);
-  const user = await User.findByPk(userId);
-  await organization.removeUser(user);
-  res.status(204).send();
-};
-
-Organization.getUsers = async (req: Request, res: Response) => {
-  const Org = await Organization.findByPk(req.params.organizationId, {
-    include: [{ model: User }],
-  });
-  res.send(Org.users);
-};
-
-Organization.getProjects = async (req: Request, res: Response) => {
-  const Org = await Organization.findByPk(req.params.organizationId, {
-    include: [{ model: Project, as: "organizationProjects" }],
-  });
-  res.send(Org.organizationProjects);
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
+  }
+  Organization.init(
+    {
+      organizationId: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      name: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+      },
+      domain: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+      },
+      ownerId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+    },
+    {
+      sequelize,
+      modelName: "organization",
+    }
+  );
+  return Organization;
 };

@@ -4,7 +4,13 @@ import {
   postProjectValidationSchema,
   patchProjectValidationSchema,
 } from "../validationSchemas";
-import { Project } from "../models";
+import {
+  projectAddRecord,
+  projectGetRecord,
+  projectGetRecords,
+  projectPatchRecord,
+  projectRemoveRecord,
+} from "../controllers/projectController";
 import { tryCatch } from "../utils/tryCatch";
 
 const router = Router();
@@ -37,7 +43,7 @@ const router = Router();
 router.post(
   "/projects",
   ajvWrapper(postProjectValidationSchema),
-  tryCatch(Project.addRecord)
+  tryCatch(projectAddRecord)
 );
 
 /**
@@ -57,7 +63,7 @@ router.post(
  *      404:
  *        description: Project not found
  */
-router.get("/projects", tryCatch(Project.getRecords));
+router.get("/projects", tryCatch(projectGetRecords));
 
 /**
  * @openapi
@@ -81,7 +87,7 @@ router.get("/projects", tryCatch(Project.getRecords));
  *      404:
  *        description: Project not found
  */
-router.get("/projects/:projectId", tryCatch(Project.getRecord));
+router.get("/projects/:projectId", tryCatch(projectGetRecord));
 
 /**
  * @openapi
@@ -114,7 +120,7 @@ router.get("/projects/:projectId", tryCatch(Project.getRecord));
 router.patch(
   "/projects/:projectId",
   ajvWrapper(patchProjectValidationSchema),
-  tryCatch(Project.patchRecord)
+  tryCatch(projectPatchRecord)
 );
 
 /**
@@ -135,6 +141,6 @@ router.patch(
  *      404:
  *        description: Project not found
  */
-router.delete("/projects/:projectId", tryCatch(Project.removeRecord));
+router.delete("/projects/:projectId", tryCatch(projectRemoveRecord));
 
 export default router;

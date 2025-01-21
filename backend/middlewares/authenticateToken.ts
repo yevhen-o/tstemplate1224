@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import jwt from "jsonwebtoken";
+
 import AppError from "../utils/AppError";
-import { JwtUser } from "../models/users";
+import { JwtUser } from "../controllers/userController";
 
 // Extend the Request interface to include the user property
 declare global {

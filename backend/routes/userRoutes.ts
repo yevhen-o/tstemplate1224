@@ -5,9 +5,21 @@ import {
   patchUserValidationSchema,
   loginUserValidationSchema,
 } from "../validationSchemas";
-import { User } from "../models";
 import { tryCatch } from "../utils/tryCatch";
 import authenticateToken from "../middlewares/authenticateToken";
+import {
+  userAddRecord,
+  userGetNewAccessToken,
+  userGetOwnedOrganizations,
+  userGetRecord,
+  userGetRecords,
+  userGetUserOrganizations,
+  userLogin,
+  userLogout,
+  userLogoutAll,
+  userPatchRecord,
+  userRemoveRecord,
+} from "../controllers/userController";
 
 const router = Router();
 
@@ -39,7 +51,7 @@ const router = Router();
 router.post(
   "/users",
   ajvWrapper(postUserValidationSchema),
-  tryCatch(User.addRecord)
+  tryCatch(userAddRecord)
 );
 
 /**
@@ -59,7 +71,7 @@ router.post(
  *      404:
  *        description: User not found
  */
-router.get("/users", tryCatch(User.getRecords));
+router.get("/users", tryCatch(userGetRecords));
 
 /**
  * @openapi
@@ -83,7 +95,7 @@ router.get("/users", tryCatch(User.getRecords));
  *      404:
  *        description: User not found
  */
-router.get("/users/:userId", tryCatch(User.getRecord));
+router.get("/users/:userId", tryCatch(userGetRecord));
 
 /**
  * @openapi
@@ -116,7 +128,7 @@ router.get("/users/:userId", tryCatch(User.getRecord));
 router.patch(
   "/users/:userId",
   ajvWrapper(patchUserValidationSchema),
-  tryCatch(User.patchRecord)
+  tryCatch(userPatchRecord)
 );
 
 /**
@@ -137,7 +149,7 @@ router.patch(
  *      404:
  *        description: User not found
  */
-router.delete("/users/:userId", tryCatch(User.removeRecord));
+router.delete("/users/:userId", tryCatch(userRemoveRecord));
 
 /**
  * @openapi
@@ -161,7 +173,7 @@ router.delete("/users/:userId", tryCatch(User.removeRecord));
  *      404:
  *        description: User not found
  */
-router.get("/users/:userId/organizations", tryCatch(User.getUserOrganizations));
+router.get("/users/:userId/organizations", tryCatch(userGetUserOrganizations));
 
 /**
  * @openapi
@@ -187,7 +199,7 @@ router.get("/users/:userId/organizations", tryCatch(User.getUserOrganizations));
  */
 router.get(
   "/users/:userId/owned-organizations",
-  tryCatch(User.getOwnedOrganizations)
+  tryCatch(userGetOwnedOrganizations)
 );
 
 /**
@@ -218,7 +230,7 @@ router.get(
 router.post(
   "/users/login",
   ajvWrapper(loginUserValidationSchema),
-  tryCatch(User.login)
+  tryCatch(userLogin)
 );
 
 /**
@@ -234,7 +246,7 @@ router.post(
  *      400:
  *        description: Bad request
  */
-router.post("/users/logout", tryCatch(User.logout));
+router.post("/users/logout", tryCatch(userLogout));
 
 /**
  * @openapi
@@ -249,7 +261,7 @@ router.post("/users/logout", tryCatch(User.logout));
  *      400:
  *        description: Bad request
  */
-router.post("/users/logout-all", authenticateToken, tryCatch(User.logoutAll));
+router.post("/users/logout-all", authenticateToken, tryCatch(userLogoutAll));
 
 /**
  * @openapi
@@ -270,7 +282,7 @@ router.post("/users/logout-all", authenticateToken, tryCatch(User.logoutAll));
  *      403:
  *        description: Forbidden
  */
-router.post("/users/token", tryCatch(User.getNewAccessToken));
+router.post("/users/token", tryCatch(userGetNewAccessToken));
 
 /**
  * @openapi
@@ -291,6 +303,6 @@ router.post("/users/token", tryCatch(User.getNewAccessToken));
  *      403:
  *        description: Forbidden
  */
-router.post("/users/init", tryCatch(User.getNewAccessToken));
+router.post("/users/init", tryCatch(userGetNewAccessToken));
 
 export default router;

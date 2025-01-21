@@ -4,7 +4,17 @@ import {
   postOrgValidationSchema,
   patchOrgValidationSchema,
 } from "../validationSchemas";
-import { Organization } from "../models";
+import {
+  organizationAddRecord,
+  organizationGetProjects,
+  organizationGetRecord,
+  organizationGetRecords,
+  organizationGetUsers,
+  organizationHandleAddUser,
+  organizationHandleRemoveUser,
+  organizationPatchRecord,
+  organizationRemoveRecord,
+} from "../controllers/organizationController";
 import { tryCatch } from "../utils/tryCatch";
 import authenticateToken from "../middlewares/authenticateToken";
 
@@ -38,7 +48,7 @@ const router = Router();
 router.post(
   "/organizations",
   ajvWrapper(postOrgValidationSchema),
-  tryCatch(Organization.addRecord)
+  tryCatch(organizationAddRecord)
 );
 
 /**
@@ -58,7 +68,7 @@ router.post(
  *      404:
  *        description: Organization not found
  */
-router.get("/organizations", tryCatch(Organization.getRecords));
+router.get("/organizations", tryCatch(organizationGetRecords));
 
 /**
  * @openapi
@@ -82,7 +92,7 @@ router.get("/organizations", tryCatch(Organization.getRecords));
  *      404:
  *        description: Organization not found
  */
-router.get("/organizations/:organizationId", tryCatch(Organization.getRecord));
+router.get("/organizations/:organizationId", tryCatch(organizationGetRecord));
 
 /**
  * @openapi
@@ -115,7 +125,7 @@ router.get("/organizations/:organizationId", tryCatch(Organization.getRecord));
 router.patch(
   "/organizations/:organizationId",
   ajvWrapper(patchOrgValidationSchema),
-  tryCatch(Organization.patchRecord)
+  tryCatch(organizationPatchRecord)
 );
 
 /**
@@ -138,7 +148,7 @@ router.patch(
  */
 router.delete(
   "/organizations/:organizationId",
-  tryCatch(Organization.removeRecord)
+  tryCatch(organizationRemoveRecord)
 );
 
 /**
@@ -175,7 +185,7 @@ router.delete(
  */
 router.post(
   "/organizations/:organizationId/user/:userId",
-  tryCatch(Organization.handleAddUser)
+  tryCatch(organizationHandleAddUser)
 );
 
 /**
@@ -212,7 +222,7 @@ router.post(
  */
 router.patch(
   "/organizations/:organizationId/user/:userId",
-  tryCatch(Organization.handleAddUser)
+  tryCatch(organizationHandleAddUser)
 );
 
 /**
@@ -239,7 +249,7 @@ router.patch(
  */
 router.delete(
   "/organizations/:organizationId/user/:userId",
-  tryCatch(Organization.handleRemoveUser)
+  tryCatch(organizationHandleRemoveUser)
 );
 
 /**
@@ -266,7 +276,7 @@ router.delete(
  */
 router.get(
   "/organizations/:organizationId/users",
-  tryCatch(Organization.getUsers)
+  tryCatch(organizationGetUsers)
 );
 
 /**
@@ -294,7 +304,7 @@ router.get(
 router.get(
   "/organizations/:organizationId/projects",
   authenticateToken,
-  tryCatch(Organization.getProjects)
+  tryCatch(organizationGetProjects)
 );
 
 export default router;
