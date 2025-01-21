@@ -46,6 +46,6 @@ localhost:3050/api - api
 - [x] Build Authorization Logic
 - [x] Use localForage for cross tab communication // use dexie instead as it support subscription for data in indexDb change
 - [ ] Widget communication flow
-- [ ] Add Sentry, New Relic, Data Dog
+- [x] Add Sentry, New Relic, Data Dog // try New Relic for this setup
 - [ ] Add Playwrite/cypress tests
 - [x] Add husky pre push hook for testing and linting

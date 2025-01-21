@@ -38,7 +38,13 @@ const ViewTodo: React.FC = () => {
   return (
     <div>
       <h1>View Todo</h1>
-
+      <Button
+        onClick={() => {
+          throw new Error("Catch by new relic and use npm package 123");
+        }}
+      >
+        Error
+      </Button>
       <Button isPrimary onClick={() => setShowEditModal(true)}>
         Edit
       </Button>

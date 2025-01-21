@@ -1,4 +1,5 @@
 require("dotenv").config();
+import "newrelic";
 const keys = require("./keys");
 import express, { Express } from "express";
 const cookieParser = require("cookie-parser");
@@ -27,7 +28,9 @@ app.use(todoRouter);
 app.use(userRouter);
 app.use(organizationRouter);
 app.use(projectRouter);
-
+app.get("/debug-nr", (req, res) => {
+  throw new Error("Check is new relic catch it up");
+});
 app.use(errorHandler);
 
 app.listen(keys.backendPort, () => {
