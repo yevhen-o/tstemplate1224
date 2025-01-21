@@ -27,3 +27,5 @@ export const UserSettings: React.FC = () => {
     </div>
   );
 };
+
+export default UserSettings;

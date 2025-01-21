@@ -3,9 +3,9 @@ import { BrowserRouter } from "react-router";
 
 import Router from "./Router";
 import { store } from "src/store/store";
+import ToastProvider from "./components/ToastProvider";
 import ClientScreenChangeListener from "./components/ClientScreenChangeListener";
 import "./App.scss";
-import ToastProvider from "./components/ToastProvider";
 
 function App() {
   return (

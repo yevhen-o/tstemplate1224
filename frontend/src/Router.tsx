@@ -5,29 +5,31 @@ import {
   useLocation,
   useSearchParams,
 } from "react-router";
-
+import { Suspense, lazy } from "react";
 import "./App.scss";
 
 import RootLayout from "./Layouts/RootLayout";
 import ProjectLayout from "./Layouts/ProjectLayout";
 import OrganizationLayout from "./Layouts/OrganizationLayout";
-
-import HomePage from "./pages/HomePage";
-import TodosPage from "./pages/TodosPage";
-import DropDownsPage from "./pages/DropDownsPage";
-import ViewTodo from "./components/Todos/ViewTodo";
-import OrganizationList from "./pages/OrganizationsList";
-import OrganizationOverView from "./pages/OrganizationOverView";
-import OrganizationMembers from "./pages/OrganizationMembers/OrganizationMembers";
-import OrganizationProjects from "./pages/OrganizationProjects";
-import { UserSettings } from "./pages/UserSetting";
-import { ProjectView } from "./pages/ProjectView";
 import { storageGetKey, storageGetLatest } from "src/services/localStorage";
 import {
   getUrl,
   getReactRouterPath,
   IDENTIFIERS,
 } from "src/services/urlsHelper";
+
+const HomePage = lazy(() => import("./pages/HomePage"));
+const TodosPage = lazy(() => import("./pages/TodosPage"));
+const DropDownsPage = lazy(() => import("./pages/DropDownsPage"));
+const ViewTodo = lazy(() => import("./components/Todos/ViewTodo"));
+const OrganizationList = lazy(() => import("./pages/OrganizationsList"));
+const OrganizationOverView = lazy(() => import("./pages/OrganizationOverView"));
+const OrganizationMembers = lazy(
+  () => import("./pages/OrganizationMembers/OrganizationMembers")
+);
+const OrganizationProjects = lazy(() => import("./pages/OrganizationProjects"));
+const UserSettings = lazy(() => import("./pages/UserSetting"));
+const ProjectView = lazy(() => import("./pages/ProjectView"));
 
 type RouterParamsProps =
   | { children: React.ReactElement; element?: never }
@@ -39,13 +41,13 @@ const RouterParams: React.FC<RouterParamsProps> = ({ children, element }) => {
   const storedValues = storageGetLatest(storageGetKey(pathname), {});
 
   return (
-    <>
+    <Suspense fallback={<>Loading...</>}>
       {!searchParams.toString() && Object.keys(storedValues).length ? (
         <Navigate to={getUrl(pathname as IDENTIFIERS, storedValues)} />
       ) : (
         children || element
       )}
-    </>
+    </Suspense>
   );
 };
 
@@ -103,7 +105,7 @@ function Router() {
         >
           <Route
             path={getReactRouterPath(IDENTIFIERS.PROJECT_VIEW)}
-            element={<ProjectView />}
+            element={<RouterParams element={<ProjectView />} />}
           />
         </Route>
       </Route>

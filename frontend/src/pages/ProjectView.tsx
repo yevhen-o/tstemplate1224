@@ -27,3 +27,5 @@ export const ProjectView: React.FC = () => {
     </div>
   );
 };
+
+export default ProjectView;
