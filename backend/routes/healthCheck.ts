@@ -50,5 +50,19 @@ router.get(
     res.json({ status: "connected!" });
   })
 );
+/**
+ * @openapi
+ * /debug-nr:
+ *  get:
+ *     tags:
+ *     - Status
+ *     description: Responds 500 error status and log action to New Relic
+ *     responses:
+ *       500:
+ *         description: Expected error
+ */
+router.get("/debug-nr", (req, res) => {
+  throw new Error("Check is new relic catch it up");
+});
 
 export default router;

@@ -54,7 +54,7 @@ const MultipleChoiceItem: React.FC<MultipleChoiceItemProps> = ({
       style={style}
       disabled={disabled}
       data-focus-parent={id}
-      onClick={handleClick && onClick && handleClick(onClick)}
+      onClick={!!handleClick && !!onClick ? handleClick(onClick) : undefined}
       className={classNames("drop-down__item", className, {
         "drop-down__item--active": activeIndex === index,
         "drop-down__item--disabled": disabled,

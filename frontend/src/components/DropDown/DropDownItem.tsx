@@ -79,7 +79,7 @@ const DropDownItem: React.FC<DropDownItemProps> = ({
       style={style}
       disabled={disabled}
       data-focus-parent={id}
-      onClick={onClick && handleClick(onClick)}
+      onClick={handleClick(onClick)}
       className={classNames("drop-down__item", className, {
         "drop-down__item--active": activeIndex === index,
         "drop-down__item--disabled": disabled,
@@ -88,7 +88,7 @@ const DropDownItem: React.FC<DropDownItemProps> = ({
       })}
     >
       <span className={"drop-down__item-text"}>
-        <TextEllipsis>{label}</TextEllipsis>
+        <TextEllipsis>{label}sdasd</TextEllipsis>
       </span>
     </button>
   );

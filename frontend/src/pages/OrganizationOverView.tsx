@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createSelector } from "reselect";
 import { useParams } from "react-router";
 import { RootState } from "src/store";
@@ -28,13 +28,18 @@ const OrganizationOverView: React.FC = () => {
     selectOrganizationById(state, organizationId)
   );
 
+  const organizationRef = useRef(organization);
+
   const { getOrgInfo } = useActions();
 
   useEffect(() => {
-    if (organizationId && (!organization || isOutdated(organization))) {
+    if (
+      organizationId &&
+      (!organizationRef.current || isOutdated(organizationRef.current))
+    ) {
       getOrgInfo({ organizationId: +organizationId });
     }
-  }, [organizationId, getOrgInfo, organization]);
+  }, [organizationId, getOrgInfo, organizationRef]);
 
   if (!organization) {
     return <>Loading...</>;

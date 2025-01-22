@@ -1,7 +1,4 @@
-import { Request, Response } from "express";
-const Sequelize = require("sequelize");
-
-const db = require("../db_connect");
+import { Sequelize, DataTypes, Model } from "sequelize";
 
 /**
  * @openapi
@@ -74,84 +71,59 @@ const db = require("../db_connect");
  *             type: string
  */
 
-export const Todo = db.define("todo", {
-  uid: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  title: {
-    type: Sequelize.STRING(10000),
-    allowNull: false,
-  },
-  deadline: {
-    type: Sequelize.STRING(1000),
-    allowNull: true,
-  },
-  isCompleted: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true,
-  },
-  priority: {
-    type: Sequelize.STRING(1000),
-    allowNull: true,
-  },
-  isImportant: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true,
-  },
-  scope: {
-    type: Sequelize.STRING(1000),
-    allowNull: true,
-  },
-});
+export const defineTodoModel = (sequelize: Sequelize) => {
+  class Todo extends Model {
+    public uid!: string;
+    public title!: string;
+    public deadline?: string;
+    public isCompleted?: boolean;
+    public priority?: string;
+    public isImportant?: boolean;
+    public scope?: string;
+
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
+  }
+
+  Todo.init(
+    {
+      uid: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      title: {
+        type: DataTypes.STRING(10000),
+        allowNull: false,
+      },
+      deadline: {
+        type: DataTypes.STRING(1000),
+        allowNull: true,
+      },
+      isCompleted: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+      },
+      priority: {
+        type: DataTypes.STRING(1000),
+        allowNull: true,
+      },
+      isImportant: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+      },
+      scope: {
+        type: DataTypes.STRING(1000),
+        allowNull: true,
+      },
+    },
+    {
+      sequelize,
+      modelName: "todo",
+    }
+  );
+
+  return Todo;
+};
 
 //Todo.sync({ force: true });
-
-export type TodoInterface = {
-  uid: string;
-  title: string;
-  deadline: string;
-  isCompleted: boolean;
-  priority: string;
-  isImportant?: boolean;
-  scope: string;
-};
-
-Todo.addRecord = async (req: Request, res: Response) => {
-  const todo = await Todo.create(req.body);
-  res.send(todo);
-};
-
-Todo.getRecords = async (req: Request, res: Response) => {
-  // await new Promise<void>((resolve) => {
-  //   setTimeout(() => resolve(), 10000);
-  // });
-  const todos = await Todo.findAll({
-    attributes: [
-      "uid",
-      "title",
-      "deadline",
-      "priority",
-      "isImportant",
-      "scope",
-    ],
-  });
-  res.send(todos);
-};
-
-Todo.getRecord = async (req: Request, res: Response) => {
-  const todo = await Todo.findOne({ where: { uid: req.params.uid } });
-  res.send(todo);
-};
-
-Todo.patchRecord = async (req: Request, res: Response) => {
-  const todo = await Todo.findOne({ where: { uid: req.params.uid } });
-  await todo.update(req.body);
-  res.send(todo);
-};
-
-Todo.removeRecord = async (req: Request, res: Response) => {
-  const todo = await Todo.destroy({ where: { uid: req.params.uid } });
-  res.status(204).send();
-};

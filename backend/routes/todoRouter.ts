@@ -4,8 +4,14 @@ import {
   postTodoValidationSchema,
   patchTodoValidationSchema,
 } from "../validationSchemas";
-import { Todo } from "../models";
 import { tryCatch } from "../utils/tryCatch";
+import {
+  todoAddRecord,
+  todoGetRecord,
+  todoGetRecords,
+  todoPatchRecord,
+  todoRemoveRecord,
+} from "../controllers/todoController";
 
 const router = Router();
 
@@ -37,7 +43,7 @@ const router = Router();
 router.post(
   "/todos",
   ajvWrapper(postTodoValidationSchema),
-  tryCatch(Todo.addRecord)
+  tryCatch(todoAddRecord)
 );
 
 /**
@@ -57,7 +63,7 @@ router.post(
  *      404:
  *        description: Todo not found
  */
-router.get("/todos", tryCatch(Todo.getRecords));
+router.get("/todos", tryCatch(todoGetRecords));
 
 /**
  * @openapi
@@ -81,7 +87,7 @@ router.get("/todos", tryCatch(Todo.getRecords));
  *      404:
  *        description: Todo not found
  */
-router.get("/todos/:uid", tryCatch(Todo.getRecord));
+router.get("/todos/:uid", tryCatch(todoGetRecord));
 
 /**
  * @openapi
@@ -114,7 +120,7 @@ router.get("/todos/:uid", tryCatch(Todo.getRecord));
 router.patch(
   "/todos/:uid",
   ajvWrapper(patchTodoValidationSchema),
-  tryCatch(Todo.patchRecord)
+  tryCatch(todoPatchRecord)
 );
 
 /**
@@ -135,6 +141,6 @@ router.patch(
  *      404:
  *        description: Todo not found
  */
-router.delete("/todos/:uid", tryCatch(Todo.removeRecord));
+router.delete("/todos/:uid", tryCatch(todoRemoveRecord));
 
 export default router;

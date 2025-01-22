@@ -1,20 +1,22 @@
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
+
 import "newrelic";
-const keys = require("./keys");
+import cors from "cors";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import express, { Express } from "express";
-const cookieParser = require("cookie-parser");
-import swaggerDocs from "./utils/swagger";
 
-import todoRouter from "./routes/todoRouter";
-import userRouter from "./routes/userRoutes";
-import organizationRouter from "./routes/organizationRouter";
-import projectRouter from "./routes/projectRoutes";
-import healthCheckRouter from "./routes/healthCheck";
-
+import keys from "./keys";
 import errorHandler from "./middlewares/errorHandler";
 
-const bodyParser = require("body-parser");
-const cors = require("cors");
+import swaggerDocs from "./utils/swagger";
+import todoRouter from "./routes/todoRouter";
+import userRouter from "./routes/userRoutes";
+import projectRouter from "./routes/projectRoutes";
+import healthCheckRouter from "./routes/healthCheck";
+import organizationRouter from "./routes/organizationRouter";
+import { db } from "./models";
 
 const app: Express = express();
 app.use(cors());
@@ -28,12 +30,10 @@ app.use(todoRouter);
 app.use(userRouter);
 app.use(organizationRouter);
 app.use(projectRouter);
-app.get("/debug-nr", (req, res) => {
-  throw new Error("Check is new relic catch it up");
-});
+
 app.use(errorHandler);
 
 app.listen(keys.backendPort, () => {
-  console.log("Listening");
-  swaggerDocs(app, keys.backendPort);
+  console.log("Listening." + db.getDatabaseName());
+  swaggerDocs(app, +keys.backendPort);
 });

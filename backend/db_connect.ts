@@ -1,13 +1,13 @@
-const Sequelize = require("sequelize");
-const keys = require("./keys");
+import { Sequelize } from "sequelize";
+import keys from "./keys";
 
 const sequelize = new Sequelize(keys.pgDatabase, keys.pgUser, keys.pgPassword, {
   host: keys.pgHost,
-  port: keys.pgPort,
+  port: +keys.pgPort,
   dialect: "postgres",
   dialectOptions: {
-    ssl: process.env.DB_SSL == "true",
+    ssl: process.env.DB_SSL === "true", // Ensure strict equality
   },
 });
 
-module.exports = sequelize;
+export default sequelize;

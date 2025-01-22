@@ -1,54 +1,85 @@
-const db = require("../db_connect");
-const Sequelize = require("sequelize");
+import db from "../db_connect";
+import { DataTypes, Model } from "sequelize";
 
-import { Organization } from "./organizations";
-import { User } from "./users";
-import { Todo } from "./todos";
-import { Project } from "./projects";
-import { Token } from "./tokens";
+// Import individual models
+import { defineOrganizationModel } from "./organizations";
+import { defineUserModel } from "./users";
+import { defineTodoModel } from "./todos";
+import { defineProjectModel } from "./projects";
+import { defineTokenModel } from "./tokens";
 
-const OrganizationUser = db.define("organization_user", {
-  role: {
-    type: Sequelize.STRING,
-    allowNull: true,
+// Define models
+const Organization = defineOrganizationModel(db);
+const User = defineUserModel(db);
+const Todo = defineTodoModel(db);
+const Project = defineProjectModel(db);
+const Token = defineTokenModel(db);
+
+// Define the junction model
+// const OrganizationUser = db.define("organization_user", {
+//   role: {
+//     type: DataTypes.STRING,
+//     allowNull: true,
+//   },
+// });
+
+class OrganizationUser extends Model {
+  public role?: string;
+
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+
+OrganizationUser.init(
+  {
+    role: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    organizationId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
-});
+  {
+    sequelize: db,
+    modelName: "organization_user",
+  }
+);
 
+// Define associations
 Organization.belongsToMany(User, {
   through: OrganizationUser,
   foreignKey: "organizationId",
 });
-
 User.belongsToMany(Organization, {
   through: OrganizationUser,
   foreignKey: "userId",
 });
-
 User.hasMany(Organization, {
   foreignKey: "ownerId",
   as: "ownedOrganizations",
 });
-
 Organization.belongsTo(User, {
   foreignKey: "ownerId",
   as: "owner",
 });
-
 Organization.hasMany(Project, {
   foreignKey: "organizationId",
   as: "organizationProjects",
 });
-
 Project.belongsTo(Organization, {
   foreignKey: "organizationId",
   as: "organization",
 });
-
 Project.belongsTo(User, {
   foreignKey: "ownerId",
   as: "owner",
 });
-
 User.hasMany(Project, {
   foreignKey: "ownerId",
   as: "ownedProjects",
@@ -59,4 +90,5 @@ User.hasMany(Project, {
 //   await db.sync({ alter: true }); // Adjust options as necessary
 // })();
 
-export { Todo, Organization, User, OrganizationUser, Project, Token };
+// Export models
+export { Organization, User, Todo, Project, Token, OrganizationUser, db };
