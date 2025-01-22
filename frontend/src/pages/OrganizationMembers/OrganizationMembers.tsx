@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createSelector } from "reselect";
 import { useParams } from "react-router";
 import { RootState } from "src/store";
@@ -47,13 +47,18 @@ const OrganizationMembers: React.FC = () => {
     selectUsersFromOrganizationById(state, organizationId)
   );
 
+  const orgMembersRef = useRef(orgMembers);
+
   const { getOrgUsers } = useActions();
 
   useEffect(() => {
-    if (organizationId && (!orgMembers || isOutdated(orgMembers))) {
+    if (
+      organizationId &&
+      (!orgMembersRef.current || isOutdated(orgMembersRef.current))
+    ) {
       getOrgUsers({ organizationId: +organizationId });
     }
-  }, [organizationId, getOrgUsers, orgMembers]);
+  }, [organizationId, getOrgUsers, orgMembersRef]);
 
   const headerFields = [
     { title: "ID", field: "userId", isAlwaysVisible: true },

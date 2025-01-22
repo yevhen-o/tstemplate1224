@@ -58,6 +58,7 @@ const VirtualizedList = ({
           key={index}
           index={index}
           activeIndex={activeIndex}
+          handleClick={handleClick}
           onMouseEnter={handleMouseEnter(index)}
           value={value}
           isItemSelected={isItemSelected}

@@ -42,10 +42,6 @@ export const OrganizationProjects: React.FC = () => {
 
   const orgProjectsRef = useRef(orgProjects);
 
-  useEffect(() => {
-    orgProjectsRef.current = orgProjects; // Update the ref whenever orgProjects changes
-  }, [orgProjects]);
-
   const { getOrgProjects } = useActions();
 
   useEffect(() => {
