@@ -1,6 +1,8 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import "newrelic";
 import cors from "cors";
-import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import express, { Express } from "express";
@@ -14,8 +16,8 @@ import userRouter from "./routes/userRoutes";
 import projectRouter from "./routes/projectRoutes";
 import healthCheckRouter from "./routes/healthCheck";
 import organizationRouter from "./routes/organizationRouter";
+import { db } from "./models";
 
-dotenv.config();
 const app: Express = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -32,6 +34,6 @@ app.use(projectRouter);
 app.use(errorHandler);
 
 app.listen(keys.backendPort, () => {
-  console.log("Listening.");
+  console.log("Listening." + db.getDatabaseName());
   swaggerDocs(app, +keys.backendPort);
 });

@@ -36,6 +36,14 @@ OrganizationUser.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    organizationId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   {
     sequelize: db,
@@ -76,6 +84,11 @@ User.hasMany(Project, {
   foreignKey: "ownerId",
   as: "ownedProjects",
 });
+
+// Sync models with the database
+// (async () => {
+//   await db.sync({ alter: true }); // Adjust options as necessary
+// })();
 
 // Export models
 export { Organization, User, Todo, Project, Token, OrganizationUser, db };

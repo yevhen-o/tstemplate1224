@@ -145,7 +145,7 @@ export const defineUserModel = (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      modelName: "todo",
+      modelName: "user",
       defaultScope: {
         attributes: { exclude: ["password"] },
       },
