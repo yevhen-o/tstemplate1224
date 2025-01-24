@@ -3,9 +3,8 @@ export const postOrgValidationSchema = {
   properties: {
     name: { type: "string" },
     domain: { type: "string" },
-    ownerId: { type: "number" },
   },
-  required: ["name", "domain", "ownerId"],
+  required: ["name", "domain"],
   additionalProperties: true,
 };
 

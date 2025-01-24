@@ -12,6 +12,7 @@ import {
   organizationGetUsers,
   organizationHandleAddUser,
   organizationHandleRemoveUser,
+  organizationIsDomainAvailable,
   organizationPatchRecord,
   organizationRemoveRecord,
 } from "../controllers/organizationController";
@@ -48,6 +49,7 @@ const router = Router();
 router.post(
   "/organizations",
   ajvWrapper(postOrgValidationSchema),
+  authenticateToken,
   tryCatch(organizationAddRecord)
 );
 
@@ -305,6 +307,32 @@ router.get(
   "/organizations/:organizationId/projects",
   authenticateToken,
   tryCatch(organizationGetProjects)
+);
+
+/**
+ * @openapi
+ * '/organizations/check-domain-availability/{domain}':
+ *  get:
+ *    tags:
+ *    - Organization
+ *    summary: Check is domain available
+ *    parameters:
+ *    - name: domain
+ *      in: path
+ *      description: The domain to check
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/OrganizationCheckDomainResponse'
+ */
+router.get(
+  "/organizations/check-domain-availability/:domain",
+  authenticateToken,
+  tryCatch(organizationIsDomainAvailable)
 );
 
 export default router;

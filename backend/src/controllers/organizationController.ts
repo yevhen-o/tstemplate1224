@@ -5,7 +5,13 @@ import { Request, Response } from "express";
 import AppError from "../utils/AppError";
 
 export const organizationAddRecord = async (req: Request, res: Response) => {
-  const Org = await Organization.create(req.body);
+  const Org = await Organization.create({
+    ...req.body,
+    ownerId: req.user!.userId,
+  });
+  const user = await User.findByPk(req.user!.userId);
+  //@ts-expect-error Something with associations
+  await Org.addUser(user, { through: { role: "Admin" } });
   res.send(Org);
 };
 
@@ -82,4 +88,22 @@ export const organizationGetProjects = async (req: Request, res: Response) => {
   if (!Org) throw new AppError(req, "Bed request", 400);
   //@ts-expect-error Something with associations
   res.send(Org.organizationProjects);
+};
+
+export const organizationIsDomainAvailable = async (
+  req: Request,
+  res: Response
+) => {
+  const Org = await Organization.findOne({
+    where: { domain: req.params.domain },
+  });
+  if (!Org) {
+    return res
+      .status(200)
+      .json({ available: true, message: "Domain is available." });
+  } else {
+    res
+      .status(200)
+      .json({ available: false, message: "Domain is already in use." });
+  }
 };

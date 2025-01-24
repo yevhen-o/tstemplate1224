@@ -23,7 +23,9 @@ const HomePage = lazy(() => import("./pages/HomePage"));
 const TodosPage = lazy(() => import("./pages/TodosPage"));
 const DropDownsPage = lazy(() => import("./pages/DropDownsPage"));
 const ViewTodo = lazy(() => import("./components/Todos/ViewTodo"));
-const OrganizationList = lazy(() => import("./pages/OrganizationsList"));
+const OrganizationList = lazy(
+  () => import("./features/organization/OrganizationsList")
+);
 const OrganizationOverView = lazy(() => import("./pages/OrganizationOverView"));
 const OrganizationMembers = lazy(
   () => import("./pages/OrganizationMembers/OrganizationMembers")
@@ -115,8 +117,8 @@ function Router() {
             </Route>
           </>
         )}
+        <Route path="*" element={<NotFound />} />
       </Route>
-      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

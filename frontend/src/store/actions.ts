@@ -12,6 +12,8 @@ export {
   getOrgInfo,
   getOrgUsers,
   getOrgProjects,
+  postNewOrganization,
+  getIsDomainAvailable,
 } from "./organization/organizationSlice";
 
 export {

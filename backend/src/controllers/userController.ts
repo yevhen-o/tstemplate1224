@@ -61,7 +61,7 @@ export type JwtUser = {
 
 function generateAccessToken(user: JwtUser) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET || "secret", {
-    expiresIn: "30s",
+    expiresIn: "30m",
   });
 }
 

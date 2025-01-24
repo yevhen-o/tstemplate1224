@@ -46,11 +46,20 @@ type ProjectType = {
   organizationId: number;
 };
 
+type IsDomainAvailableInterface = {
+  available: boolean;
+  message: string;
+};
+
 type StateType = {
   orgList: RequestState &
     FetchedTime & {
       data: number[];
     };
+  getIsDomainAvailable: RequestState & {
+    data: IsDomainAvailableInterface | null;
+  };
+  postNewOrganization: RequestState;
   orgById: {
     [key: string | number]: OrgType;
   };
@@ -88,6 +97,8 @@ const initialState: StateType = {
     ...initialFetchingState,
     data: [],
   },
+  getIsDomainAvailable: { ...initialFetchingState, data: null },
+  postNewOrganization: { ...initialFetchingState },
   orgById: {},
   userById: {},
   projectById: {},
@@ -103,11 +114,101 @@ const organizationSlice = createSliceWithThunks({
   name: "organization",
   initialState,
   reducers: (create) => ({
-    getOrgList: create.asyncThunk<OrgInterface[], { signal?: AbortSignal }>(
+    getIsDomainAvailable: create.asyncThunk<
+      IsDomainAvailableInterface,
+      { domain: string; signal?: AbortSignal }
+    >(
+      async (args, thunkApi) => {
+        const fetchOptions: RequestConfig<IsDomainAvailableInterface> = {
+          method: "GET",
+          url: `/api/organizations/check-domain-availability/${args.domain}`,
+          signal: args.signal,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+        return genericRequest(fetchOptions, thunkApi);
+      },
+      {
+        pending: (state, action) => {
+          state.getIsDomainAvailable = setFetchingState(
+            state.getIsDomainAvailable,
+            action.meta.requestId
+          );
+        },
+        rejected: (state, action) => {
+          state.getIsDomainAvailable = setRejectedState(
+            state.getIsDomainAvailable,
+            action.meta,
+            action.payload as SliceError,
+            action.error.message
+          );
+        },
+        fulfilled: (state, action) => {
+          state.getIsDomainAvailable = setFulfilledState(
+            state.getIsDomainAvailable
+          );
+          state.getIsDomainAvailable.data = action.payload;
+        },
+      }
+    ),
+    postNewOrganization: create.asyncThunk<
+      OrgInterface,
+      { domain: string; name: string; signal?: AbortSignal }
+    >(
+      async (args, thunkApi) => {
+        const { signal, ...restArgs } = args;
+        const fetchOptions: RequestConfig<OrgInterface> = {
+          method: "POST",
+          url: `/api/organizations/`,
+          signal: signal,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(restArgs),
+        };
+        return genericRequest(fetchOptions, thunkApi);
+      },
+      {
+        pending: (state, action) => {
+          state.postNewOrganization = setFetchingState(
+            state.postNewOrganization,
+            action.meta.requestId
+          );
+        },
+        rejected: (state, action) => {
+          state.postNewOrganization = setRejectedState(
+            state.postNewOrganization,
+            action.meta,
+            action.payload as SliceError,
+            action.error.message
+          );
+        },
+        fulfilled: (state, action) => {
+          state.postNewOrganization = setFulfilledState(
+            state.postNewOrganization
+          );
+          const org = action.payload;
+          state.orgById[org.organizationId] = {
+            ...(state.orgById[org.organizationId] ||
+              deepClone(defaultOrgState)),
+            generalInfo: {
+              ...(state.orgById[org.organizationId]?.generalInfo || {}),
+              ...org,
+            },
+          };
+          state.orgList.data = [...state.orgList.data, org.organizationId];
+        },
+      }
+    ),
+    getOrgList: create.asyncThunk<
+      OrgInterface[],
+      { userId: number; signal?: AbortSignal }
+    >(
       async (args, thunkApi) => {
         const fetchOptions: RequestConfig<OrgInterface[]> = {
           method: "GET",
-          url: `/api/organizations`,
+          url: `/api/users/${args.userId}/organizations`,
           signal: args.signal,
           headers: {
             "Content-Type": "application/json",
@@ -316,6 +417,12 @@ const organizationSlice = createSliceWithThunks({
   }),
 });
 
-export const { getOrgList, getOrgInfo, getOrgProjects, getOrgUsers } =
-  organizationSlice.actions;
+export const {
+  getOrgList,
+  getOrgInfo,
+  getOrgProjects,
+  getOrgUsers,
+  postNewOrganization,
+  getIsDomainAvailable,
+} = organizationSlice.actions;
 export default organizationSlice.reducer;

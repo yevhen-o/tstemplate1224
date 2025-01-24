@@ -9,7 +9,6 @@ import { Sequelize, DataTypes, Model } from "sequelize";
  *       required:
  *         - name
  *         - domain
- *         - ownerId
  *       properties:
  *         name:
  *           type: string
@@ -17,9 +16,6 @@ import { Sequelize, DataTypes, Model } from "sequelize";
  *         domain:
  *           type: string
  *           default: org_
- *         ownerId:
- *           type: number
- *           default: 1
  *     OrganizationResponse:
  *       type: object
  *       properties:
@@ -34,6 +30,13 @@ import { Sequelize, DataTypes, Model } from "sequelize";
  *         owner:
  *           type: object
  *           $ref: '#/components/schemas/UserResponse'
+ *     OrganizationCheckDomainResponse:
+ *       type: object
+ *       properties:
+ *         available:
+ *           type: boolean
+ *         message:
+ *           type: string
  *     OrganizationListResponse:
  *       type: array
  *       items:

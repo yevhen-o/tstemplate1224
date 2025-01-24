@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import InputField from "src/components/FormFields/InputField";
 import Select from "src/components/FormFields/Select";
 import CheckBox from "src/components/FormFields/CheckBox";
@@ -71,6 +71,10 @@ export const useForm = <T extends FormValueType>(
     setValues(initialValues);
     setFormErrors(getValidationErrors(initialValues, rules));
   };
+
+  useEffect(() => {
+    setFormErrors(getValidationErrors(values, rules));
+  }, [values, rules, setFormErrors]);
 
   const isFormValid = () =>
     !formErrors || !Object.keys(formErrors).some((key) => !!formErrors[key]);

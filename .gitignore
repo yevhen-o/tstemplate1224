@@ -12,6 +12,7 @@ backend/dist
 backend/newrelic_agent.log
 
 # Playwright
+frontend/tests/storage
 frontend/test-results/
 frontend/playwright-report/
 frontend/blob-report/

@@ -11,7 +11,7 @@ export const NotFound: React.FC = () => {
   return (
     <div className="mx-auto max-w-7xl px-2 py-4 sm:px-6 lg:px-8 break-all">
       <h2>Page you are looking for is not found</h2>
-      <Link to={getUrl(IDENTIFIERS.HOME)}>Home Page</Link>
+      <Link to={getUrl(IDENTIFIERS.HOME)}>Go Home Page</Link>
       {!isAuthenticated && (
         <>
           <br />

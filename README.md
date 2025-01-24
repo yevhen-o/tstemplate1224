@@ -14,10 +14,13 @@ localhost:3050/api - api
 
 ## Plans to implement
 
+- [ ] useApiHook? // don't see reason to implement right now.
+- [ ] FormFields advanced, normalize all Types
+- [ ] Widget communication flow
+- [ ] Setup playwright to handel authorized state, for tests
 - [x] Redux basic setup
 - [x] Redux advanced setup (Store data under id and create and use default state object if data not provided yet)
 - [x] Caching based on redux // It conflicting with abort signal, and don't see way outsource it more
-- [ ] useApiHook? // don't see reason to implement right now.
 - [x] useFormHook
 - [x] useObserveElementSize
 - [x] useClickOutside
@@ -34,7 +37,6 @@ localhost:3050/api - api
 - [x] ~~HOC withWrapperSize~~ deprecated: to complicated to use, hook is more straight forward
 - [x] Table
 - [x] FormFields basic
-- [ ] FormFields advanced, normalize all Types
 - [x] DropDown hm implementation much harder that with css only, work correctly when anchor shifted with translate, but instead buggy on scroll
 - [x] DropDown with just css simple implementation, work great, but don't set dropdown correctly when anchor is shifted with translate, and not the best browser support yet
 - [x] MultiSelect // Should work yet on style improvement and types improvements
@@ -45,7 +47,6 @@ localhost:3050/api - api
 - [x] Create Authentication flow with email and password, try to use browser hashing functionality
 - [x] Build Authorization Logic
 - [x] Use localForage for cross tab communication // use dexie instead as it support subscription for data in indexDb change
-- [ ] Widget communication flow
 - [x] Add Sentry, New Relic, Data Dog // try New Relic for this setup
 - [x] Add Playwrite/cypress tests
 - [x] Add husky pre push hook for testing and linting
