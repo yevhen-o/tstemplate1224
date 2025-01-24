@@ -9,6 +9,7 @@ export { useSortWorker } from "./useSortWorker";
 export { useSearchParamsOrLocalStorage } from "./useSearchParamsOrLocalStorage";
 export { usePagination } from "./usePagination";
 export { useFilters } from "./useFilters";
+export { useIsAuthenticated } from "./useIsAuthenticated";
 
 export const isOutdated = <
   T extends { fetchedTime?: number; isFetching?: boolean }

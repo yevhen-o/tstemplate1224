@@ -17,6 +17,7 @@ import {
   getReactRouterPath,
   IDENTIFIERS,
 } from "src/services/urlsHelper";
+import { useIsAuthenticated } from "src/hooks";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const TodosPage = lazy(() => import("./pages/TodosPage"));
@@ -30,6 +31,7 @@ const OrganizationMembers = lazy(
 const OrganizationProjects = lazy(() => import("./pages/OrganizationProjects"));
 const UserSettings = lazy(() => import("./pages/UserSetting"));
 const ProjectView = lazy(() => import("./pages/ProjectView"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 type RouterParamsProps =
   | { children: React.ReactElement; element?: never }
@@ -52,6 +54,7 @@ const RouterParams: React.FC<RouterParamsProps> = ({ children, element }) => {
 };
 
 function Router() {
+  const isAuthenticated = useIsAuthenticated();
   return (
     <Routes>
       <Route
@@ -74,41 +77,46 @@ function Router() {
           path={getReactRouterPath(IDENTIFIERS.DROP_DOWNS)}
           element={<RouterParams element={<DropDownsPage />} />}
         />
-        <Route
-          path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_LIST)}
-          element={<RouterParams element={<OrganizationList />} />}
-        />
-        <Route
-          path={getReactRouterPath(IDENTIFIERS.USER_SETTINGS)}
-          element={<RouterParams element={<UserSettings />} />}
-        />
-        <Route
-          path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_VIEW)}
-          element={<OrganizationLayout />}
-        >
-          <Route
-            path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_VIEW)}
-            element={<RouterParams element={<OrganizationOverView />} />}
-          />
-          <Route
-            path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_MEMBERS)}
-            element={<RouterParams element={<OrganizationMembers />} />}
-          />
-          <Route
-            path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_PROJECTS)}
-            element={<RouterParams element={<OrganizationProjects />} />}
-          />
-        </Route>
-        <Route
-          path={getReactRouterPath(IDENTIFIERS.PROJECT_VIEW)}
-          element={<ProjectLayout />}
-        >
-          <Route
-            path={getReactRouterPath(IDENTIFIERS.PROJECT_VIEW)}
-            element={<RouterParams element={<ProjectView />} />}
-          />
-        </Route>
+        {isAuthenticated && (
+          <>
+            <Route
+              path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_LIST)}
+              element={<RouterParams element={<OrganizationList />} />}
+            />
+            <Route
+              path={getReactRouterPath(IDENTIFIERS.USER_SETTINGS)}
+              element={<RouterParams element={<UserSettings />} />}
+            />
+            <Route
+              path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_VIEW)}
+              element={<OrganizationLayout />}
+            >
+              <Route
+                path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_VIEW)}
+                element={<RouterParams element={<OrganizationOverView />} />}
+              />
+              <Route
+                path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_MEMBERS)}
+                element={<RouterParams element={<OrganizationMembers />} />}
+              />
+              <Route
+                path={getReactRouterPath(IDENTIFIERS.ORGANIZATION_PROJECTS)}
+                element={<RouterParams element={<OrganizationProjects />} />}
+              />
+            </Route>
+            <Route
+              path={getReactRouterPath(IDENTIFIERS.PROJECT_VIEW)}
+              element={<ProjectLayout />}
+            >
+              <Route
+                path={getReactRouterPath(IDENTIFIERS.PROJECT_VIEW)}
+                element={<RouterParams element={<ProjectView />} />}
+              />
+            </Route>
+          </>
+        )}
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

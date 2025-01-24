@@ -7,8 +7,7 @@ import Button from "src/components/Buttons";
 import SignIn from "src/components/SignIn";
 import SignUp from "src/components/SignUp";
 import MenuButton from "src/components/MenuButton";
-import { useActions, useTypedSelector } from "src/hooks";
-import { useIsAuthenticated } from "src/hooks/useIsAuthenticated";
+import { useActions, useTypedSelector, useIsAuthenticated } from "src/hooks";
 import { getUrl, IDENTIFIERS, Link } from "src/services/urlsHelper";
 
 type ListItemType = {
@@ -75,9 +74,6 @@ function RootLayout() {
                 <ul className="relative flex h-16 items-center justify-start gap-2">
                   <ListItem to={getUrl(IDENTIFIERS.HOME)}>Home</ListItem>
                   <ListItem to={getUrl(IDENTIFIERS.TODOS)}>Todos</ListItem>
-                  <ListItem to={getUrl(IDENTIFIERS.ORGANIZATION_LIST)}>
-                    Organization
-                  </ListItem>
                   <ListItem to={getUrl(IDENTIFIERS.DROP_DOWNS)}>
                     Dropdowns
                   </ListItem>
@@ -98,14 +94,19 @@ function RootLayout() {
                     </li>
                   )}
                   {isAuthenticated && (
-                    <li className={classNames("ml-auto")}>
-                      <MenuButton
-                        data-testId={"user-menu"}
-                        menuItems={userOptions}
-                      >
-                        <Settings className="text-white" size="20" />
-                      </MenuButton>
-                    </li>
+                    <>
+                      <ListItem to={getUrl(IDENTIFIERS.ORGANIZATION_LIST)}>
+                        Organizations
+                      </ListItem>
+                      <li className={classNames("ml-auto")}>
+                        <MenuButton
+                          data-testId={"user-menu"}
+                          menuItems={userOptions}
+                        >
+                          <Settings className="text-white" size="20" />
+                        </MenuButton>
+                      </li>
+                    </>
                   )}
                 </ul>
               </div>

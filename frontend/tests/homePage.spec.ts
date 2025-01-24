@@ -13,13 +13,15 @@ test.describe("Home page tests", () => {
     test("has right menu items", async ({ page }) => {
       await expect(page.getByRole("link", { name: "Home" })).toBeVisible();
       await expect(page.getByRole("link", { name: "Todos" })).toBeVisible();
-      await expect(
-        page.getByRole("link", { name: "Organization" })
-      ).toBeVisible();
+
       await expect(page.getByRole("link", { name: "Dropdowns" })).toBeVisible();
 
       await expect(page.getByRole("button", { name: "Sign In" })).toBeVisible();
       await expect(page.getByRole("button", { name: "Sign Up" })).toBeVisible();
+
+      await expect(
+        page.getByRole("link", { name: "Organization" })
+      ).toHaveCount(0);
     });
 
     test("display Sign In form", async ({ page }) => {
@@ -62,6 +64,9 @@ test.describe("Home page tests", () => {
         0
       );
       await expect(page.getByTestId("user-menu")).toBeVisible();
+      await expect(
+        page.getByRole("link", { name: "Organization" })
+      ).toBeVisible();
     });
 
     test("perform Sign In", async ({ page }) => {
