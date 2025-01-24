@@ -4,6 +4,7 @@ import { FieldType, useActions, useForm, useTypedSelector } from "src/hooks";
 import { debounce } from "src/helpers/utils";
 import Button from "src/components/Buttons";
 import Modal from "src/components/Modal";
+import { ResponseThunkAction } from "src/Types";
 
 type AddOrganizationModalProps = {
   onClose: () => void;
@@ -55,7 +56,9 @@ const AddOrganizationModal: React.FC<AddOrganizationModalProps> = ({
     const checkIsDomainAvailable = debounce(async (value: string) => {
       const res = (await getIsDomainAvailable({
         domain: value,
-      })) as unknown as { payload: { available: boolean } };
+      })) as unknown as ResponseThunkAction & {
+        payload: { available: boolean };
+      };
       if (!res.payload.available) {
         setFormErrors((prev) => ({
           ...prev,
@@ -69,9 +72,9 @@ const AddOrganizationModal: React.FC<AddOrganizationModalProps> = ({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isFormValid()) {
-      const res = (await postNewOrganization(values)) as unknown as {
-        error?: string;
-      };
+      const res = (await postNewOrganization(
+        values
+      )) as unknown as ResponseThunkAction;
       if (!res.error) {
         onClose();
       }

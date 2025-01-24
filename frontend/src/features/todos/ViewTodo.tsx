@@ -7,6 +7,7 @@ import Button from "src/components/Buttons";
 import AddEditTodoModal from "./AddEditTodoModal";
 import { useActions, useTypedSelector, isOutdated } from "src/hooks";
 import { getUrl, IDENTIFIERS } from "src/services/urlsHelper";
+import { ResponseThunkAction } from "src/Types";
 
 type Params = {
   todoId: string;
@@ -35,6 +36,17 @@ const ViewTodo: React.FC = () => {
 
   const [showEditModal, setShowEditModal] = useState(false);
 
+  const { todoDeleteItem } = useActions();
+
+  const handleDeleteTodo = async () => {
+    const result = (await todoDeleteItem({
+      todoId: todoId!,
+    })) as unknown as ResponseThunkAction;
+    if (!result.error) {
+      navigate(getUrl(IDENTIFIERS.TODOS));
+    }
+  };
+
   return (
     <div>
       <h1>View Todo</h1>
@@ -58,6 +70,9 @@ const ViewTodo: React.FC = () => {
         />
       )}
       <pre>{JSON.stringify(todo, null, 2)}</pre>
+      <Button isBordered onClick={handleDeleteTodo}>
+        Delete todo
+      </Button>
     </div>
   );
 };

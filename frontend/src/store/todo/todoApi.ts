@@ -70,3 +70,16 @@ export const todoGetList = createAsyncThunk<
   };
   return genericRequest(fetchOptions, thunkApi);
 });
+
+export const todoDeleteItem = createAsyncThunk<
+  void,
+  { signal?: AbortSignal; todoId: string },
+  RejectValueType
+>("todos/deleteItem", async ({ todoId, signal }, thunkApi) => {
+  const fetchOptions: RequestConfig<void> = {
+    method: "DELETE",
+    url: `/api/todos/${todoId}`,
+    signal: signal,
+  };
+  return genericRequest(fetchOptions, thunkApi);
+});

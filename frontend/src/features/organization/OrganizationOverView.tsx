@@ -6,6 +6,7 @@ import { useActions } from "src/hooks/useActions";
 import { useTypedSelector, isOutdated } from "src/hooks";
 import Buttons from "src/components/Buttons/Buttons";
 import { getUrl, IDENTIFIERS } from "src/services/urlsHelper";
+import { ResponseThunkAction } from "src/Types";
 
 type Params = {
   organizationId: string;
@@ -48,7 +49,7 @@ const OrganizationOverView: React.FC = () => {
   const handleDeleteOrganization = async () => {
     const res = (await deleteOrganization({
       organizationId: +organizationId!,
-    })) as unknown as { error?: string };
+    })) as unknown as ResponseThunkAction;
     if (!res.error) navigate(getUrl(IDENTIFIERS.ORGANIZATION_LIST));
   };
 

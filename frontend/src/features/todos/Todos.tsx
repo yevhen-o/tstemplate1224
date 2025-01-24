@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createSelector } from "reselect";
 
 import { useActions } from "src/hooks/useActions";
@@ -25,7 +25,6 @@ const Todos: React.FC = () => {
   const { todoGetList } = useActions();
 
   useEffect(() => {
-    console.log("on todo get list");
     const controller = new AbortController();
     const signal: AbortSignal = controller.signal;
     todoGetList({ signal });
@@ -35,10 +34,6 @@ const Todos: React.FC = () => {
   }, [todoGetList]);
 
   const [showAddTodoModal, setShowAddTodoModal] = useState(false);
-
-  const handleCloseModal = useCallback(() => {
-    setShowAddTodoModal(false);
-  }, [setShowAddTodoModal]);
 
   const initialFilterValues = {
     search: "",
@@ -88,7 +83,9 @@ const Todos: React.FC = () => {
         Add Todo
       </Button>
 
-      {showAddTodoModal && <AddTodoModal onClose={handleCloseModal} />}
+      {showAddTodoModal && (
+        <AddTodoModal onClose={() => setShowAddTodoModal(false)} />
+      )}
       {isFetching && <div>Loading...</div>}
       {hasError && <div>Something went wrong...</div>}
       {isFetched && todos && (

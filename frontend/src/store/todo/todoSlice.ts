@@ -14,6 +14,7 @@ import {
   todoGetList,
   todoPatchItem,
   todoPostItem,
+  todoDeleteItem,
 } from "./todoApi";
 
 type StateType = {
@@ -27,6 +28,7 @@ type StateType = {
   getItem: RequestState;
   postItem: RequestState;
   patchItem: RequestState;
+  deleteItem: RequestState;
 };
 
 const initialState: StateType = {
@@ -42,6 +44,9 @@ const initialState: StateType = {
     ...initialFetchingState,
   },
   patchItem: {
+    ...initialFetchingState,
+  },
+  deleteItem: {
     ...initialFetchingState,
   },
 };
@@ -128,6 +133,27 @@ const todosSlice = createSlice({
       .addCase(todoPatchItem.rejected, (state, action) => {
         state.patchItem = setRejectedState(
           state.patchItem,
+          action.meta,
+          action.payload,
+          action.error.message
+        );
+      })
+      .addCase(todoDeleteItem.pending, (state, action) => {
+        state.deleteItem = setFetchingState(
+          state.deleteItem,
+          action.meta.requestId
+        );
+      })
+      .addCase(todoDeleteItem.fulfilled, (state, action) => {
+        state.deleteItem = setFulfilledState(state.deleteItem);
+        delete state.itemsById[action.meta.arg.todoId];
+        state.list.data = state.list.data.filter(
+          (t) => t !== action.meta.arg.todoId
+        );
+      })
+      .addCase(todoDeleteItem.rejected, (state, action) => {
+        state.deleteItem = setRejectedState(
+          state.deleteItem,
           action.meta,
           action.payload,
           action.error.message

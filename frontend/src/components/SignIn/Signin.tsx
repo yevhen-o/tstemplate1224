@@ -1,13 +1,7 @@
+import { ResponseThunkAction } from "src/Types";
 import Button from "../Buttons";
 import Modal from "../Modal";
 import { useForm, FieldType, useActions } from "src/hooks";
-
-type AwaitedRequest = {
-  type: string;
-  error?: {
-    message: string; // Error message
-  };
-};
 
 const SignIn: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const formFields: FieldType[] = [
@@ -43,7 +37,7 @@ const SignIn: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isFormValid()) {
-      const re = (await login(values)) as unknown as AwaitedRequest;
+      const re = (await login(values)) as unknown as ResponseThunkAction;
       if (!re.error) {
         onClose();
       }

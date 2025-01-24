@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { TodoInterface } from "src/Types";
+import React from "react";
+import { ResponseThunkAction, TodoInterface } from "src/Types";
 import { createSelector } from "reselect";
 
 import { FieldType, useForm, useTypedSelector, useActions } from "src/hooks";
@@ -25,18 +25,12 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
       };
 
   const { todoPostItem, todoPatchItem } = useActions();
-  const { isFetching, isFetched, hasError } = useTypedSelector((state) =>
+  const { isFetching, hasError } = useTypedSelector((state) =>
     createSelector([(s) => s.todo, (_, key) => key], (todo, key) => todo[key])(
       state,
       propsState ? "patchItem" : "postItem"
     )
   );
-
-  useEffect(() => {
-    if (isFetched && !hasError) {
-      onClose();
-    }
-  }, [isFetched, hasError, onClose]);
 
   const RULES = {
     title: {
@@ -116,18 +110,22 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isFormValid()) {
+      let result: ResponseThunkAction;
       if (propsState) {
-        await todoPatchItem({
+        result = (await todoPatchItem({
           uid: propsState.uid,
           item: values,
-        });
+        })) as unknown as ResponseThunkAction;
       } else {
-        await todoPostItem({
+        result = (await todoPostItem({
           item: {
             uid: Math.random().toString(36).slice(2, 16),
             ...values,
           },
-        });
+        })) as unknown as ResponseThunkAction;
+      }
+      if (!result.error) {
+        onClose();
       }
     } else {
       setFieldsTouched();
