@@ -17,7 +17,7 @@ localhost:3050/api - api
 - [ ] useApiHook? // don't see reason to implement right now.
 - [ ] FormFields advanced, normalize all Types
 - [ ] Widget communication flow
-- [ ] Setup playwright to handel authorized state, for tests
+- [x] Setup playwright to handel authorized state, for tests
 - [x] Redux basic setup
 - [x] Redux advanced setup (Store data under id and create and use default state object if data not provided yet)
 - [x] Caching based on redux // It conflicting with abort signal, and don't see way outsource it more

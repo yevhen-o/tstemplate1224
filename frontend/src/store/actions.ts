@@ -12,6 +12,7 @@ export {
   getOrgInfo,
   getOrgUsers,
   getOrgProjects,
+  deleteOrganization,
   postNewOrganization,
   getIsDomainAvailable,
 } from "./organization/organizationSlice";

@@ -33,8 +33,10 @@ export async function genericRequest<T, R>(
 
   const makeRequest = async (accessToken: string | null) => {
     const response = await fetch(url, {
+      method: "GET",
       ...restConfig,
       headers: {
+        "Content-Type": "application/json",
         ...restConfig.headers,
         ...(accessToken ? { Authorization: "Bearer " + accessToken } : {}),
       },

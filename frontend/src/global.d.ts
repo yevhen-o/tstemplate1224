@@ -10,6 +10,8 @@ interface ImportMetaEnv {
   readonly VITE_APP_NEW_RELIC_APP_ID: number;
   readonly VITE_APP_NEW_RELIC_ACCOUNT_ID: number;
   readonly VITE_APP_NEW_RELIC_TRUST_KEY: number;
+  readonly VITE_APP_TEST_USER_EMAIL: string;
+  readonly VITE_APP_TEST_USER_PASSWORD: string;
 }
 
 interface ImportMeta {

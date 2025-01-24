@@ -27,6 +27,7 @@ type OrgType = {
   patchOrg: RequestState;
   getOrgMembers: RequestStateFetchData;
   getOrgProjects: RequestStateFetchData;
+  deleteOrganization: RequestState;
 };
 
 export type UserType = {
@@ -90,6 +91,9 @@ const defaultOrgState: OrgType = {
     ...initialFetchingState,
     data: [],
   },
+  deleteOrganization: {
+    ...initialFetchingState,
+  },
 };
 
 const initialState: StateType = {
@@ -120,12 +124,8 @@ const organizationSlice = createSliceWithThunks({
     >(
       async (args, thunkApi) => {
         const fetchOptions: RequestConfig<IsDomainAvailableInterface> = {
-          method: "GET",
           url: `/api/organizations/check-domain-availability/${args.domain}`,
           signal: args.signal,
-          headers: {
-            "Content-Type": "application/json",
-          },
         };
         return genericRequest(fetchOptions, thunkApi);
       },
@@ -162,9 +162,6 @@ const organizationSlice = createSliceWithThunks({
           method: "POST",
           url: `/api/organizations/`,
           signal: signal,
-          headers: {
-            "Content-Type": "application/json",
-          },
           body: JSON.stringify(restArgs),
         };
         return genericRequest(fetchOptions, thunkApi);
@@ -207,12 +204,8 @@ const organizationSlice = createSliceWithThunks({
     >(
       async (args, thunkApi) => {
         const fetchOptions: RequestConfig<OrgInterface[]> = {
-          method: "GET",
           url: `/api/users/${args.userId}/organizations`,
           signal: args.signal,
-          headers: {
-            "Content-Type": "application/json",
-          },
         };
         return genericRequest(fetchOptions, thunkApi);
       },
@@ -259,12 +252,8 @@ const organizationSlice = createSliceWithThunks({
     >(
       async (args, thunkApi) => {
         const fetchOptions: RequestConfig<OrgInterface> = {
-          method: "GET",
           url: `/api/organizations/${args.organizationId}`,
           signal: args.signal,
-          headers: {
-            "Content-Type": "application/json",
-          },
         };
         return genericRequest(fetchOptions, thunkApi);
       },
@@ -308,12 +297,8 @@ const organizationSlice = createSliceWithThunks({
     >(
       async (args, thunkApi) => {
         const fetchOptions: RequestConfig<UserType[]> = {
-          method: "GET",
           url: `/api/organizations/${args.organizationId}/users`,
           signal: args.signal,
-          headers: {
-            "Content-Type": "application/json",
-          },
         };
         return genericRequest(fetchOptions, thunkApi);
       },
@@ -363,12 +348,8 @@ const organizationSlice = createSliceWithThunks({
     >(
       async (args, thunkApi) => {
         const fetchOptions: RequestConfig<ProjectType[]> = {
-          method: "GET",
           url: `/api/organizations/${args.organizationId}/projects`,
           signal: args.signal,
-          headers: {
-            "Content-Type": "application/json",
-          },
         };
         return genericRequest(fetchOptions, thunkApi);
       },
@@ -414,14 +395,62 @@ const organizationSlice = createSliceWithThunks({
         },
       }
     ),
+    deleteOrganization: create.asyncThunk<
+      void,
+      { signal?: AbortSignal; organizationId: number }
+    >(
+      async (args, thunkApi) => {
+        const fetchOptions: RequestConfig<void> = {
+          method: "DELETE",
+          url: `/api/organizations/${args.organizationId}`,
+          signal: args.signal,
+        };
+        return genericRequest(fetchOptions, thunkApi);
+      },
+      {
+        pending: (state, action) => {
+          const { organizationId } = action.meta.arg;
+          const org =
+            state.orgById[organizationId] || deepClone(defaultOrgState);
+          org.deleteOrganization = setFetchingState(
+            org.deleteOrganization,
+            action.meta.requestId
+          );
+          state.orgById[organizationId] = org;
+        },
+        rejected: (state, action) => {
+          const { organizationId } = action.meta.arg;
+          const org =
+            state.orgById[organizationId] || deepClone(defaultOrgState);
+          org.deleteOrganization = setRejectedState(
+            org.deleteOrganization,
+            action.meta,
+            action.payload as SliceError,
+            action.error.message
+          );
+          state.orgById[organizationId] = org;
+        },
+        fulfilled: (state, action) => {
+          const { organizationId } = action.meta.arg;
+          const org =
+            state.orgById[organizationId] || deepClone(defaultOrgState);
+          org.deleteOrganization = setFulfilledState(org.deleteOrganization);
+          state.orgList.data = state.orgList.data.filter(
+            (orgId) => orgId !== organizationId
+          );
+          delete state.orgById[organizationId];
+        },
+      }
+    ),
   }),
 });
 
 export const {
   getOrgList,
   getOrgInfo,
-  getOrgProjects,
   getOrgUsers,
+  getOrgProjects,
+  deleteOrganization,
   postNewOrganization,
   getIsDomainAvailable,
 } = organizationSlice.actions;

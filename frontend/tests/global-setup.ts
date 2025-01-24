@@ -1,25 +1,29 @@
-import { chromium, FullConfig } from "@playwright/test";
+import { FullConfig } from "@playwright/test";
+import dotenv from "dotenv";
+import fs from "fs/promises";
+
+dotenv.config();
 
 async function globalSetup(config: FullConfig) {
   const { baseURL } = config.projects[0].use;
 
-  const browser = await chromium.launch();
-  const page = await browser.newPage();
+  const response = await fetch(baseURL + "/api/users/login", {
+    method: "POST",
+    body: JSON.stringify({
+      email: process.env.VITE_APP_TEST_USER_EMAIL,
+      password: process.env.VITE_APP_TEST_USER_PASSWORD,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
-  // Perform login and save the storage state
-  await page.goto(`${baseURL}`);
-  await page.getByRole("button", { name: "Sign In" }).click();
+  const state = await response.json();
+  const storageState = {
+    ...state,
+  };
 
-  await page.locator("[name='email']").fill("email1@auto.test");
-  await page.locator("[name='password']").fill("strongPassword123");
-
-  await page.getByTestId("signIn").click();
-  // Ensure login was successful
-  await page.getByTestId("user-menu");
-
-  // Save the storage state
-  await page.context().storageState({ path: "tests/storage/auth.json" });
-  await browser.close();
+  await fs.writeFile("tests/storage/auth.json", JSON.stringify(storageState));
 }
 
 export default globalSetup;
