@@ -90,7 +90,12 @@ const SignUp: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <Modal title="Sign Up" onClose={onClose}>
       <form onSubmit={handleSubmit} className="grid min-w-[18rem]">
         {fields.map(renderFormField)}
-        <Button className="mt-4 " isPrimary type="submit">
+        <Button
+          data-testId={"signUp"}
+          className="mt-4 "
+          isPrimary
+          type="submit"
+        >
           Sing Up
         </Button>
       </form>

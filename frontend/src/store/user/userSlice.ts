@@ -37,6 +37,7 @@ type StateType = {
   };
   logout: RequestState;
   logoutAll: RequestState;
+  deleteAccount: RequestState;
   signup: RequestState;
   user: UserTypeAccess | null | undefined;
 };
@@ -53,6 +54,9 @@ const initialState: StateType = {
     ...initialFetchingState,
   },
   logoutAll: {
+    ...initialFetchingState,
+  },
+  deleteAccount: {
     ...initialFetchingState,
   },
   signup: {
@@ -201,6 +205,45 @@ const userSlice = createSliceWithThunks({
         },
       }
     ),
+    deleteAccount: create.asyncThunk<
+      void,
+      { userId: number; signal?: AbortSignal }
+    >(
+      async (args, thunkApi) => {
+        const fetchOptions: RequestConfig<void> = {
+          method: "DELETE",
+          url: `/api/users/${args.userId}`,
+          signal: args.signal,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          additionalOptions: {
+            successMessage: "You have deleted your account",
+          },
+        };
+        return genericRequest(fetchOptions, thunkApi);
+      },
+      {
+        pending: (state, action) => {
+          state.deleteAccount = setFetchingState(
+            state.deleteAccount,
+            action.meta.requestId
+          );
+        },
+        rejected: (state, action) => {
+          state.deleteAccount = setRejectedState(
+            state.deleteAccount,
+            action.meta,
+            action.payload as SliceError,
+            action.error.message
+          );
+        },
+        fulfilled: (state) => {
+          state.deleteAccount = setFulfilledState(state.deleteAccount);
+          state.user = null;
+        },
+      }
+    ),
     signup: create.asyncThunk<
       UserTypeAccess,
       Omit<UserType, "userId" | "createdAt"> & {
@@ -210,7 +253,7 @@ const userSlice = createSliceWithThunks({
       }
     >(
       async (args, thunkApi) => {
-        const { password, confirmPassword, signal, ...restArgs } = args;
+        const { age, password, confirmPassword, signal, ...restArgs } = args;
         const passwordHash = await hashString(password);
         const confirmPasswordHash = await hashString(confirmPassword);
         const fetchOptions: RequestConfig<UserTypeAccess> = {
@@ -222,6 +265,7 @@ const userSlice = createSliceWithThunks({
           },
           body: JSON.stringify({
             ...restArgs,
+            age: +age,
             password: passwordHash,
             confirmPassword: confirmPasswordHash,
           }),
@@ -257,6 +301,7 @@ const userSlice = createSliceWithThunks({
   },
 });
 
-export const { init, login, logout, logoutAll, signup } = userSlice.actions;
+export const { init, login, logout, logoutAll, signup, deleteAccount } =
+  userSlice.actions;
 export const { isAuthenticated, authorizedUserSelector } = userSlice.selectors;
 export default userSlice.reducer;

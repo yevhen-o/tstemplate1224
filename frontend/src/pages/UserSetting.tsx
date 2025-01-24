@@ -6,13 +6,19 @@ import { getUrl, IDENTIFIERS } from "src/services/urlsHelper";
 import { authorizedUserSelector } from "src/store/user/userSlice";
 
 export const UserSettings: React.FC = () => {
-  const { logoutAll } = useActions();
+  const { logoutAll, deleteAccount } = useActions();
   const navigate = useNavigate();
 
   const authorizedUser = useTypedSelector(authorizedUserSelector);
 
   const handleLogoutAll = async () => {
     await logoutAll({});
+    navigate(getUrl(IDENTIFIERS.HOME));
+  };
+  const handleDeleteAccount = async () => {
+    if (authorizedUser) {
+      await deleteAccount({ userId: authorizedUser?.userId });
+    }
     navigate(getUrl(IDENTIFIERS.HOME));
   };
 
@@ -24,6 +30,7 @@ export const UserSettings: React.FC = () => {
       <Button onClick={handleLogoutAll} isBordered>
         Log out
       </Button>
+      <Button onClick={handleDeleteAccount}>Delete account</Button>
     </div>
   );
 };

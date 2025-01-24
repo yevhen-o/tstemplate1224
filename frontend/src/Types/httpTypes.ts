@@ -7,7 +7,7 @@ export type AdditionalRequestOption<T> = {
 
 export type RequestConfig<T> = {
   url: string;
-  method: "PATCH" | "POST" | "GET" | "PUT";
+  method: "PATCH" | "POST" | "GET" | "PUT" | "DELETE";
   headers?: Record<string, string>;
   body?: string;
   signal?: AbortSignal;
