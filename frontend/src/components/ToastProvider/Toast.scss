@@ -1,3 +1,6 @@
+@use "sass:map";
+@use "sass:color";
+
 .toasts {
   position: fixed;
   display: flex;
@@ -29,14 +32,14 @@ $types: (
   info: blue,
 );
 
-@each $variant in map-keys($types) {
+@each $variant in map.keys($types) {
   .message-#{$variant} {
     .message-title {
-      color: map-get($types, $variant);
+      color: map.get($types, $variant);
     }
 
     .message-description {
-      color: lighten($color: map-get($types, $variant), $amount: 10%);
+      color: color.adjust(map.get($types, $variant), $lightness: 10%);
     }
 
     .message-close-btn {
@@ -45,7 +48,7 @@ $types: (
       &:focus {
         svg {
           path {
-            stroke: map-get($types, $variant);
+            stroke: map.get($types, $variant);
           }
         }
       }
