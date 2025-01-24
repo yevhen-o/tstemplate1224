@@ -3,8 +3,8 @@ import { TodoInterface } from "src/Types";
 import { createSelector } from "reselect";
 
 import { FieldType, useForm, useTypedSelector, useActions } from "src/hooks";
-import Button from "../Buttons";
-import Modal from "../Modal";
+import Button from "src/components/Buttons";
+import Modal from "src/components/Modal";
 
 type AddTodoProps = {
   onClose: () => void;

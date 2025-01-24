@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { createSelector } from "reselect";
+import React, { useEffect } from "react";
 
 import { FieldType, useActions, useForm, useTypedSelector } from "src/hooks";
+import { debounce } from "src/helpers/utils";
 import Button from "src/components/Buttons";
 import Modal from "src/components/Modal";
-import { debounce } from "src/helpers/utils";
 
 type AddOrganizationModalProps = {
   onClose: () => void;
@@ -19,22 +18,13 @@ const AddOrganizationModal: React.FC<AddOrganizationModalProps> = ({
   };
 
   // const { todoPostItem } = useActions();
-  const { isFetching, isFetched, hasError } = useTypedSelector((state) =>
-    createSelector([(s) => s.todo, (_, key) => key], (todo, key) => todo[key])(
-      state,
-      "postItem"
-    )
+  const { isFetching, error } = useTypedSelector(
+    (store) => store.organization.postNewOrganization
   );
-
-  useEffect(() => {
-    if (isFetched && !hasError) {
-      onClose();
-    }
-  }, [isFetched, hasError, onClose]);
 
   const { getIsDomainAvailable, postNewOrganization } = useActions();
 
-  const initialRules = {
+  const RULES = {
     name: {
       isRequired: true,
       minLength: 3,
@@ -44,8 +34,6 @@ const AddOrganizationModal: React.FC<AddOrganizationModalProps> = ({
       isAlreadyExistsInArray: [""],
     },
   };
-
-  const [rules, setRules] = useState(initialRules);
 
   const formFields: FieldType[] = [
     { fieldType: "input", name: "name", label: "Organization name" },
@@ -57,10 +45,11 @@ const AddOrganizationModal: React.FC<AddOrganizationModalProps> = ({
     values,
     resetForm,
     isFormValid,
+    setFormErrors,
     hasFormChanges,
     renderFormField,
     setFieldsTouched,
-  } = useForm(rules, initialValue, formFields);
+  } = useForm(RULES, initialValue, formFields);
 
   useEffect(() => {
     const checkIsDomainAvailable = debounce(async (value: string) => {
@@ -68,20 +57,14 @@ const AddOrganizationModal: React.FC<AddOrganizationModalProps> = ({
         domain: value,
       })) as unknown as { payload: { available: boolean } };
       if (!res.payload.available) {
-        setRules((prev) => ({
+        setFormErrors((prev) => ({
           ...prev,
-          domain: {
-            ...prev.domain,
-            isAlreadyExistsInArray: [
-              ...prev.domain.isAlreadyExistsInArray,
-              value,
-            ],
-          },
+          domain: "Sorry, this domain already in use",
         }));
       }
     }, 300);
     if (values.domain) checkIsDomainAvailable(values.domain);
-  }, [values.domain, getIsDomainAvailable, setFieldsTouched]);
+  }, [values.domain, getIsDomainAvailable, setFormErrors]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -109,11 +92,13 @@ const AddOrganizationModal: React.FC<AddOrganizationModalProps> = ({
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">
           {isFetching && <span>Loading...</span>}
-          {hasError && (
-            <span className="text-red-500">Something goes wrong</span>
+          {error && (
+            <span className="text-red-500">
+              {error.message || "Something goes wrong"}
+            </span>
           )}
           {hasFormChanges() && <Button onClick={resetForm}>Reset</Button>}
-          <Button isPrimary type="submit">
+          <Button disabled={isFetching} isPrimary type="submit">
             Submit
           </Button>
         </div>

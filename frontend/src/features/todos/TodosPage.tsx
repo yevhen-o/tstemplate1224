@@ -1,4 +1,4 @@
-import Todos from "src/components/Todos";
+import Todos from "./Todos";
 
 function TodosPage() {
   return (

@@ -20,17 +20,22 @@ import {
 import { useIsAuthenticated } from "src/hooks";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
-const TodosPage = lazy(() => import("./pages/TodosPage"));
+const TodosPage = lazy(() => import("src/features/todos/TodosPage"));
 const DropDownsPage = lazy(() => import("./pages/DropDownsPage"));
-const ViewTodo = lazy(() => import("./components/Todos/ViewTodo"));
+const ViewTodo = lazy(() => import("src/features/todos/ViewTodo"));
 const OrganizationList = lazy(
   () => import("./features/organization/OrganizationsList")
 );
-const OrganizationOverView = lazy(() => import("./pages/OrganizationOverView"));
-const OrganizationMembers = lazy(
-  () => import("./pages/OrganizationMembers/OrganizationMembers")
+const OrganizationOverView = lazy(
+  () => import("./features/organization/OrganizationOverView")
 );
-const OrganizationProjects = lazy(() => import("./pages/OrganizationProjects"));
+const OrganizationMembers = lazy(
+  () =>
+    import("./features/organization/OrganizationMembers/OrganizationMembers")
+);
+const OrganizationProjects = lazy(
+  () => import("./features/organization/OrganizationProjects")
+);
 const UserSettings = lazy(() => import("./pages/UserSetting"));
 const ProjectView = lazy(() => import("./pages/ProjectView"));
 const NotFound = lazy(() => import("./pages/NotFound"));

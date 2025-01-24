@@ -25,6 +25,7 @@ const Todos: React.FC = () => {
   const { todoGetList } = useActions();
 
   useEffect(() => {
+    console.log("on todo get list");
     const controller = new AbortController();
     const signal: AbortSignal = controller.signal;
     todoGetList({ signal });
