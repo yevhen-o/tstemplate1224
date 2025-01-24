@@ -12,7 +12,7 @@ const ajvWrapper = (schema: any): RequestHandler => {
       const validate = ajv.compile(schema);
       const valid = validate(req.body);
       if (!valid) {
-        next(new AppError(validate.errors, "Validation error", 400));
+        next(new AppError(validate, "Validation error", 400));
       } else {
         next();
       }

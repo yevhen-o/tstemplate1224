@@ -2,6 +2,13 @@ import Button from "../Buttons";
 import Modal from "../Modal";
 import { useForm, FieldType, useActions } from "src/hooks";
 
+type AwaitedRequest = {
+  type: string;
+  error?: {
+    message: string; // Error message
+  };
+};
+
 const SignIn: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const formFields: FieldType[] = [
     { fieldType: "input", name: "email", label: "Email" },
@@ -36,8 +43,10 @@ const SignIn: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isFormValid()) {
-      await login(values);
-      onClose();
+      const re = (await login(values)) as unknown as AwaitedRequest;
+      if (!re.error) {
+        onClose();
+      }
     } else {
       setFieldsTouched();
     }
@@ -47,7 +56,12 @@ const SignIn: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <Modal title="Sign in" onClose={onClose}>
       <form onSubmit={handleSubmit} className="grid min-w-[14rem]">
         {fields.map(renderFormField)}
-        <Button className="mt-4 " isPrimary type="submit">
+        <Button
+          data-testId={"signIn"}
+          className="mt-4 "
+          isPrimary
+          type="submit"
+        >
           Sing In
         </Button>
       </form>

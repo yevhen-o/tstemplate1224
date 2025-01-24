@@ -52,7 +52,7 @@ function RootLayout() {
 
   const userOptions = [
     {
-      label: "Setting",
+      label: "Settings",
       value: "settings",
       onClick: () => {},
       href: getUrl(IDENTIFIERS.USER_SETTINGS),
@@ -99,7 +99,10 @@ function RootLayout() {
                   )}
                   {isAuthenticated && (
                     <li className={classNames("ml-auto")}>
-                      <MenuButton menuItems={userOptions}>
+                      <MenuButton
+                        data-testId={"user-menu"}
+                        menuItems={userOptions}
+                      >
                         <Settings className="text-white" size="20" />
                       </MenuButton>
                     </li>

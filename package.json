@@ -1,12 +1,14 @@
 {
+  "license": "MIT",
   "scripts": {
-    "pre-push": "npm run lint:all && npm run test:all",
-    "lint:all": "npm run lint:frontend",
-    "test:all": "npm run test:frontend",
-    "lint:frontend": "cd frontend && npm run lint",
-    "lint:backend": "cd backend && npm run lint",
-    "test:frontend": "cd frontend && npm test",
-    "test:backend": "cd backend && npm test",
+    "pre-push": "yarn run lint:all && yarn run test:all",
+    "lint:all": "yarn run lint:frontend",
+    "test:all": "yarn run test:frontend && yarn run test:e2e",
+    "lint:frontend": "cd frontend && yarn run lint",
+    "lint:backend": "cd backend && yarn run lint",
+    "test:frontend": "cd frontend && yarn test",
+    "test:backend": "cd backend && yarn test",
+    "test:e2e": "cd frontend && yarn playwright test",
     "prepare": "husky install"
   },
   "devDependencies": {

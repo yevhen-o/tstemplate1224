@@ -96,6 +96,7 @@ function generateJwtUserAndTokens(user: UserWithOrganizations | UserInterface) {
 }
 
 export const userAddRecord = async (req: Request, res: Response) => {
+  console.log("on add user handler");
   const { password, confirmPassword, ...rest } = req.body;
   if (password !== confirmPassword) return res.status(400).send();
   const hashedPassword = await bcrypt.hash(password, 10);

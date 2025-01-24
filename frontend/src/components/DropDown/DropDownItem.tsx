@@ -88,7 +88,7 @@ const DropDownItem: React.FC<DropDownItemProps> = ({
       })}
     >
       <span className={"drop-down__item-text"}>
-        <TextEllipsis>{label}sdasd</TextEllipsis>
+        <TextEllipsis>{label}</TextEllipsis>
       </span>
     </button>
   );

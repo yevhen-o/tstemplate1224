@@ -10,3 +10,9 @@ backend/config/config.json
 backend/.env
 backend/dist
 backend/newrelic_agent.log
+
+# Playwright
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+frontend/playwright/.cache/

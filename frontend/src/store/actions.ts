@@ -14,4 +14,11 @@ export {
   getOrgProjects,
 } from "./organization/organizationSlice";
 
-export { init, login, logout, logoutAll, signup } from "./user/userSlice";
+export {
+  init,
+  login,
+  logout,
+  logoutAll,
+  signup,
+  deleteAccount,
+} from "./user/userSlice";

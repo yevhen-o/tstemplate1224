@@ -6,6 +6,7 @@ const errorHandler: ErrorRequestHandler = async (error, req, res, next) => {
     const details = {
       ...(error.details.params || {}),
       ...(error.details.body || {}),
+      ...(error.details.errors || {}),
     };
     res.status(error.statusCode).send({ message: error.message, details });
   } else {

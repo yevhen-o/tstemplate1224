@@ -4,15 +4,6 @@ import jwt from "jsonwebtoken";
 import AppError from "../utils/AppError";
 import { JwtUser } from "../controllers/userController";
 
-// Extend the Request interface to include the user property
-declare global {
-  namespace Express {
-    interface Request {
-      user?: JwtUser;
-    }
-  }
-}
-
 const authenticateToken: RequestHandler = async (
   req: Request,
   res: Response,
