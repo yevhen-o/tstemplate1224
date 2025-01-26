@@ -22,10 +22,11 @@ const TodoList: React.FC<TodoListProps> = ({ items }) => {
         <Link
           to={getUrl(IDENTIFIERS.TODO_VIEW, { todoId: todo.uid })}
           className={classNames(
-            "rounded-lg block bg-white text-left shadow-xl px-4 py-3 border border-gray-200 my-4",
+            "todoItem rounded-lg block bg-white text-left shadow-xl px-4 py-3 border border-gray-200 my-4",
             { "bg-gray-100": activeItem?.uid === todo.uid }
           )}
           key={todo.uid}
+          id={todo.uid}
           onContextMenu={handleOpenContextMenu(todo)}
         >
           <strong>ID: </strong>

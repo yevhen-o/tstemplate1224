@@ -90,6 +90,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
         "Maybe need to think about radio group, but it's not a priority",
     },
     {
+      id: "someUniqId",
       fieldType: "checkbox",
       name: "isImportant",
       label: "Important",

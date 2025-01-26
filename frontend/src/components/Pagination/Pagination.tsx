@@ -92,7 +92,7 @@ const Pagination: React.FC<PaginationProps> = ({
           </Button>
         </nav>
         <span className="block">
-          Page {page} of {totalPages}
+          Page {page} of <span data-test-id="total-pages">{totalPages}</span>
         </span>
       </div>
       <div className="flex justify-self-end items-center gap-2">
