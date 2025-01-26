@@ -39,7 +39,12 @@ function RootLayout() {
   const initState = useTypedSelector((state) => state.user.init);
 
   useEffect(() => {
-    init({});
+    const controller = new AbortController();
+    const signal: AbortSignal = controller.signal;
+    init({ signal });
+    return () => {
+      controller.abort();
+    };
   }, [init]);
 
   const { isFetched, isFetching } = initState;

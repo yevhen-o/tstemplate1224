@@ -84,7 +84,19 @@ test.describe("Todo page tests", () => {
 
       await page.locator(nextPageButtonSelector).click();
 
-      await expect(page.locator(todoItemSelector)).toHaveCount(3);
+      await page.waitForFunction(
+        ({ selector, previousIds }) => {
+          const currentIds = Array.from(
+            document.querySelectorAll(selector)
+          ).map((item) => item.getAttribute("id"));
+          return (
+            currentIds.length > 0 &&
+            currentIds.length === previousIds.length &&
+            !currentIds.every((id, index) => id === previousIds[index])
+          );
+        },
+        { selector: todoItemSelector, previousIds: firstPageItems }
+      );
 
       const secondPageItems = await page
         .locator(todoItemSelector)
@@ -96,8 +108,6 @@ test.describe("Todo page tests", () => {
     });
 
     test("perform check changing itemsPerPage", async ({ page }) => {
-      await expect(page.locator(todoItemSelector)).toHaveCount(3);
-
       const firstPageItems = await page
         .locator(todoItemSelector)
         .evaluateAll((items) => items.map((item) => item.getAttribute("id")));
@@ -106,8 +116,19 @@ test.describe("Todo page tests", () => {
 
       await page.locator(itemsPerPageSelector).selectOption("5");
 
+      await page.waitForFunction(
+        ({ selector }) => {
+          const currentIds = Array.from(
+            document.querySelectorAll(selector)
+          ).map((item) => item.getAttribute("id"));
+          return currentIds.length > 0 && currentIds.length === 5;
+        },
+        { selector: todoItemSelector }
+      );
+
       const currentUrl = new URL(page.url());
       expect(currentUrl.searchParams.has("page")).toBe(false);
+      expect(currentUrl.searchParams.get("perPage") === "5").toBe(true);
 
       await expect(page.locator(todoItemSelector)).toHaveCount(5);
 
@@ -122,7 +143,7 @@ test.describe("Todo page tests", () => {
 
     test("perform check changing filters", async ({ page }) => {
       const totalPagesSelector = "[data-test-id='total-pages']";
-
+      await expect(page.locator(todoItemSelector)).toHaveCount(3);
       const initialTotalPages = await page
         .locator(totalPagesSelector)
         .innerText();
@@ -132,7 +153,7 @@ test.describe("Todo page tests", () => {
 
       // Step 1: Change the priority filter
       await page.locator(priorityFilterSelector).selectOption("medium");
-      await page.waitForTimeout(1000); // Wait for the UI to update
+      await page.waitForTimeout(1000);
       const totalPagesAfterPriority = await page
         .locator(totalPagesSelector)
         .innerText();
@@ -142,7 +163,10 @@ test.describe("Todo page tests", () => {
 
       // Step 2: Change the scope filter
       await page.locator(scopeFilterSelector).selectOption("forWork");
-      await page.waitForTimeout(1000); // Wait for the UI to update
+      await page.waitForURL(
+        (url) => url.searchParams.get("scope") === "forWork"
+      );
+      await page.waitForTimeout(1000);
       const totalPagesAfterScope = await page
         .locator(totalPagesSelector)
         .innerText();
@@ -152,7 +176,10 @@ test.describe("Todo page tests", () => {
 
       // Step 3: Change the isImportant filter
       await page.locator(isImportantFilterSelector).selectOption("true");
-      await page.waitForTimeout(1000); // Wait for the UI to update
+      await page.waitForURL(
+        (url) => url.searchParams.get("isImportant") === "true"
+      );
+      await page.waitForTimeout(1000);
       const totalPagesAfterIsImportant = await page
         .locator(totalPagesSelector)
         .innerText();
@@ -161,20 +188,21 @@ test.describe("Todo page tests", () => {
       expect(pagesAfterIsImportant).not.toBe(pagesAfterScope);
     });
 
-    test.only("perform check persistence url with filters", async ({
-      page,
-    }) => {
+    test("perform check persistence url with filters", async ({ page }) => {
       const goToListButtonSelector = "button:has-text('Go to list')";
 
       // Step 1: Apply filters and check URL
-      await page.locator(priorityFilterSelector).selectOption("medium");
-      await page.locator(scopeFilterSelector).selectOption("forWork");
-      await page.locator(isImportantFilterSelector).selectOption("true");
+      await page.goto(
+        getUrl(IDENTIFIERS.TODOS, {
+          priority: "medium",
+          isImportant: true,
+          scope: "forWork",
+        })
+      );
 
-      const urlWithFilters = page.url();
-      expect(urlWithFilters).toContain("priority=medium");
-      expect(urlWithFilters).toContain("scope=forWork");
-      expect(urlWithFilters).toContain("isImportant=true");
+      await page.waitForURL(
+        (url) => url.searchParams.get("priority") === "medium"
+      );
 
       // Step 2: Store the ID of the first item on the list
       const firstItemId = await page
@@ -191,10 +219,22 @@ test.describe("Todo page tests", () => {
 
       // Step 4: Navigate back to Todos and check URL and items
       await page.getByRole("link", { name: "Todos" }).click();
-      await page.waitForSelector(todoItemSelector);
+      await page.waitForURL(
+        (url) => url.searchParams.get("priority") === "medium"
+      );
       expect(page.url()).toContain("priority=medium");
       expect(page.url()).toContain("scope=forWork");
       expect(page.url()).toContain("isImportant=true");
+
+      await page.waitForFunction(
+        ({ todoItemSelector, firstItemId }) => {
+          const currentIds = Array.from(
+            document.querySelectorAll(todoItemSelector)
+          ).map((item) => item.getAttribute("id"));
+          return currentIds.includes(firstItemId);
+        },
+        { todoItemSelector, firstItemId }
+      );
 
       const itemIdsAfterNavigateBack = await page
         .locator(todoItemSelector)
@@ -210,10 +250,22 @@ test.describe("Todo page tests", () => {
 
       // Step 6: Go back to the list and check URL and items
       await page.locator(goToListButtonSelector).click();
-      await page.waitForSelector(todoItemSelector);
+      await page.waitForURL(
+        (url) => url.searchParams.get("priority") === "medium"
+      );
       expect(page.url()).toContain("priority=medium");
       expect(page.url()).toContain("scope=forWork");
       expect(page.url()).toContain("isImportant=true");
+
+      await page.waitForFunction(
+        ({ todoItemSelector, firstItemId }) => {
+          const currentIds = Array.from(
+            document.querySelectorAll(todoItemSelector)
+          ).map((item) => item.getAttribute("id"));
+          return currentIds.includes(firstItemId);
+        },
+        { todoItemSelector, firstItemId }
+      );
 
       const itemIdsAfterGoBack = await page
         .locator(todoItemSelector)
