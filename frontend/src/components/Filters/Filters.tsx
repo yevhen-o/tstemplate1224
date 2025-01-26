@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FormValueType,
   FieldType,
@@ -23,10 +23,15 @@ const Filters: React.FC<FilterProps> = ({
   const el = useRef(null);
   const { values, renderFormField, hasFormChanges, resetForm, updateValues } =
     useForm({}, initialValues);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    onChange(values);
-  }, [values, onChange]);
+    if (isMounted) {
+      onChange({ ...values, page: "1" });
+    } else {
+      setIsMounted(true);
+    }
+  }, [values, onChange, isMounted]);
 
   const { wrapperHeight } = useObserveElementSize(el);
 

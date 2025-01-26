@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { storageSet, storageGetKey } from "src/services/localStorage";
-import { getUrl, IDENTIFIERS } from "src/services/urlsHelper";
 import { FormValueType } from "src/hooks/useForm";
 import { DEFAULT_PAGE_SIZE, FILTER_ALL_VALUE } from "src/constants";
 
@@ -12,14 +11,10 @@ type UseAppliedValuesParams = {
 
 export function useSearchParamsOrLocalStorage({
   initialValues = {},
-  onChange,
 }: UseAppliedValuesParams) {
   const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const [appliedValues, setAppliedValues] = useState<FormValueType | null>(
-    initialValues
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [appliedValues, setAppliedValues] = useState<FormValueType | null>({});
 
   useEffect(() => {
     const values: FormValueType = { ...initialValues };
@@ -51,10 +46,9 @@ export function useSearchParamsOrLocalStorage({
       });
 
       storageSet(storageGetKey(pathname), valuesImpactUrl);
-      navigate(getUrl(pathname as IDENTIFIERS, valuesImpactUrl));
-      onChange?.(valuesImpactUrl);
+      setSearchParams((params) => ({ ...params, ...valuesImpactUrl }));
     },
-    [navigate, pathname, onChange]
+    [setSearchParams, pathname]
   );
 
   return {

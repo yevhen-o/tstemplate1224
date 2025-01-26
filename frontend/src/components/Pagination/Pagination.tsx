@@ -34,10 +34,15 @@ const Pagination: React.FC<PaginationProps> = ({
     const newPerPage = Math.max(+value, 1); // Ensure positive value
     setValues((prev) => ({ ...prev, page: 1, perPage: newPerPage }));
   };
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    onChange?.(values);
-  }, [values, onChange]);
+    if (isMounted) {
+      onChange?.(values);
+    } else {
+      setIsMounted(true);
+    }
+  }, [values, onChange, isMounted]);
 
   useEffect(() => {
     if (!!appliedValues && !deepEqual(appliedValues, values)) {
