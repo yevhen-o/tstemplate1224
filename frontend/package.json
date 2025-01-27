@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@carbon/icons-react": "^11.53.0",
+    "@hookform/resolvers": "^3.10.0",
     "@newrelic/browser-agent": "^1.278.3",
     "@reduxjs/toolkit": "^2.5.0",
     "classnames": "^2.5.1",
@@ -27,12 +28,14 @@
     "react": "^19.0.0",
     "react-datepicker": "^7.6.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.54.2",
     "react-redux": "^9.2.0",
     "react-router": "^7.1.1",
     "react-router-dom": "^7.1.1",
     "reselect": "^5.1.1",
     "sass": "^1.83.4",
     "web-vitals": "^4.2.4",
+    "zod": "^3.24.1",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
