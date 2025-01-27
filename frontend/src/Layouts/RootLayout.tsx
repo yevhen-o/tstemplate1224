@@ -105,7 +105,7 @@ function RootLayout() {
                       </ListItem>
                       <li className={classNames("ml-auto")}>
                         <MenuButton
-                          data-testId={"user-menu"}
+                          data-testid={"user-menu"}
                           menuItems={userOptions}
                         >
                           <Settings className="text-white" size="20" />

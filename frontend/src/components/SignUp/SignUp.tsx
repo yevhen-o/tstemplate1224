@@ -91,7 +91,7 @@ const SignUp: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       <form onSubmit={handleSubmit} className="grid min-w-[18rem]">
         {fields.map(renderFormField)}
         <Button
-          data-testId={"signUp"}
+          data-testid={"signUp"}
           className="mt-4 "
           isPrimary
           type="submit"

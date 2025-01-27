@@ -142,7 +142,7 @@ test.describe("Todo page tests", () => {
     });
 
     test("perform check changing filters", async ({ page }) => {
-      const totalPagesSelector = "[data-test-id='total-pages']";
+      const totalPagesSelector = "[data-testid='total-pages']";
       await expect(page.locator(todoItemSelector)).toHaveCount(3);
       const initialTotalPages = await page
         .locator(totalPagesSelector)
