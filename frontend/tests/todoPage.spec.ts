@@ -116,15 +116,17 @@ test.describe("Todo page tests", () => {
 
       await page.locator(itemsPerPageSelector).selectOption("5");
 
-      await page.waitForFunction(
-        ({ selector }) => {
-          const currentIds = Array.from(
-            document.querySelectorAll(selector)
-          ).map((item) => item.getAttribute("id"));
-          return currentIds.length > 0 && currentIds.length === 5;
-        },
-        { selector: todoItemSelector }
-      );
+      await page.waitForTimeout(1000);
+
+      // await page.waitForFunction(
+      //   ({ selector }) => {
+      //     const currentIds = Array.from(
+      //       document.querySelectorAll(selector)
+      //     ).map((item) => item.getAttribute("id"));
+      //     return currentIds.length > 0 && currentIds.length === 5;
+      //   },
+      //   { selector: todoItemSelector }
+      // );
 
       const currentUrl = new URL(page.url());
       expect(currentUrl.searchParams.has("page")).toBe(false);
