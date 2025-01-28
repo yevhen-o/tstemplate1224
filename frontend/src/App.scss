@@ -51,10 +51,24 @@ $color-gray-0: #ffffff;
 --color-gray-0: #{$color-gray-0};
 
 --color-error: var(--color-red);
+--color-gray-dark: #4a4e71;
+--color-gray-text: #6F91BC;
+--color-success: #27B274;
+--color-white: #ffffff;
+
+--color-error-text: #FF8080;
+--color-error-background: #FDEFEE;
+
+
+--border-radius-default: .625rem;
+--border-radius-lg: 1.875rem;
+--border-color-default: #151D5133;
 
 --shadow-lg: 0px 4px 24px rgba(0, 0, 0, 0.04);
 --shadow-md: 0px 4px 8px rgba(0, 0, 0, 0.04);
 --shadow-sm: 0px 1px 4px rgba(0, 0, 0, 0.08);
+
+  
 }
 
 .App {

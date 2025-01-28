@@ -8,7 +8,7 @@ import { useState } from "react";
 import { signUpSchema } from "./PasswordValidationSchemas";
 
 import "./SignUpUseForm.scss";
-import InputField from "./InputField";
+import InputField from "../Forms/InputField/InputField";
 import PasswordValidationHelper from "./PasswordValidationHelper";
 
 type FormValues = z.infer<typeof signUpSchema>;
@@ -111,27 +111,6 @@ const SignUp: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </>
             )}
           />
-          // <div
-          //   onBlur={handleBlur(name)}
-          //   className={classNames("field_wrapper", {
-          //     "field_wrapper--error": errors[name] && touchedFields[name],
-          //     "field_wrapper--success": !errors[name] && dirtyFields[name],
-          //   })}
-          // >
-          //   <input
-          //     {...register(name)}
-          //     placeholder={placeholder}
-          //     name={name}
-          //     autoComplete="new-password"
-          //     {...rest}
-          //   />
-          //   {name !== "password" && errors[name] && touchedFields[name] && (
-          //     <div className="text-red-500">
-          //       <small>{errors[name].message}</small>
-          //     </div>
-          //   )}
-          //   {name === "password" && getPasswordErrors(name, passwordValue)}
-          // </div>
         ))}
 
         <Button

@@ -1,4 +1,6 @@
 export {
+  View,
+  ViewOff,
   Settings,
   ArrowDown,
   ArrowUp,

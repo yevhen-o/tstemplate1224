@@ -1,60 +1,102 @@
-import { ResponseThunkAction } from "src/Types";
-import Button from "../Buttons";
+import { z } from "zod";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+
 import Modal from "../Modal";
-import { useForm, FieldType, useActions } from "src/hooks";
+import Button from "../Buttons";
+import { useActions } from "src/hooks";
+import { ResponseThunkAction } from "src/Types";
+import InputField from "src/components/Forms/InputField";
+
+const signInSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
+});
+
+type FormValues = z.infer<typeof signInSchema>;
+
+type FormFieldsType = {
+  name: keyof FormValues;
+  label?: string;
+  type?: string;
+};
 
 const SignIn: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const formFields: FieldType[] = [
-    { fieldType: "input", name: "email", label: "Email" },
+  const formFields: FormFieldsType[] = [
+    { name: "email", label: "Email" },
     {
-      fieldType: "input",
       type: "password",
       name: "password",
       label: "Password",
     },
   ];
 
-  const RULES = {
-    email: {
-      isEmail: true,
-      isRequired: true,
-    },
-    password: {
-      isRequired: true,
-    },
-  };
-
   const initialValues = {
     email: "",
     password: "",
   };
 
-  const { fields, values, isFormValid, renderFormField, setFieldsTouched } =
-    useForm(RULES, initialValues, formFields);
+  const [touchedFields, setTouchedFields] = useState<
+    Partial<Record<keyof FormValues, boolean>>
+  >({});
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting, dirtyFields },
+  } = useForm<FormValues>({
+    defaultValues: initialValues,
+    resolver: zodResolver(signInSchema),
+    mode: "all",
+  });
 
   const { login } = useActions();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (isFormValid()) {
-      const re = (await login(values)) as unknown as ResponseThunkAction;
-      if (!re.error) {
-        onClose();
-      }
-    } else {
-      setFieldsTouched();
+  const submitFunction: SubmitHandler<FormValues> = async (data) => {
+    const re = (await login(data)) as unknown as ResponseThunkAction;
+    if (!re.error) {
+      onClose();
     }
   };
 
+  const handleBlur = (field: keyof FormValues) =>
+    setTouchedFields((prev) => ({ ...prev, [field]: true }));
+
   return (
     <Modal title="Sign in" onClose={onClose}>
-      <form onSubmit={handleSubmit} className="grid min-w-[14rem]">
-        {fields.map(renderFormField)}
+      <form
+        onSubmit={handleSubmit(submitFunction)}
+        className="grid min-w-[14rem]"
+      >
+        {formFields.map(({ name, ...rest }) => (
+          <Controller
+            key={name}
+            name={name}
+            control={control}
+            render={({ field: { onBlur, ...restFieldsProps } }) => (
+              <>
+                <InputField
+                  {...rest}
+                  {...restFieldsProps}
+                  onBlur={() => {
+                    onBlur();
+                    handleBlur(name);
+                  }}
+                  errorMessage={errors[name]?.message}
+                  isTouched={touchedFields[name]}
+                  isDirty={dirtyFields[name]}
+                />
+              </>
+            )}
+          />
+        ))}
         <Button
-          data-testid={"signIn"}
-          className="mt-4 "
           isPrimary
           type="submit"
+          className="mt-6"
+          data-testid={"signIn"}
+          disabled={isSubmitting}
         >
           Sing In
         </Button>
