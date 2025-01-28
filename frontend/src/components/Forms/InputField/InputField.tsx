@@ -1,7 +1,6 @@
 import { forwardRef, HTMLProps, Ref, useState } from "react";
 import { View, ViewOff } from "src/components/Icons";
-import classNames from "classnames";
-import "./InputField.scss";
+import { FieldWrapper } from "../FieldWrapper/FieldWrapper";
 
 interface InputProps extends HTMLProps<HTMLInputElement> {
   label?: string;
@@ -11,7 +10,7 @@ interface InputProps extends HTMLProps<HTMLInputElement> {
   isErrorMessageHidden?: boolean;
 }
 
-const InputField = forwardRef(
+export const InputField = forwardRef(
   (props: InputProps, ref: Ref<HTMLInputElement>) => {
     const {
       label,
@@ -20,23 +19,26 @@ const InputField = forwardRef(
       isDirty,
       isErrorMessageHidden = false,
       type,
+      name,
+      id,
       ...inputProps
     } = props;
 
     const [fieldType, setFieldType] = useState<string | undefined>(type);
 
     return (
-      <div
-        className={classNames("field_wrapper", {
-          "field_wrapper--error": errorMessage && isTouched,
-          "field_wrapper--success": !errorMessage && isDirty,
-        })}
+      <FieldWrapper
+        isDirty={isDirty}
+        isTouched={isTouched}
+        errorMessage={errorMessage}
+        isErrorMessageHidden={isErrorMessageHidden}
       >
-        {label && <label htmlFor={inputProps.name}>{label}</label>}
+        {label && <label htmlFor={id || name}>{label}</label>}
         <div className="field_wrapper__input">
           <input
-            id={inputProps.name}
+            id={id || name}
             {...inputProps}
+            name={name}
             ref={ref}
             type={fieldType}
           />
@@ -54,12 +56,7 @@ const InputField = forwardRef(
             </span>
           )}
         </div>
-        {!isErrorMessageHidden && errorMessage && isTouched && (
-          <small>{errorMessage}</small>
-        )}
-      </div>
+      </FieldWrapper>
     );
   }
 );
-
-export default InputField;

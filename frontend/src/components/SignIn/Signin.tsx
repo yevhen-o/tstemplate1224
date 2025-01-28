@@ -7,7 +7,7 @@ import Modal from "../Modal";
 import Button from "../Buttons";
 import { useActions } from "src/hooks";
 import { ResponseThunkAction } from "src/Types";
-import InputField from "src/components/Forms/InputField";
+import { InputField } from "src/components/Forms/InputField";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -97,6 +97,14 @@ const SignIn: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           className="mt-6"
           data-testid={"signIn"}
           disabled={isSubmitting}
+          onClick={() =>
+            setTouchedFields(
+              formFields.reduce(
+                (acc, field) => ({ ...acc, [field.name]: true }),
+                {}
+              )
+            )
+          }
         >
           Sing In
         </Button>

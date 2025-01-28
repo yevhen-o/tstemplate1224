@@ -1,10 +1,27 @@
-import React, { useEffect } from "react";
+import { z } from "zod";
+import React, { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
-import { FieldType, useActions, useForm, useTypedSelector } from "src/hooks";
-import { debounce } from "src/helpers/utils";
-import Button from "src/components/Buttons";
 import Modal from "src/components/Modal";
+import Button from "src/components/Buttons";
+import { debounce } from "src/helpers/utils";
 import { ResponseThunkAction } from "src/Types";
+import { useTypedSelector, useActions } from "src/hooks";
+import { InputField } from "src/components/Forms/InputField";
+
+const addOrganizationSchema = z.object({
+  name: z.string().max(250),
+  domain: z.string().regex(/^\S*$/, "Domain must not contain spaces").max(64),
+});
+
+type FormValues = z.infer<typeof addOrganizationSchema>;
+
+type FormFieldsType = {
+  name: keyof FormValues;
+  label?: string;
+  type?: string;
+};
 
 type AddOrganizationModalProps = {
   onClose: () => void;
@@ -13,44 +30,40 @@ type AddOrganizationModalProps = {
 const AddOrganizationModal: React.FC<AddOrganizationModalProps> = ({
   onClose,
 }) => {
-  const initialValue = {
+  const initialValues = {
     name: "",
     domain: "",
   };
 
-  // const { todoPostItem } = useActions();
   const { isFetching, error } = useTypedSelector(
     (store) => store.organization.postNewOrganization
   );
 
   const { getIsDomainAvailable, postNewOrganization } = useActions();
 
-  const RULES = {
-    name: {
-      isRequired: true,
-      minLength: 3,
-    },
-    domain: {
-      isRequired: true,
-      isAlreadyExistsInArray: [""],
-    },
-  };
-
-  const formFields: FieldType[] = [
-    { fieldType: "input", name: "name", label: "Organization name" },
-    { fieldType: "input", name: "domain", label: "Organization domain" },
+  const formFields: FormFieldsType[] = [
+    { name: "name", label: "Organization name" },
+    { name: "domain", label: "Organization domain" },
   ];
 
+  const [touchedFields, setTouchedFields] = useState<
+    Partial<Record<keyof FormValues, boolean>>
+  >({});
+
   const {
-    fields,
-    values,
-    resetForm,
-    isFormValid,
-    setFormErrors,
-    hasFormChanges,
-    renderFormField,
-    setFieldsTouched,
-  } = useForm(RULES, initialValue, formFields);
+    watch,
+    reset,
+    control,
+    setError,
+    handleSubmit,
+    formState: { errors, isSubmitting, dirtyFields, isDirty },
+  } = useForm<FormValues>({
+    defaultValues: initialValues,
+    resolver: zodResolver(addOrganizationSchema),
+    mode: "all",
+  });
+
+  const domainValue = watch("domain");
 
   useEffect(() => {
     const checkIsDomainAvailable = debounce(async (value: string) => {
@@ -60,38 +73,57 @@ const AddOrganizationModal: React.FC<AddOrganizationModalProps> = ({
         payload: { available: boolean };
       };
       if (!res.payload.available) {
-        setFormErrors((prev) => ({
-          ...prev,
-          domain: "Sorry, this domain already in use",
-        }));
+        setError("domain", {
+          type: "custom",
+          message: "Sorry, this domain already in use",
+        });
       }
     }, 300);
-    if (values.domain) checkIsDomainAvailable(values.domain);
-  }, [values.domain, getIsDomainAvailable, setFormErrors]);
+    if (domainValue) checkIsDomainAvailable(domainValue);
+  }, [domainValue, getIsDomainAvailable, setError]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (isFormValid()) {
-      const res = (await postNewOrganization(
-        values
-      )) as unknown as ResponseThunkAction;
-      if (!res.error) {
-        onClose();
-      }
-    } else {
-      setFieldsTouched();
+  const submitFunction: SubmitHandler<FormValues> = async (data) => {
+    const res = (await postNewOrganization(
+      data
+    )) as unknown as ResponseThunkAction;
+    if (!res.error) {
+      onClose();
     }
   };
 
+  const handleBlur = (field: keyof FormValues) =>
+    setTouchedFields((prev) => ({ ...prev, [field]: true }));
+
   return (
     <Modal title="Add new organization" onClose={onClose}>
-      <form onSubmit={handleSubmit} style={{ padding: "20px" }}>
+      <form onSubmit={handleSubmit(submitFunction)} style={{ padding: "20px" }}>
         <p className="mt-1 text-sm/6 text-gray-600">
           Use some descriptive name and use uniq domain, it will be a part of
           your privat urls
         </p>
-        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-          {fields.map((field) => renderFormField(field))}
+        <div className="mt-10 flex flex-col gap-8">
+          {formFields.map(({ name, ...rest }) => (
+            <Controller
+              key={name}
+              name={name}
+              control={control}
+              render={({ field: { onBlur, ...restFieldsProps } }) => (
+                <>
+                  <InputField
+                    {...rest}
+                    {...restFieldsProps}
+                    onBlur={() => {
+                      onBlur();
+                      handleBlur(name);
+                    }}
+                    errorMessage={errors[name]?.message}
+                    isTouched={touchedFields[name]}
+                    isDirty={dirtyFields[name]}
+                  />
+                </>
+              )}
+            />
+          ))}
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">
           {isFetching && <span>Loading...</span>}
@@ -100,8 +132,20 @@ const AddOrganizationModal: React.FC<AddOrganizationModalProps> = ({
               {error.message || "Something goes wrong"}
             </span>
           )}
-          {hasFormChanges() && <Button onClick={resetForm}>Reset</Button>}
-          <Button disabled={isFetching} isPrimary type="submit">
+          {isDirty && <Button onClick={() => reset()}>Reset</Button>}
+          <Button
+            disabled={isFetching || isSubmitting}
+            isPrimary
+            type="submit"
+            onClick={() =>
+              setTouchedFields(
+                formFields.reduce(
+                  (acc, field) => ({ ...acc, [field.name]: true }),
+                  {}
+                )
+              )
+            }
+          >
             Submit
           </Button>
         </div>

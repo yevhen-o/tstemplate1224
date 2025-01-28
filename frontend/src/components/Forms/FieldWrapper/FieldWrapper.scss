@@ -4,10 +4,36 @@
   margin-bottom: .625rem;
   min-height: 4.7rem;
   
+
+  $this: &;
+  #{$this}--thin, &--thin {
+    min-height: 2.3rem;
+  }
   &__input {
     position: relative;
     display: flex;
     flex-direction: column;
+
+    &--check-box {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: var(--spacer-df);
+      flex-direction: row;
+    }
+  }
+
+  &__select {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    & > svg {
+      position: absolute;
+      top: 50%;
+      right: 0.9rem;
+      transform: translateY(-50%);
+    }
   }
 
   &__toggle {
@@ -18,7 +44,7 @@
     cursor: pointer;
   }
 
-  input {
+  input:not([type="checkbox"]):not([type="radio"]), select {
     all: unset;
     padding: 0.7rem 1.25rem;
     border: 1px solid var(--border-color-default);

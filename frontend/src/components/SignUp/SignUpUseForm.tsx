@@ -8,7 +8,7 @@ import { useState } from "react";
 import { signUpSchema } from "./PasswordValidationSchemas";
 
 import "./SignUpUseForm.scss";
-import InputField from "../Forms/InputField/InputField";
+import { InputField } from "../Forms/InputField/InputField";
 import PasswordValidationHelper from "./PasswordValidationHelper";
 
 type FormValues = z.infer<typeof signUpSchema>;
