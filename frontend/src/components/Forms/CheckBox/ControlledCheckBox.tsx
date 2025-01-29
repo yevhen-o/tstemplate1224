@@ -31,6 +31,7 @@ export const ControlledCheckBox = <T extends FieldValues>({
               onBlur();
               setTouchedField(name);
             }}
+            checked={restFieldsProps.value}
             errorMessage={error?.message}
             isTouched={touchedFields[name]}
             isDirty={isDirty}

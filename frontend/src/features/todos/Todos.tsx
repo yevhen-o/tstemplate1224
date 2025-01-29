@@ -3,7 +3,7 @@ import { createSelector } from "reselect";
 
 import { useActions } from "src/hooks/useActions";
 import { useTypedSelector } from "src/hooks/useTypedSelector";
-import { AddEditTodoModalProvider } from "./AddEditTodoModalProvider";
+import { AddEditTodoModal } from "./AddEditTodoModal";
 import Button from "src/components/Buttons";
 import TodoList from "./TodoListWithHOC";
 import { FieldType } from "src/hooks/useForm";
@@ -84,7 +84,7 @@ const Todos: React.FC = () => {
       </Button>
 
       {showAddTodoModal && (
-        <AddEditTodoModalProvider onClose={() => setShowAddTodoModal(false)} />
+        <AddEditTodoModal onClose={() => setShowAddTodoModal(false)} />
       )}
       {isFetching && <div>Loading...</div>}
       {hasError && <div>Something went wrong...</div>}

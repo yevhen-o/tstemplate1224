@@ -4,7 +4,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router";
 
 import Button from "src/components/Buttons";
-import { AddEditTodoModalProvider } from "./AddEditTodoModalProvider";
+import { AddEditTodoModal } from "./AddEditTodoModal";
 import { useActions, useTypedSelector, isOutdated } from "src/hooks";
 import { getUrl, IDENTIFIERS } from "src/services/urlsHelper";
 import { ResponseThunkAction } from "src/Types";
@@ -64,7 +64,7 @@ const ViewTodo: React.FC = () => {
         Go to list
       </Button>
       {showEditModal && (
-        <AddEditTodoModalProvider
+        <AddEditTodoModal
           onClose={() => setShowEditModal(false)}
           propsState={todo}
         />
