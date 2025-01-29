@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { SubmitHandler, useFormContext } from "react-hook-form";
+import React, { useEffect } from "react";
+import { SubmitHandler } from "react-hook-form";
+import { useCustomFormContext } from "src/hooks/useCustomFormContext";
 import { ResponseThunkAction, TodoInterface } from "src/Types";
 import { createSelector } from "reselect";
 
@@ -7,7 +8,8 @@ import { useTypedSelector, useActions } from "src/hooks";
 import Button from "src/components/Buttons";
 import Modal from "src/components/Modal";
 import { TodoSchemaType } from "./types/todoSchema";
-import { ControlledInputField } from "src/components/Forms/InputField/ControlledInputField";
+
+import { ControlledInputField } from "src/components/Forms/InputField";
 import { ControlledCheckBox } from "src/components/Forms/CheckBox";
 import { ControlledRadioInput } from "src/components/Forms/RadioInput";
 import { ControlledNativeSelect } from "src/components/Forms/NativeSelect";
@@ -28,15 +30,23 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
     )
   );
 
-  const [touchedFields, setTouchedFields] = useState<
-    Partial<Record<keyof TodoSchemaType, boolean>>
-  >({});
-
   const {
     reset,
+    setValue,
     handleSubmit,
+    setAllFieldsTouched,
     formState: { isSubmitting, isDirty },
-  } = useFormContext<TodoSchemaType>();
+  } = useCustomFormContext<TodoSchemaType>();
+
+  useEffect(() => {
+    if (propsState) {
+      setValue("title", propsState.title);
+      setValue("scope", propsState.scope);
+      setValue("priority", propsState.priority);
+      setValue("isImportant", propsState.isImportant);
+      setValue("deadline", new Date(propsState.deadline));
+    }
+  }, [propsState, setValue]);
 
   const submitFunction: SubmitHandler<TodoSchemaType> = async (data) => {
     let result: ResponseThunkAction;
@@ -59,9 +69,6 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
     }
   };
 
-  const handleBlur = (field: keyof TodoSchemaType) => () =>
-    setTouchedFields((prev) => ({ ...prev, [field]: true }));
-
   return (
     <Modal title="Add new todo" onClose={onClose}>
       <form onSubmit={handleSubmit(submitFunction)} style={{ padding: "20px" }}>
@@ -72,24 +79,15 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
           Use some descriptive title and set a deadline for the task
         </p>
         <div className="mt-10 flex-col gap-8">
-          <ControlledInputField<TodoSchemaType>
-            name="title"
-            label="Title"
-            handleBlur={handleBlur("title")}
-            isTouched={!!touchedFields["title"]}
-          />
+          <ControlledInputField<TodoSchemaType> name="title" label="Title" />
           <ControlledDatePicker<TodoSchemaType>
             name="deadline"
             label="Deadline"
-            handleBlur={handleBlur("deadline")}
-            isTouched={!!touchedFields["deadline"]}
           />
           <ControlledCheckBox<TodoSchemaType>
             id="importantUid"
             name="isImportant"
             label="Important"
-            handleBlur={handleBlur("isImportant")}
-            isTouched={!!touchedFields["isImportant"]}
           />
 
           <ControlledRadioInput<TodoSchemaType>
@@ -97,15 +95,11 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
             value="forFun"
             id="importantUid1"
             label="Done this for fun"
-            handleBlur={handleBlur("scope")}
-            isTouched={!!touchedFields["scope"]}
           />
 
           <ControlledNativeSelect<TodoSchemaType>
             name="priority"
             label="Priority"
-            handleBlur={handleBlur("priority")}
-            isTouched={!!touchedFields["priority"]}
             options={[
               { value: "low", label: "Low" },
               { value: "medium", label: "Medium" },
@@ -118,8 +112,6 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
             value="forWork"
             id="importantUid2"
             label="Done this for work or study"
-            handleBlur={handleBlur("scope")}
-            isTouched={!!touchedFields["scope"]}
           />
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">
@@ -132,15 +124,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onClose, propsState }) => {
             disabled={isSubmitting}
             isPrimary
             type="submit"
-            onClick={() =>
-              setTouchedFields({
-                title: true,
-                deadline: true,
-                isImportant: true,
-                scope: true,
-                priority: true,
-              })
-            }
+            onClick={setAllFieldsTouched}
           >
             {propsState ? "Update" : "Submit"}
           </Button>

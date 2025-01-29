@@ -1,21 +1,19 @@
 import { HTMLProps } from "react";
-import { Controller, FieldValues, useFormContext, Path } from "react-hook-form";
+import { Controller, FieldValues, Path } from "react-hook-form";
+import { useCustomFormContext } from "src/hooks/useCustomFormContext";
+
 import { InputField } from "./InputField";
 
 type InputProps<T extends FieldValues> = {
   name: Path<T>;
-  isTouched?: boolean;
-  handleBlur?: () => void;
   isErrorMessageHidden?: boolean;
 } & HTMLProps<HTMLInputElement>;
 
 export const ControlledInputField = <T extends FieldValues>({
   name,
-  handleBlur,
-  isTouched,
   ...rest
 }: InputProps<T>) => {
-  const { control } = useFormContext();
+  const { control, touchedFields, setTouchedField } = useCustomFormContext<T>();
 
   return (
     <Controller
@@ -31,10 +29,10 @@ export const ControlledInputField = <T extends FieldValues>({
             {...restFieldsProps}
             onBlur={() => {
               onBlur();
-              handleBlur?.();
+              setTouchedField(name);
             }}
             errorMessage={error?.message}
-            isTouched={isTouched}
+            isTouched={touchedFields[name]}
             isDirty={isDirty}
           />
         </>

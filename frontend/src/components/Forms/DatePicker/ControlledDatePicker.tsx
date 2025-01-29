@@ -1,22 +1,20 @@
-import { Controller, FieldValues, useFormContext, Path } from "react-hook-form";
+import { Controller, FieldValues, Path } from "react-hook-form";
 import { DatePickerField } from "./DatePicker";
 import { DatePickerProps } from "react-datepicker";
+
+import { useCustomFormContext } from "src/hooks/useCustomFormContext";
 
 type InputProps<T extends FieldValues> = {
   name: Path<T>;
   label?: string;
-  isTouched?: boolean;
-  handleBlur?: () => void;
   isErrorMessageHidden?: boolean;
 } & DatePickerProps;
 
 export const ControlledDatePicker = <T extends FieldValues>({
   name,
-  handleBlur,
-  isTouched,
   ...rest
 }: InputProps<T>) => {
-  const { control } = useFormContext();
+  const { control, touchedFields, setTouchedField } = useCustomFormContext<T>();
 
   return (
     <Controller
@@ -30,22 +28,13 @@ export const ControlledDatePicker = <T extends FieldValues>({
           <DatePickerField
             {...rest}
             {...restFieldsProps}
-            // onChange={(date: null | Date | Array<Date | null>) => {
-            //   if (date === null) {
-            //     onChange(null);
-            //   } else if (Array.isArray(date)) {
-            //     onChange(date?.[0]?.toDateString());
-            //   } else {
-            //     onChange(date?.toDateString());
-            //   }
-            // }}
             selected={restFieldsProps.value}
             onBlur={() => {
               onBlur();
-              handleBlur?.();
+              setTouchedField(name);
             }}
             errorMessage={error?.message}
-            isTouched={isTouched}
+            isTouched={touchedFields[name]}
             isDirty={isDirty}
           />
         </>

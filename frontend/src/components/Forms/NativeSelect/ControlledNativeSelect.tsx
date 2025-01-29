@@ -1,24 +1,21 @@
 import { HTMLProps } from "react";
-import { Controller, FieldValues, useFormContext, Path } from "react-hook-form";
+import { Controller, FieldValues, Path } from "react-hook-form";
+import { useCustomFormContext } from "src/hooks/useCustomFormContext";
 import { NativeSelect } from "./NativeSelect";
 import { Option } from "src/Types";
 
 type SelectProps<T extends FieldValues> = {
   name: Path<T>;
-  isTouched?: boolean;
-  handleBlur?: () => void;
   isErrorMessageHidden?: boolean;
   options: Option[];
 } & HTMLProps<HTMLSelectElement>;
 
 export const ControlledNativeSelect = <T extends FieldValues>({
   name,
-  handleBlur,
-  isTouched,
   options,
   ...rest
 }: SelectProps<T>) => {
-  const { control } = useFormContext();
+  const { control, touchedFields, setTouchedField } = useCustomFormContext<T>();
 
   return (
     <Controller
@@ -34,10 +31,10 @@ export const ControlledNativeSelect = <T extends FieldValues>({
             {...restFieldsProps}
             onBlur={() => {
               onBlur();
-              handleBlur?.();
+              setTouchedField(name);
             }}
             errorMessage={error?.message}
-            isTouched={isTouched}
+            isTouched={touchedFields[name]}
             isDirty={isDirty}
             options={options}
           />

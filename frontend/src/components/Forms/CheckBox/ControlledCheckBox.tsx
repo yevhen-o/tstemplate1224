@@ -1,21 +1,19 @@
 import { HTMLProps } from "react";
-import { Controller, FieldValues, useFormContext, Path } from "react-hook-form";
+import { Controller, FieldValues, Path } from "react-hook-form";
 import { CheckBox } from "./CheckBox";
+
+import { useCustomFormContext } from "src/hooks/useCustomFormContext";
 
 type CheckBoxProps<T extends FieldValues> = {
   name: Path<T>;
-  isTouched?: boolean;
-  handleBlur?: () => void;
   isErrorMessageHidden?: boolean;
 } & HTMLProps<HTMLInputElement>;
 
 export const ControlledCheckBox = <T extends FieldValues>({
   name,
-  handleBlur,
-  isTouched,
   ...rest
 }: CheckBoxProps<T>) => {
-  const { control } = useFormContext();
+  const { control, touchedFields, setTouchedField } = useCustomFormContext<T>();
 
   return (
     <Controller
@@ -31,10 +29,10 @@ export const ControlledCheckBox = <T extends FieldValues>({
             {...restFieldsProps}
             onBlur={() => {
               onBlur();
-              handleBlur?.();
+              setTouchedField(name);
             }}
             errorMessage={error?.message}
-            isTouched={isTouched}
+            isTouched={touchedFields[name]}
             isDirty={isDirty}
           />
         </>

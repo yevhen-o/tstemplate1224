@@ -1,23 +1,21 @@
 import { HTMLProps } from "react";
-import { Controller, FieldValues, useFormContext, Path } from "react-hook-form";
+import { Controller, FieldValues, Path } from "react-hook-form";
 import { RadioInput } from "./RadioInput";
+
+import { useCustomFormContext } from "src/hooks/useCustomFormContext";
 
 type RadioInputProps<T extends FieldValues> = {
   name: Path<T>;
   value: string;
-  isTouched?: boolean;
-  handleBlur?: () => void;
   isErrorMessageHidden?: boolean;
 } & HTMLProps<HTMLInputElement>;
 
 export const ControlledRadioInput = <T extends FieldValues>({
   name,
-  handleBlur,
-  isTouched,
   value,
   ...rest
 }: RadioInputProps<T>) => {
-  const { control } = useFormContext();
+  const { control, touchedFields, setTouchedField } = useCustomFormContext<T>();
 
   return (
     <Controller
@@ -33,12 +31,12 @@ export const ControlledRadioInput = <T extends FieldValues>({
             {...restFieldsProps}
             onBlur={() => {
               onBlur();
-              handleBlur?.();
+              setTouchedField(name);
             }}
             value={value}
             checked={formValue === value}
             errorMessage={error?.message}
-            isTouched={isTouched}
+            isTouched={touchedFields[name]}
             isDirty={isDirty}
           />
         </>

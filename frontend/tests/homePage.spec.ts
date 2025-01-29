@@ -52,7 +52,7 @@ test.describe("Home page tests", () => {
       await page.locator("[name='confirmPassword']").fill("strongPassword123");
       await page.locator("[name='age']").fill("22");
 
-      await page.getByTestId("signUp").click();
+      await page.getByTestId("signUp").dblclick();
 
       await expect(page.getByRole("heading", { name: "Sign Up" })).toHaveCount(
         0

@@ -14,7 +14,6 @@ test.describe("Organization page tests", () => {
   test.describe("Authorized page tests", () => {
     test.describe.configure({ mode: "serial" });
     test.beforeEach(async ({ page }) => {
-      await page.goto(getUrl(IDENTIFIERS.ORGANIZATION_LIST));
       await page.route("**/init", (route) => {
         route.fulfill({
           status: 200,
@@ -22,6 +21,7 @@ test.describe("Organization page tests", () => {
           path: "tests/storage/auth.json",
         });
       });
+      await page.goto(getUrl(IDENTIFIERS.ORGANIZATION_LIST));
     });
 
     test("has visible required elements", async ({ page }) => {

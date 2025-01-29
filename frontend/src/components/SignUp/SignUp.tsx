@@ -64,7 +64,7 @@ const SignUp: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     confirmPassword: "",
     firstName: "",
     lastName: "",
-    age: 18,
+    age: "18",
   };
 
   const [touchedFields, setTouchedFields] = useState<
@@ -84,7 +84,10 @@ const SignUp: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { signup } = useActions();
 
   const submitFunction: SubmitHandler<FormValues> = async (data) => {
-    const re = (await signup(data)) as unknown as ResponseThunkAction;
+    const re = (await signup({
+      ...data,
+      age: +data.age,
+    })) as unknown as ResponseThunkAction;
     if (!re.error) {
       onClose();
     }

@@ -3,7 +3,7 @@ export type TodoInterface = {
   title: string;
   deadline: string;
   isCompleted: boolean;
-  priority: string;
+  priority: "low" | "medium" | "high";
   isImportant?: boolean;
-  scope: string;
+  scope: "forFun" | "forWork";
 };

@@ -1,16 +1,17 @@
 import { test, expect } from "@playwright/test";
 import { getUrl, IDENTIFIERS } from "../src/services/urlsHelper";
 
+const defaultTodoTitle = "TodoAutoTest TodoAutoTest TodoAutoTest";
+const modifiedTodoTitle = defaultTodoTitle + " modified";
+
 test.describe("Todo page tests", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(getUrl(IDENTIFIERS.TODOS));
+    await page.goto(getUrl(IDENTIFIERS.TODOS), { waitUntil: "networkidle" });
   });
 
   test.describe("can perform add todo, edit todo, delete todo", () => {
     test.describe.configure({ mode: "serial" });
 
-    const defaultTodoTitle = "TodoAutoTest TodoAutoTest TodoAutoTest";
-    const modifiedTodoTitle = defaultTodoTitle + " modified";
     test("perform add todo", async ({ page }) => {
       await page.getByRole("button", { name: "Add Todo" }).click();
 
@@ -36,8 +37,8 @@ test.describe("Todo page tests", () => {
         })
         .click();
       await page.getByRole("button", { name: "Edit" }).click();
+      await page.locator("[name='deadline']").fill("Sat Feb 01 2025");
       await page.locator("[name='title']").fill(modifiedTodoTitle);
-      await page.locator("[name='deadline']").fill("02/24/2025");
 
       await page.getByRole("button", { name: "Update" }).click();
       await page.getByRole("button", { name: "Go to list" }).click();
@@ -51,16 +52,19 @@ test.describe("Todo page tests", () => {
 
     test("perform delete todo", async ({ page }) => {
       await page.locator("[name='search']").fill(modifiedTodoTitle);
-      page
-        .getByRole("link", {
-          name: modifiedTodoTitle,
-        })
-        .click();
+      const todoItem = page.getByRole("link", { name: modifiedTodoTitle });
+      if (todoItem) {
+        await todoItem.click();
+      } else {
+        await page.locator("[name='search']").fill(defaultTodoTitle);
+        const todoItem = page.getByRole("link", { name: defaultTodoTitle });
+        await todoItem.click();
+      }
       await page.getByRole("button", { name: "Delete todo" }).click();
-      await page.locator("[name='search']").fill(modifiedTodoTitle);
+      await page.locator("[name='search']").fill(defaultTodoTitle);
       await expect(
         page.getByRole("link", {
-          name: modifiedTodoTitle,
+          name: defaultTodoTitle,
         })
       ).toHaveCount(0);
     });
@@ -117,16 +121,6 @@ test.describe("Todo page tests", () => {
       await page.locator(itemsPerPageSelector).selectOption("5");
 
       await page.waitForTimeout(1000);
-
-      // await page.waitForFunction(
-      //   ({ selector }) => {
-      //     const currentIds = Array.from(
-      //       document.querySelectorAll(selector)
-      //     ).map((item) => item.getAttribute("id"));
-      //     return currentIds.length > 0 && currentIds.length === 5;
-      //   },
-      //   { selector: todoItemSelector }
-      // );
 
       const currentUrl = new URL(page.url());
       expect(currentUrl.searchParams.has("page")).toBe(false);
