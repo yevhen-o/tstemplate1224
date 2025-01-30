@@ -36,7 +36,7 @@ export const NativeSelect = forwardRef(
       >
         {label && <label htmlFor={id || name}>{label}</label>}
         <div className="field_wrapper__select">
-          <select ref={ref} id={id || name} {...selectProps}>
+          <select ref={ref} id={id || name} name={name} {...selectProps}>
             {options.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}

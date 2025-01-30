@@ -15,8 +15,6 @@ export const ControlledInputField = <T extends FieldValues>({
 }: InputProps<T>) => {
   const { control, touchedFields, setTouchedField } = useCustomFormContext<T>();
 
-  console.log("touchedFields input", touchedFields);
-
   return (
     <Controller
       name={name}

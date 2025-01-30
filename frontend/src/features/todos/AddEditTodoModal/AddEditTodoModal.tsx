@@ -16,6 +16,7 @@ export const AddEditTodoModal = ({
 
   const submitFunction = async (data: TodoSchemaType) => {
     let result: ResponseThunkAction;
+    console.log("data", data);
     if (propsState) {
       result = (await todoPatchItem({
         uid: propsState.uid,
@@ -35,7 +36,7 @@ export const AddEditTodoModal = ({
     }
   };
   return (
-    <Modal title="Add new todo" onClose={onClose}>
+    <Modal title={propsState ? "Edit todo" : "Add new todo"} onClose={onClose}>
       <ControlledForm<TodoSchemaType>
         schema={todoSchema}
         onSubmit={submitFunction}
@@ -44,6 +45,7 @@ export const AddEditTodoModal = ({
             ? {
                 ...propsState,
                 deadline: new Date(propsState.deadline),
+                isCompleted: propsState.isCompleted || false,
               }
             : defaultValues
         }

@@ -31,13 +31,10 @@ export const ControlledForm = <T extends FieldValues>({
     Partial<Record<keyof T, boolean>>
   >({});
 
-  console.log("touchFields", touchedFields);
-
   const setTouchedField = (key: keyof T) => {
     setTouchedFields({ ...touchedFields, [key]: true });
   };
   const setAllFieldsTouched = () => {
-    console.log("methods.getValues()", methods.getValues());
     const allFieldsTouched = Object.keys(methods.getValues()).reduce(
       (acc, key) => ({ ...acc, [key]: true }),
       {}

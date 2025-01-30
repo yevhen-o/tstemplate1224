@@ -29,6 +29,7 @@ export const ControlledNativeSelect = <T extends FieldValues>({
           <NativeSelect
             {...rest}
             {...restFieldsProps}
+            name={name}
             onBlur={() => {
               onBlur();
               setTouchedField(name);

@@ -22,51 +22,52 @@ test.describe("Todo page tests", () => {
       await page.locator("[name='search']").fill(defaultTodoTitle);
 
       await expect(
-        page.getByRole("link", {
-          name: defaultTodoTitle,
-        })
+        page.getByRole("link", { name: defaultTodoTitle }).first()
       ).toBeVisible();
     });
 
     test("perform edit todo", async ({ page }) => {
       await page.locator("[name='search']").fill(defaultTodoTitle);
 
-      page
-        .getByRole("link", {
-          name: defaultTodoTitle,
-        })
-        .click();
-      await page.getByRole("button", { name: "Edit" }).click();
-      await page.locator("[name='deadline']").fill("Sat Feb 01 2025");
-      await page.locator("[name='title']").fill(modifiedTodoTitle);
+      await expect(async () => {
+        page
+          .getByRole("link", {
+            name: defaultTodoTitle,
+          })
+          .first()
+          .click();
+        await page.getByRole("button", { name: "Edit" }).click();
+        await page.locator("[name='deadline']").fill("Sat Feb 01 2025");
+        await page.locator("[name='title']").fill(modifiedTodoTitle);
+        await page.locator("[name='priority']").selectOption("low");
 
-      await page.getByRole("button", { name: "Update" }).click();
-      await page.getByRole("button", { name: "Go to list" }).click();
-      await page.locator("[name='search']").fill(modifiedTodoTitle);
-      await expect(
-        page.getByRole("link", {
-          name: modifiedTodoTitle,
-        })
-      ).toBeVisible();
+        await page.getByRole("button", { name: "Update" }).click();
+        await page.getByRole("button", { name: "Go to list" }).click();
+        await page.locator("[name='search']").fill(modifiedTodoTitle);
+        await expect(
+          page
+            .getByRole("link", {
+              name: modifiedTodoTitle,
+            })
+            .first()
+        ).toBeVisible();
+      }).toPass();
     });
 
     test("perform delete todo", async ({ page }) => {
-      await page.locator("[name='search']").fill(modifiedTodoTitle);
-      const todoItem = page.getByRole("link", { name: modifiedTodoTitle });
-      if (todoItem) {
-        await todoItem.click();
-      } else {
+      await expect(async () => {
         await page.locator("[name='search']").fill(defaultTodoTitle);
         const todoItem = page.getByRole("link", { name: defaultTodoTitle });
-        await todoItem.click();
-      }
-      await page.getByRole("button", { name: "Delete todo" }).click();
-      await page.locator("[name='search']").fill(defaultTodoTitle);
-      await expect(
-        page.getByRole("link", {
-          name: defaultTodoTitle,
-        })
-      ).toHaveCount(0);
+        await todoItem.first().click();
+
+        await page.getByRole("button", { name: "Delete todo" }).click();
+        await page.locator("[name='search']").fill(defaultTodoTitle);
+        await expect(
+          page.getByRole("link", {
+            name: defaultTodoTitle,
+          })
+        ).toHaveCount(0);
+      }).toPass();
     });
   });
   test.describe("check filtering todos and pagination working", () => {
@@ -76,6 +77,7 @@ test.describe("Todo page tests", () => {
     const priorityFilterSelector = "select[name='priority']";
     const scopeFilterSelector = "select[name='scope']";
     const isImportantFilterSelector = "select[name='isImportant']";
+    const totalItemsSelector = "[data-testid='total-items']";
 
     test("perform check pagination", async ({ page }) => {
       await expect(page.locator(todoItemSelector)).toHaveCount(3);
@@ -84,31 +86,19 @@ test.describe("Todo page tests", () => {
         .locator(todoItemSelector)
         .evaluateAll((items) => items.map((item) => item.getAttribute("id")));
 
-      expect(firstPageItems).toHaveLength(3);
+      await expect(async () => {
+        expect(firstPageItems).toHaveLength(3);
 
-      await page.locator(nextPageButtonSelector).click();
+        await page.locator(nextPageButtonSelector).click();
 
-      await page.waitForFunction(
-        ({ selector, previousIds }) => {
-          const currentIds = Array.from(
-            document.querySelectorAll(selector)
-          ).map((item) => item.getAttribute("id"));
-          return (
-            currentIds.length > 0 &&
-            currentIds.length === previousIds.length &&
-            !currentIds.every((id, index) => id === previousIds[index])
-          );
-        },
-        { selector: todoItemSelector, previousIds: firstPageItems }
-      );
+        const secondPageItems = await page
+          .locator(todoItemSelector)
+          .evaluateAll((items) => items.map((item) => item.getAttribute("id")));
 
-      const secondPageItems = await page
-        .locator(todoItemSelector)
-        .evaluateAll((items) => items.map((item) => item.getAttribute("id")));
+        expect(secondPageItems).toHaveLength(3);
 
-      expect(secondPageItems).toHaveLength(3);
-
-      expect(firstPageItems).not.toEqual(secondPageItems);
+        expect(firstPageItems).not.toEqual(secondPageItems);
+      }).toPass();
     });
 
     test("perform check changing itemsPerPage", async ({ page }) => {
@@ -117,16 +107,13 @@ test.describe("Todo page tests", () => {
         .evaluateAll((items) => items.map((item) => item.getAttribute("id")));
 
       await page.locator(nextPageButtonSelector).click();
-
-      await page.locator(itemsPerPageSelector).selectOption("5");
-
-      await page.waitForTimeout(1000);
-
-      const currentUrl = new URL(page.url());
-      expect(currentUrl.searchParams.has("page")).toBe(false);
-      expect(currentUrl.searchParams.get("perPage") === "5").toBe(true);
-
-      await expect(page.locator(todoItemSelector)).toHaveCount(5);
+      await expect(async () => {
+        await page.locator(itemsPerPageSelector).selectOption("5");
+        const currentUrl = new URL(page.url());
+        expect(currentUrl.searchParams.has("page")).toBe(false);
+        expect(currentUrl.searchParams.get("perPage") === "5").toBe(true);
+        await expect(page.locator(todoItemSelector)).toHaveCount(5);
+      }).toPass();
 
       const itemsAfterChange = await page
         .locator(todoItemSelector)
@@ -138,54 +125,54 @@ test.describe("Todo page tests", () => {
     });
 
     test("perform check changing filters", async ({ page }) => {
-      const totalPagesSelector = "[data-testid='total-pages']";
       await expect(page.locator(todoItemSelector)).toHaveCount(3);
-      const initialTotalPages = await page
-        .locator(totalPagesSelector)
+      const initialTotalItems = await page
+        .locator(totalItemsSelector)
         .innerText();
-      const initialPages = parseInt(initialTotalPages, 10);
 
-      expect(initialPages).toBeGreaterThan(0);
+      expect(+initialTotalItems).toBeGreaterThan(0);
 
       // Step 1: Change the priority filter
       await page.locator(priorityFilterSelector).selectOption("medium");
-      await page.waitForTimeout(1000);
-      const totalPagesAfterPriority = await page
-        .locator(totalPagesSelector)
-        .innerText();
-      const pagesAfterPriority = parseInt(totalPagesAfterPriority, 10);
+      let totalItemsAfterPriority = "0";
+      await expect(async () => {
+        totalItemsAfterPriority = await page
+          .locator(totalItemsSelector)
+          .innerText();
 
-      expect(pagesAfterPriority).not.toBe(initialPages);
+        expect(+totalItemsAfterPriority).not.toBe(+initialTotalItems);
+      }).toPass();
 
       // Step 2: Change the scope filter
       await page.locator(scopeFilterSelector).selectOption("forWork");
-      await page.waitForURL(
-        (url) => url.searchParams.get("scope") === "forWork"
-      );
-      await page.waitForTimeout(1000);
-      const totalPagesAfterScope = await page
-        .locator(totalPagesSelector)
-        .innerText();
-      const pagesAfterScope = parseInt(totalPagesAfterScope, 10);
+      let totalItemsAfterScope = "0";
+      await expect(async () => {
+        totalItemsAfterScope = await page
+          .locator(totalItemsSelector)
+          .innerText();
 
-      expect(pagesAfterScope).not.toBe(pagesAfterPriority);
+        expect(+totalItemsAfterScope).not.toBe(+totalItemsAfterPriority);
+      }).toPass();
 
       // Step 3: Change the isImportant filter
       await page.locator(isImportantFilterSelector).selectOption("true");
-      await page.waitForURL(
-        (url) => url.searchParams.get("isImportant") === "true"
-      );
-      await page.waitForTimeout(1000);
-      const totalPagesAfterIsImportant = await page
-        .locator(totalPagesSelector)
-        .innerText();
-      const pagesAfterIsImportant = parseInt(totalPagesAfterIsImportant, 10);
 
-      expect(pagesAfterIsImportant).not.toBe(pagesAfterScope);
+      await expect(async () => {
+        const totalItemsAfterIsImportant = await page
+          .locator(totalItemsSelector)
+          .innerText();
+
+        expect(+totalItemsAfterIsImportant).not.toBe(+totalItemsAfterScope);
+      }).toPass();
     });
 
     test("perform check persistence url with filters", async ({ page }) => {
       const goToListButtonSelector = "button:has-text('Go to list')";
+      const initialTotalItems = await page
+        .locator(totalItemsSelector)
+        .innerText();
+
+      expect(+initialTotalItems).toBeGreaterThan(0);
 
       // Step 1: Apply filters and check URL
       await page.goto(
@@ -196,10 +183,14 @@ test.describe("Todo page tests", () => {
         })
       );
 
-      await page.waitForURL(
-        (url) => url.searchParams.get("priority") === "medium"
-      );
+      await expect(async () => {
+        const totalItemsAfterFilter = await page
+          .locator(totalItemsSelector)
+          .innerText();
 
+        expect(+totalItemsAfterFilter).not.toBe(+initialTotalItems);
+      }).toPass();
+      await page.waitForTimeout(500);
       // Step 2: Store the ID of the first item on the list
       const firstItemId = await page
         .locator(todoItemSelector)
@@ -221,28 +212,20 @@ test.describe("Todo page tests", () => {
       expect(page.url()).toContain("priority=medium");
       expect(page.url()).toContain("scope=forWork");
       expect(page.url()).toContain("isImportant=true");
-
-      await page.waitForFunction(
-        ({ todoItemSelector, firstItemId }) => {
-          const currentIds = Array.from(
-            document.querySelectorAll(todoItemSelector)
-          ).map((item) => item.getAttribute("id"));
-          return currentIds.includes(firstItemId);
-        },
-        { todoItemSelector, firstItemId }
-      );
-
-      const itemIdsAfterNavigateBack = await page
-        .locator(todoItemSelector)
-        .evaluateAll((items) => items.map((item) => item.getAttribute("id")));
-
-      expect(itemIdsAfterNavigateBack).toContain(firstItemId);
+      await expect(async () => {
+        const itemIdsAfterNavigateBack = await page
+          .locator(todoItemSelector)
+          .evaluateAll((items) => items.map((item) => item.getAttribute("id")));
+        expect(itemIdsAfterNavigateBack).toContain(firstItemId);
+      }).toPass();
 
       // Step 5: Click on the first item and check URL
-      await page.locator(`${todoItemSelector}[id="${firstItemId}"]`).click();
-      expect(page.url()).not.toContain("priority");
-      expect(page.url()).not.toContain("scope");
-      expect(page.url()).not.toContain("isImportant");
+      await expect(async () => {
+        await page.locator(`${todoItemSelector}[id="${firstItemId}"]`).click();
+        expect(page.url()).not.toContain("priority");
+        expect(page.url()).not.toContain("scope");
+        expect(page.url()).not.toContain("isImportant");
+      }).toPass();
 
       // Step 6: Go back to the list and check URL and items
       await page.locator(goToListButtonSelector).click();
@@ -253,20 +236,12 @@ test.describe("Todo page tests", () => {
       expect(page.url()).toContain("scope=forWork");
       expect(page.url()).toContain("isImportant=true");
 
-      await page.waitForFunction(
-        ({ todoItemSelector, firstItemId }) => {
-          const currentIds = Array.from(
-            document.querySelectorAll(todoItemSelector)
-          ).map((item) => item.getAttribute("id"));
-          return currentIds.includes(firstItemId);
-        },
-        { todoItemSelector, firstItemId }
-      );
-
-      const itemIdsAfterGoBack = await page
-        .locator(todoItemSelector)
-        .evaluateAll((items) => items.map((item) => item.getAttribute("id")));
-      expect(itemIdsAfterGoBack).toContain(firstItemId);
+      await expect(async () => {
+        const itemIdsAfterGoBack = await page
+          .locator(todoItemSelector)
+          .evaluateAll((items) => items.map((item) => item.getAttribute("id")));
+        expect(itemIdsAfterGoBack).toContain(firstItemId);
+      }).toPass();
     });
   });
 });

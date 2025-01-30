@@ -32,7 +32,6 @@ export const AddEditTodoForm: React.FC<AddEditTodoFormProps> = ({
     setAllFieldsTouched,
     formState: { isSubmitting, isDirty },
   } = useCustomFormContext<TodoSchemaType>();
-
   return (
     <>
       <h2 className="text-base/7 font-semibold text-gray-900">
