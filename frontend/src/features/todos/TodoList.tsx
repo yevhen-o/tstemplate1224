@@ -16,7 +16,7 @@ const TodoList: React.FC<TodoListProps> = ({ items }) => {
     getContextMenuOptions
   );
   return (
-    <div className="px-8">
+    <div className="">
       {menuPlaceholder}
       {items.map((todo: TodoInterface) => (
         <Link

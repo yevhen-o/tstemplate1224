@@ -58,7 +58,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   };
 
   return (
-    <div className="items-center space-y-2 text-xs sm:space-y-0 sm:space-x-3 grid grid-cols-2 px-8 pagination">
+    <div className="items-center space-y-2 text-xs sm:space-y-0 sm:space-x-3 grid grid-cols-2 pagination">
       <div className="items-center space-y-2 text-xs sm:space-y-0 sm:space-x-3 inline-flex ">
         <nav
           aria-label="Pagination"

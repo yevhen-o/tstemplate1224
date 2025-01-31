@@ -1,14 +1,14 @@
 import { useEffect, useRef } from "react";
+
 import { FieldType, useObserveElementSize } from "src/hooks";
-import Button from "../Buttons";
 import { InputField } from "../Forms/InputField";
 import { NativeSelect } from "../Forms/NativeSelect";
-import { deepEqual } from "src/helpers/utils";
 import { FilterValueType } from "src/Types";
+import Button from "../Buttons";
+import "./Filters.scss";
 
 interface FilterProps {
   filterFields: FieldType[];
-  initialValues: FilterValueType;
   appliedValues: FilterValueType;
   onChange: (values: FilterValueType) => void;
   resetForm: () => void;
@@ -18,10 +18,14 @@ const Filters: React.FC<FilterProps> = ({
   onChange,
   resetForm,
   filterFields,
-  initialValues = {},
   appliedValues,
 }) => {
   const el = useRef(null);
+  const fieldsNames = filterFields.map((field) => field.name);
+  const filterValues = fieldsNames.reduce(
+    (acc, name) => ({ ...acc, [name]: appliedValues[name] }),
+    {}
+  );
 
   const { wrapperHeight } = useObserveElementSize(el);
 
@@ -40,15 +44,7 @@ const Filters: React.FC<FilterProps> = ({
   }, [wrapperHeight]);
 
   return (
-    <div
-      ref={el}
-      style={{
-        display: "flex",
-        alignItems: "flex-end",
-        gap: "24px",
-        padding: "0 32px",
-      }}
-    >
+    <div ref={el} className="filters__wrapper">
       {filterFields.map((field) => {
         if (field.fieldType === "input") {
           return (
@@ -76,13 +72,12 @@ const Filters: React.FC<FilterProps> = ({
           );
         }
       })}
-      {!deepEqual(initialValues, appliedValues) &&
-        appliedValues &&
-        Object.values(appliedValues).some((v) => !!v) && (
-          <Button isPrimary onClick={resetForm}>
-            Clear
-          </Button>
-        )}
+
+      {filterValues && Object.values(filterValues).some((v) => !!v) && (
+        <Button isPrimary onClick={resetForm}>
+          Clear
+        </Button>
+      )}
     </div>
   );
 };

@@ -60,6 +60,8 @@ const OrganizationMembers: React.FC = () => {
     }
   }, [organizationId, getOrgUsers, orgMembersRef]);
 
+  const { authorizedUserHasPermission } = useHasOrgPermission();
+
   const headerFields = [
     { title: "ID", field: "userId", isAlwaysVisible: true },
     {
@@ -112,7 +114,7 @@ const OrganizationMembers: React.FC = () => {
           {
             label: "Delete",
             value: "4",
-            disabled: !useHasOrgPermission("users", "delete", record),
+            disabled: !authorizedUserHasPermission("users", "delete", record),
             onClick: () => console.log("allow delete record", record),
           },
         ]}

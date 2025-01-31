@@ -6,7 +6,7 @@ export { useForm } from "./useForm";
 export { useOutsideClick } from "./useOutsideClick";
 export { useObserveElementSize } from "./useObserveElementSize";
 export { useSortWorker } from "./useSortWorker";
-export { useSearchParamsOrLocalStorage } from "./useSearchParamsOrLocalStorage";
+export { useSearchParamsAsValues } from "./useSearchParamsAsValues";
 export { usePagination } from "./usePagination";
 export { useFilters } from "./useFilters";
 export { useIsAuthenticated } from "./useIsAuthenticated";

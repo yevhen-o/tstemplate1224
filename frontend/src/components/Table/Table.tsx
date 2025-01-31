@@ -1,6 +1,6 @@
 import "./Table.scss";
 import React, {
-  useMemo,
+  //useMemo,
   useState,
   ReactElement,
   PropsWithChildren,
@@ -13,7 +13,7 @@ import {
   useFilters,
   useSortWorker,
   usePagination,
-  useSearchParamsOrLocalStorage,
+  useSearchParamsAsValues,
 } from "src/hooks";
 
 import TableHead, { TableField } from "./TableHead";
@@ -43,8 +43,8 @@ const defaultRenderFunction = {};
 const Table = <O extends Record<string, unknown>>({
   data,
   name,
-  sortBy,
-  isSortedAsc,
+  // sortBy,
+  // isSortedAsc,
   headerFields,
   filterFields,
   initialFilterValues = defaultObj,
@@ -56,13 +56,11 @@ const Table = <O extends Record<string, unknown>>({
   getRowClasses,
   renderFunctions = defaultRenderFunction,
 }: PropsWithChildren<TableProps<O>>): ReactElement => {
-  const initialValues = useMemo(
-    () => ({ sortBy, isSortedAsc }),
-    [sortBy, isSortedAsc]
-  );
-  const { appliedValues, handleValuesChange } = useSearchParamsOrLocalStorage({
-    initialValues,
-  });
+  // const initialValues = useMemo(
+  //   () => ({ sortBy, isSortedAsc }),
+  //   [sortBy, isSortedAsc]
+  // );
+  const { values, handleValuesChange } = useSearchParamsAsValues();
 
   const [fieldsToDisplay, setFieldsToDisplay] = useState<string[]>(
     headerFields.map((f) => f.field)
@@ -72,13 +70,13 @@ const Table = <O extends Record<string, unknown>>({
     fieldsToDisplay.includes(f.field)
   );
 
-  const appliedIsSortedAsc = typeof appliedValues?.isSortedAsc === "undefined";
+  const appliedIsSortedAsc = values.sortOrder === "desc" ? false : true;
 
   const sortType =
-    appliedValues?.sortBy === "createdAt" ? SortTypes.date : SortTypes.string;
+    values?.sortBy === "createdAt" ? SortTypes.date : SortTypes.string;
   const { sortedData, isWorking } = useSortWorker(
     data || [],
-    appliedValues?.sortBy,
+    values?.sortBy,
     appliedIsSortedAsc,
     sortType
   );
@@ -90,34 +88,30 @@ const Table = <O extends Record<string, unknown>>({
     filterFunctions
   );
 
-  console.log("render");
-
   const { pagination, paginatedItems } = usePagination<O>(filteredData);
 
   const handleSort = (field: TableField) => () => {
-    const updatedValues = { ...appliedValues };
     if (!field.isSortable) {
       return;
     }
-    if (field.field === appliedValues?.sortBy) {
-      updatedValues.isSortedAsc =
-        typeof appliedValues.isSortedAsc === "undefined" ? false : true;
+    if (field.field === values?.sortBy) {
+      handleValuesChange(
+        values.sortOrder ? { sortOrder: "" } : { sortOrder: "desc" }
+      );
     } else {
-      updatedValues.sortBy = field.field;
-      updatedValues.isSortedAsc = true;
+      handleValuesChange({ sortBy: field.field, sortOrder: "" });
     }
-    handleValuesChange(updatedValues);
   };
 
   return (
     <div
       className={classNames(wrapperClassName, "wrapper", `${name}__wrapper`)}
     >
-      {filters}
+      <div className="table__filters">{filters}</div>
       <table className={classNames("table", `${name}__table`)}>
         <TableHead
           name={name}
-          sortBy={(appliedValues?.sortBy || "").toString()}
+          sortBy={(values?.sortBy || "").toString()}
           isSortedAsc={appliedIsSortedAsc}
           headerFields={headerFields}
           fieldsToDisplay={fieldsToDisplay}
@@ -140,7 +134,7 @@ const Table = <O extends Record<string, unknown>>({
       {!!showEmptyDataMessage && (
         <>{emptyDataMessageText ? emptyDataMessageText : "No data found."}</>
       )}
-      {pagination}
+      <div className="table__pagination">{pagination}</div>
     </div>
   );
 };
