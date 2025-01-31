@@ -79,9 +79,12 @@ const Todos: React.FC = () => {
 
   return (
     <div className="px-8">
-      <Button isPrimary onClick={() => setShowAddTodoModal(true)}>
-        Add Todo
-      </Button>
+      <div className="px-8 py-4 flex justify-between">
+        <h1 className="text-2xl">Todos</h1>
+        <Button isPrimary onClick={() => setShowAddTodoModal(true)}>
+          Add Todo
+        </Button>
+      </div>
 
       {showAddTodoModal && (
         <AddEditTodoModal onClose={() => setShowAddTodoModal(false)} />

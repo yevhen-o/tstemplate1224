@@ -1,80 +1,92 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
-import { FormValueType } from "src/hooks";
 import Button from "src/components/Buttons";
-import { deepEqual } from "src/helpers/utils";
-import Select from "src/components/FormFields/Select";
 import { ChevronLeft, ChevronRight } from "src/components/Icons";
-import { DEFAULT_PAGE_SIZE, PREDEFINED_PAGE_SIZES } from "src/constants";
+import { PREDEFINED_PAGE_SIZES } from "src/constants";
+import { NativeSelect } from "../Forms/NativeSelect";
+import "./Pagination.scss";
 
 interface PaginationProps {
   totalItems: number;
-  appliedValues?: FormValueType;
-  onChange?: (values: FormValueType) => void;
+  page: number;
+  perPage: number;
+  onChange: ({ page, perPage }: { page: number; perPage: number }) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({
+export const Pagination: React.FC<PaginationProps> = ({
   totalItems,
-  appliedValues,
   onChange,
+  page,
+  perPage,
 }) => {
-  const [values, setValues] = useState<FormValueType>({
-    page: 1,
-    perPage: DEFAULT_PAGE_SIZE,
-  });
-  const page = values.page ? +values.page : 1;
-  const perPage = values.perPage ? +values.perPage : DEFAULT_PAGE_SIZE;
   const totalPages = Math.ceil(totalItems / +perPage);
 
-  const handleChangePage = (pageToShow: number) => () => {
-    setValues((prev) => ({ ...prev, page: pageToShow }));
-  };
+  const getPaginationRange = (currentPage: number, totalPages: number) => {
+    const delta = 3;
+    const range: (number | "...")[] = [];
+    const left = Math.max(2, currentPage - delta);
+    const right = Math.min(totalPages - 1, currentPage + delta);
 
-  const handleChangePerPage = (value: boolean | string) => {
-    const newPerPage = Math.max(+value, 1); // Ensure positive value
-    setValues((prev) => ({ ...prev, page: 1, perPage: newPerPage }));
-  };
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    if (isMounted) {
-      onChange?.(values);
+    if (left > 2) {
+      range.push(1, "...");
     } else {
-      setIsMounted(true);
+      range.push(1);
     }
-  }, [values, onChange, isMounted]);
+    for (let i = left; i <= right; i++) {
+      range.push(i);
+    }
 
-  useEffect(() => {
-    if (!!appliedValues && !deepEqual(appliedValues, values)) {
-      setValues(appliedValues);
+    if (right < totalPages - 1) {
+      range.push("...", totalPages);
+    } else {
+      if (totalPages > 1) {
+        range.push(totalPages);
+      }
     }
-    // TODO: Check how solve add value as a dependency
-  }, [appliedValues]); //eslint-disable-line react-hooks/exhaustive-deps
+
+    return range;
+  };
+
+  const paginationItems = getPaginationRange(page, totalPages);
+
+  const handleChangePage = (page: number) => () => {
+    onChange({ page, perPage });
+  };
+
+  const handleChangePerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onChange({ page: 1, perPage: +e.target.value });
+  };
 
   return (
-    <div className="items-center space-y-2 text-xs sm:space-y-0 sm:space-x-3 grid grid-cols-2">
-      <div className="items-center space-y-2 text-xs sm:space-y-0 sm:space-x-3 inline-flex">
+    <div className="items-center space-y-2 text-xs sm:space-y-0 sm:space-x-3 grid grid-cols-2 px-8 pagination">
+      <div className="items-center space-y-2 text-xs sm:space-y-0 sm:space-x-3 inline-flex ">
         <nav
           aria-label="Pagination"
-          className="inline-flex -space-x-px rounded-md shadow-sm dark:bg-gray-100 dark:text-gray-800"
+          className="inline-flex -space-x-px rounded-md shadow-sm dark:bg-gray-100 dark:text-gray-800 "
         >
           <Button
             type="button"
             isBordered
-            onClick={handleChangePage(+page - 1)}
+            onClick={handleChangePage(page - 1)}
             disabled={page === 1}
           >
             <span className="sr-only">Previous</span>
             <ChevronLeft size={20} />
           </Button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-            (pageItem) => (
+
+          {paginationItems.map((pageItem, index) =>
+            pageItem === "..." ? (
+              <span key={pageItem + index} className="px-2">
+                ...
+              </span>
+            ) : (
               <Button
-                key={pageItem}
+                key={pageItem + index}
                 onClick={handleChangePage(pageItem)}
                 isBordered
                 isPrimary={pageItem === page}
                 disabled={pageItem === page}
+                className={`page__${pageItem}`}
               >
                 {pageItem}
               </Button>
@@ -83,7 +95,7 @@ const Pagination: React.FC<PaginationProps> = ({
 
           <Button
             type="button"
-            onClick={handleChangePage(+page + 1)}
+            onClick={handleChangePage(page + 1)}
             disabled={page === totalPages}
             isBordered
           >
@@ -100,8 +112,7 @@ const Pagination: React.FC<PaginationProps> = ({
       </div>
       <div className="flex justify-self-end items-center gap-2">
         <span className="block">Items per page:</span>
-        <Select
-          fieldType="select"
+        <NativeSelect
           name="itemsPerPage"
           className={"my-0"}
           value={perPage.toString()}
@@ -115,5 +126,3 @@ const Pagination: React.FC<PaginationProps> = ({
     </div>
   );
 };
-
-export default Pagination;

@@ -11,7 +11,7 @@ export const organizationAddRecord = async (req: Request, res: Response) => {
   });
   const user = await User.findByPk(req.user!.userId);
   //@ts-expect-error Something with associations
-  await Org.addUser(user, { through: { role: "Admin" } });
+  await Org.addUser(user, { through: { role: "admin" } });
   res.send(Org);
 };
 

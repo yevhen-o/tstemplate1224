@@ -11,7 +11,6 @@ import {
   Value,
   FieldType,
   useFilters,
-  FormValueType,
   useSortWorker,
   usePagination,
   useSearchParamsOrLocalStorage,
@@ -19,12 +18,13 @@ import {
 
 import TableHead, { TableField } from "./TableHead";
 import TableBody from "./TableBody";
+import { FilterValueType } from "src/Types";
 const defaultObj = {};
 
 type TableProps<O> = {
   name: string;
   headerFields: TableField[];
-  initialFilterValues?: FormValueType;
+  initialFilterValues?: FilterValueType;
   filterFields?: FieldType[];
   filterFunctions?: Record<string, (i: O, k: string, v: Value) => boolean>;
   wrapperClassName?: string;
@@ -90,10 +90,9 @@ const Table = <O extends Record<string, unknown>>({
     filterFunctions
   );
 
-  const { pagination, paginatedItems } = usePagination<O>(
-    filteredData,
-    initialFilterValues
-  );
+  console.log("render");
+
+  const { pagination, paginatedItems } = usePagination<O>(filteredData);
 
   const handleSort = (field: TableField) => () => {
     const updatedValues = { ...appliedValues };

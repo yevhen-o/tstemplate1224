@@ -16,7 +16,6 @@ export const AddEditTodoModal = ({
 
   const submitFunction = async (data: TodoSchemaType) => {
     let result: ResponseThunkAction;
-    console.log("data", data);
     if (propsState) {
       result = (await todoPatchItem({
         uid: propsState.uid,

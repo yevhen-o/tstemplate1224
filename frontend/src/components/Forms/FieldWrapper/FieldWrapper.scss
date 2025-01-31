@@ -1,14 +1,7 @@
 .field_wrapper {
   display: flex;
   flex-direction: column;
-  margin-bottom: .625rem;
-  min-height: 4.7rem;
-  
 
-  $this: &;
-  #{$this}--thin, &--thin {
-    min-height: 2.3rem;
-  }
   &__input {
     position: relative;
     display: flex;
@@ -31,8 +24,9 @@
     & > svg {
       position: absolute;
       top: 50%;
-      right: 0.9rem;
+      right: 0.7rem;
       transform: translateY(-50%);
+      pointer-events: none;
     }
   }
 
@@ -46,13 +40,17 @@
 
   input:not([type="checkbox"]):not([type="radio"]), select {
     all: unset;
-    padding: 0.7rem 1.25rem;
+    padding: 0.4rem 0.85rem;
     border: 1px solid var(--border-color-default);
     border-radius: var(--border-radius-default);
     background: var(--color-white);
     color: var(--color-gray-text);
     display: block;
   }
+
+    select {
+      padding-right: var(--spacer-xl);
+    }
 
   &--success {
     input {

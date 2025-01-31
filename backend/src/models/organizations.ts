@@ -57,7 +57,7 @@ import { Sequelize, DataTypes, Model } from "sequelize";
  *       properties:
  *         role:
  *           type: string
- *           default: Admin
+ *           default: admin
  */
 
 export const defineOrganizationModel = (sequelize: Sequelize) => {
