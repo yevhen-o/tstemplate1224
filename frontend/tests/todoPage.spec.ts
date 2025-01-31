@@ -166,6 +166,23 @@ test.describe("Todo page tests", () => {
       }).toPass();
     });
 
+    test("perform check open url with filters", async ({ page }) => {
+      await page.goto(
+        getUrl(IDENTIFIERS.TODOS, {
+          priority: "medium",
+          isImportant: true,
+          scope: "forWork",
+        })
+      );
+
+      await expect(page.url()).toContain("priority=medium");
+      await expect(page.url()).toContain("scope=forWork");
+      await expect(page.url()).toContain("isImportant=true");
+      await expect(page.locator("#scope")).toHaveValue("forWork");
+      await expect(page.locator("#isImportant")).toHaveValue("true");
+      await expect(page.locator("#priority")).toHaveValue("medium");
+    });
+
     test("perform check persistence url with filters", async ({ page }) => {
       const goToListButtonSelector = "button:has-text('Go to list')";
       const initialTotalItems = await page
@@ -175,12 +192,19 @@ test.describe("Todo page tests", () => {
       expect(+initialTotalItems).toBeGreaterThan(0);
 
       // Step 1: Apply filters and check URL
-      await page.goto(
-        getUrl(IDENTIFIERS.TODOS, {
-          priority: "medium",
-          isImportant: true,
-          scope: "forWork",
-        })
+      await page.goto(getUrl(IDENTIFIERS.TODOS));
+
+      await page.locator(priorityFilterSelector).selectOption("medium");
+      await page.waitForURL(
+        (url) => url.searchParams.get("priority") === "medium"
+      );
+      await page.locator(scopeFilterSelector).selectOption("forWork");
+      await page.waitForURL(
+        (url) => url.searchParams.get("scope") === "forWork"
+      );
+      await page.locator(isImportantFilterSelector).selectOption("true");
+      await page.waitForURL(
+        (url) => url.searchParams.get("isImportant") === "true"
       );
 
       await expect(async () => {

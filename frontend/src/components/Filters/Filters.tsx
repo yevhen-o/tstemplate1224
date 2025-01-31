@@ -1,43 +1,40 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  FormValueType,
-  FieldType,
-  useForm,
-  useObserveElementSize,
-} from "src/hooks";
+import { useEffect, useRef } from "react";
+
+import { FieldType, useObserveElementSize } from "src/hooks";
+import { InputField } from "../Forms/InputField";
+import { NativeSelect } from "../Forms/NativeSelect";
+import { FilterValueType } from "src/Types";
 import Button from "../Buttons";
+import "./Filters.scss";
 
 interface FilterProps {
   filterFields: FieldType[];
-  initialValues: FormValueType;
-  appliedValues?: FormValueType;
-  onChange: (values: FormValueType) => void;
+  appliedValues: FilterValueType;
+  onChange: (values: FilterValueType) => void;
+  resetForm: () => void;
 }
 
 const Filters: React.FC<FilterProps> = ({
   onChange,
+  resetForm,
   filterFields,
-  initialValues = {},
   appliedValues,
 }) => {
   const el = useRef(null);
-  const { values, renderFormField, hasFormChanges, resetForm, updateValues } =
-    useForm({}, initialValues);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    if (isMounted) {
-      onChange({ ...values, page: "1" });
-    } else {
-      setIsMounted(true);
-    }
-  }, [values, onChange, isMounted]);
+  const fieldsNames = filterFields.map((field) => field.name);
+  const filterValues = fieldsNames.reduce(
+    (acc, name) => ({ ...acc, [name]: appliedValues[name] }),
+    {}
+  );
 
   const { wrapperHeight } = useObserveElementSize(el);
 
-  useEffect(() => {
-    if (appliedValues) updateValues(appliedValues);
-  }, [appliedValues, updateValues]);
+  const updateValues =
+    (field: string) =>
+    (e: React.FormEvent<HTMLSelectElement | HTMLInputElement>) => {
+      const target = e.target as HTMLInputElement | HTMLSelectElement;
+      onChange({ [field]: target.value });
+    };
 
   useEffect(() => {
     document.documentElement.style.setProperty(
@@ -45,18 +42,38 @@ const Filters: React.FC<FilterProps> = ({
       `${wrapperHeight}px`
     );
   }, [wrapperHeight]);
+
   return (
-    <div
-      ref={el}
-      style={{
-        display: "flex",
-        alignItems: "flex-end",
-        gap: "24px",
-        padding: "0 32px",
-      }}
-    >
-      {filterFields.map((field) => renderFormField(field))}
-      {hasFormChanges() && values && Object.values(values).some((v) => !!v) && (
+    <div ref={el} className="filters__wrapper">
+      {filterFields.map((field) => {
+        if (field.fieldType === "input") {
+          return (
+            <InputField
+              key={field.name}
+              name={field.name}
+              type="text"
+              placeholder={field.label}
+              value={appliedValues[field.name] || ""}
+              onChange={updateValues(field.name)}
+            />
+          );
+        }
+        if (field.fieldType === "select") {
+          return (
+            <NativeSelect
+              key={field.name}
+              name={field.name}
+              type="text"
+              placeholder={field.label}
+              value={appliedValues[field.name] || ""}
+              onChange={updateValues(field.name)}
+              options={field.options}
+            />
+          );
+        }
+      })}
+
+      {filterValues && Object.values(filterValues).some((v) => !!v) && (
         <Button isPrimary onClick={resetForm}>
           Clear
         </Button>

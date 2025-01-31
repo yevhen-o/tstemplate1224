@@ -8,4 +8,6 @@ export type ResponseThunkAction = {
   };
 };
 
-export type Option = { id?: string; value: string; label: string };
+export type Option = { id?: string; value: string | number; label: string };
+
+export type FilterValueType = Record<string, string>;

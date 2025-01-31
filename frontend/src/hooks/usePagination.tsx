@@ -1,27 +1,48 @@
-import Pagination from "src/components/Pagination/Pagination";
-import { useSearchParamsOrLocalStorage } from "src/hooks";
+import { useSearchParams, useLocation } from "react-router-dom";
+import { storageGetKey, storageSet } from "src/services/localStorage";
+import { Pagination } from "src/components/Pagination/Pagination";
 import { DEFAULT_PAGE_SIZE } from "src/constants";
-import { FormValueType } from "src/hooks/useForm";
 
-const defaultInitialValues = { page: 1, perPage: DEFAULT_PAGE_SIZE };
+export function usePagination<T>(items: T[]) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { pathname } = useLocation();
 
-export function usePagination<T>(
-  items: T[],
-  initialValues: FormValueType = defaultInitialValues
-) {
-  const { appliedValues, handleValuesChange } = useSearchParamsOrLocalStorage({
-    initialValues,
-  });
-
-  const page = Number(appliedValues?.page ?? 1);
-  const perPage = Number(appliedValues?.perPage ?? DEFAULT_PAGE_SIZE);
+  const page = Number(searchParams.get("page")) || 1;
+  const perPage = Number(searchParams.get("perPage")) || DEFAULT_PAGE_SIZE;
   const paginatedItems = items.slice((page - 1) * perPage, page * perPage);
+
+  const handleChange = ({
+    page,
+    perPage,
+  }: {
+    page: number;
+    perPage: number;
+  }) => {
+    setSearchParams((params) => {
+      const values = {
+        ...Object.fromEntries(params),
+        ...(page === 1 ? {} : { page: page.toString() }),
+        ...(perPage === DEFAULT_PAGE_SIZE
+          ? {}
+          : { perPage: perPage.toString() }),
+      };
+      if (page === 1) {
+        delete values.page;
+      }
+      if (perPage === DEFAULT_PAGE_SIZE) {
+        delete values.perPage;
+      }
+      storageSet(storageGetKey(pathname), values);
+      return values;
+    });
+  };
 
   const pagination = (
     <Pagination
+      page={page}
+      perPage={perPage}
       totalItems={items.length}
-      appliedValues={appliedValues || {}}
-      onChange={handleValuesChange}
+      onChange={handleChange}
     />
   );
 

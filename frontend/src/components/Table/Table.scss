@@ -18,6 +18,16 @@
     height: 20px;
     overflow: hidden;
   }
+
+  &__pagination {
+    padding: var(--spacer-sm) var(--spacer-df);
+    border-top: 1px solid var(--color-gray-25)
+  }
+  
+  &__filters {
+    padding: var(--spacer-sm) var(--spacer-df);
+    border-bottom: 1px solid var(--color-gray-25)
+  }
 }
 
 .cell {

@@ -1,37 +1,37 @@
 import Filters from "src/components/Filters";
-import { useSearchParamsOrLocalStorage } from "src/hooks";
 import { useFilterWorker } from "src/hooks/useFilterWorker";
-import { FieldType, FormValueType, Value } from "src/hooks/useForm";
+import { FieldType, Value } from "src/hooks/useForm";
+import { useSearchParamsAsValues } from "./useSearchParamsAsValues";
+import { FilterValueType } from "src/Types";
 
 const defaultObj = {};
 const defaultArr: FieldType[] = [];
 
 export function useFilters<T>(
   items: T[],
-  initialValues: FormValueType = defaultObj,
+  initialValues: FilterValueType = defaultObj,
   filterFields: FieldType[] = defaultArr,
   filterFunctions: Record<
     string,
     (i: T, k: keyof typeof initialValues, v: Value) => boolean
   > = defaultObj
 ) {
-  const { appliedValues, handleValuesChange } = useSearchParamsOrLocalStorage({
-    initialValues,
-  });
+  const { values, handleValuesChange, handleResetForm } =
+    useSearchParamsAsValues();
 
   const { filteredData } = useFilterWorker(
     items,
-    appliedValues,
+    values,
     filterFields,
     filterFunctions
   );
 
   const filters = (
     <Filters
-      initialValues={initialValues}
+      appliedValues={values}
       filterFields={filterFields}
-      appliedValues={appliedValues || {}}
-      onChange={handleValuesChange}
+      onChange={(v) => handleValuesChange({ ...v, page: "1" })}
+      resetForm={handleResetForm}
     />
   );
 

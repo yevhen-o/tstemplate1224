@@ -1,0 +1,7 @@
+.filters {
+  &__wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--spacer-lg);
+  }
+}

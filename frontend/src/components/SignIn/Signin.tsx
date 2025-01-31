@@ -70,26 +70,27 @@ const SignIn: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         className="grid min-w-[14rem]"
       >
         {formFields.map(({ name, ...rest }) => (
-          <Controller
-            key={name}
-            name={name}
-            control={control}
-            render={({ field: { onBlur, ...restFieldsProps } }) => (
-              <>
-                <InputField
-                  {...rest}
-                  {...restFieldsProps}
-                  onBlur={() => {
-                    onBlur();
-                    handleBlur(name);
-                  }}
-                  errorMessage={errors[name]?.message}
-                  isTouched={touchedFields[name]}
-                  isDirty={dirtyFields[name]}
-                />
-              </>
-            )}
-          />
+          <div key={name} className="min-h-[5.125rem]">
+            <Controller
+              name={name}
+              control={control}
+              render={({ field: { onBlur, ...restFieldsProps } }) => (
+                <>
+                  <InputField
+                    {...rest}
+                    {...restFieldsProps}
+                    onBlur={() => {
+                      onBlur();
+                      handleBlur(name);
+                    }}
+                    errorMessage={errors[name]?.message}
+                    isTouched={touchedFields[name]}
+                    isDirty={dirtyFields[name]}
+                  />
+                </>
+              )}
+            />
+          </div>
         ))}
         <Button
           isPrimary
