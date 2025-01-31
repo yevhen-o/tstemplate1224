@@ -1,6 +1,7 @@
 node_modules/
 .idea/
 .history/
+.DS_Store
 database/
 data/
 backend/node_modules/
